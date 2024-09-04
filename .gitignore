@@ -114,5 +114,5 @@ gradle-app.setting
 # Common working directory
 run/
 
-# Gradle wrapper jar
-gradle-wrapper.jar
+# Gradle wrapper
+gradle/
