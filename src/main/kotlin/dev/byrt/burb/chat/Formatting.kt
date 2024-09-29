@@ -45,7 +45,9 @@ object Formatting {
         }
     }
 
-    private val BURB_COLOUR = TagResolver.resolver("burbcolour", Tag.styling(TextColor.color(255, 174, 97)))
+    private val BURB_COLOUR = TagResolver.resolver("burbcolour", Tag.styling(TextColor.color(34, 224, 97)))
+    private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(TextColor.color(21, 237, 50)))
+    private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(TextColor.color(136, 21, 237)))
     private val NOTIFICATION_COLOUR = TagResolver.resolver("notifcolour", Tag.styling(TextColor.color(219, 0, 96)))
 
     val allTags = MiniMessage.builder()
@@ -54,6 +56,8 @@ object Formatting {
                 .resolver(StandardTags.defaults())
                 .resolver(Noxesium.skullResolver())
                 .resolver(BURB_COLOUR)
+                .resolver(PLANTS_COLOUR)
+                .resolver(ZOMBIES_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .resolver(prefix())
                 .resolver(actionBar())
@@ -66,10 +70,11 @@ object Formatting {
             TagResolver.builder()
                 .resolver(StandardTags.color())
                 .resolver(StandardTags.decorations())
-                .resolver(StandardTags.rainbow())
                 .resolver(StandardTags.reset())
                 .resolver(Noxesium.skullResolver())
                 .resolver(BURB_COLOUR)
+                .resolver(PLANTS_COLOUR)
+                .resolver(ZOMBIES_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .build()
         )

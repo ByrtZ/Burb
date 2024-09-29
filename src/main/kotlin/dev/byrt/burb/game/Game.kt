@@ -1,6 +1,7 @@
 package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.chat.InfoBoardManager
 
 object Game {
     fun start() {
@@ -20,11 +21,11 @@ object Game {
     }
 
     fun setup() {
-
+        InfoBoardManager.buildScoreboard()
     }
 
     fun cleanup() {
-
+        InfoBoardManager.destroyScoreboard()
     }
 
     fun reload() {

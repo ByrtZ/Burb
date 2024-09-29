@@ -13,6 +13,7 @@ object Sounds {
         const val ROUND_OVER_MUSIC = ""
         val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.75f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
+        val GAME_INTRO_JINGLE = Sound.sound(Key.key("burb.game.intro_jingle"), Sound.Source.VOICE, 1f, 1f)
         val NULL = Sound.sound(Key.key(""), Sound.Source.VOICE, 0f, 0f)
     }
     object Timer {
@@ -32,18 +33,8 @@ object Sounds {
         const val START_GAME_SUCCESS = "block.respawn_anchor.set_spawn"
         const val START_GAME_FAIL = "entity.enderman.teleport"
     }
-    object Queue {
-        const val QUEUE_JOIN = "block.note_block.flute"
-        const val QUEUE_LEAVE = "block.note_block.didgeridoo"
-        const val QUEUE_FIND_GAME = "block.end_portal.spawn"
-        const val QUEUE_TELEPORT = "block.portal.trigger"
-        const val QUEUE_TICK = "block.note_block.pling"
-    }
     object Score {
-        const val ACQUIRED = ""
-        const val BIG_ACQUIRED = ""
-        const val UNDO_ELIMINATION = ""
-        const val TEAM_ELIMINATED = ""
+        val ELIMINATION = Sound.sound(Key.key("burb.generic.vanquish"), Sound.Source.VOICE, 1f, 1f)
     }
     object Alert {
         const val GENERAL_ALERT = "mcc.game.map_alert"
@@ -53,18 +44,10 @@ object Sounds {
     object Tutorial {
         const val TUTORIAL_POP = "entity.item.pickup"
     }
-    object Command {
-        const val SHUFFLE_START = "block.note_block.flute"
-        const val SHUFFLE_COMPLETE = "block.note_block.flute"
-        const val SHUFFLE_FAIL = "block.note_block.didgeridoo"
-        const val WHITELIST_START = "block.note_block.flute"
-        const val WHITELIST_COMPLETE = "block.note_block.flute"
-        const val WHITELIST_FAIL = "block.note_block.didgeridoo"
-        const val PING = "entity.experience_orb.pickup"
-        const val BUILDMODE_SUCCESS = "entity.mooshroom.convert"
-        const val BUILDMODE_FAIL = "entity.enderman.teleport"
-    }
     object Misc {
         val ADMIN_MESSAGE = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 1f, 2f)
+    }
+    object Weapon {
+        val FOOT_SOLDIER_WEAPON_FIRE = Sound.sound(Key.key("burb.weapon.foot_soldier.fire"), Sound.Source.VOICE, 0.75f, 1f)
     }
 }

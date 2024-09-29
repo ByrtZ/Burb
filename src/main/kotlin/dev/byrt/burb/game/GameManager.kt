@@ -1,6 +1,7 @@
 package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.library.Sounds
@@ -18,6 +19,7 @@ import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
 import org.bukkit.SoundCategory
+import org.bukkit.command.CommandSender
 
 import java.time.Duration
 
@@ -52,43 +54,44 @@ object GameManager {
 
     fun setGameState(newState: GameState) {
         if(newState == gameState) return
-        ChatUtility.broadcastDev("<dark_gray>Game state updated from $gameState to $newState.", true)
+        ChatUtility.broadcastDev("<dark_gray>Game State: <red>$gameState<reset> <aqua>-> <green>$newState<dark_gray>.", true)
         this.gameState = newState
+        InfoBoardManager.updateStatus()
         when(this.gameState) {
             GameState.IDLE -> {
                 Game.reload()
-                GameTask.startGameLoop()
+                GameTask.stopGameLoop()
             }
             GameState.STARTING -> {
                 if(RoundManager.getRound() == Round.ONE) {
-                    Timer.setTimerState(TimerState.ACTIVE)
-                    Timer.setTimer(GameTime.GAME_STARTING_TIME)
+                    Timer.setTimerState(TimerState.ACTIVE, null)
+                    Timer.setTimer(GameTime.GAME_STARTING_TIME, null)
                     GameTask.startGameLoop()
                     starting()
                 } else {
-                    Timer.setTimerState(TimerState.ACTIVE)
-                    Timer.setTimer(ROUND_STARTING_TIME)
+                    Timer.setTimerState(TimerState.ACTIVE, null)
+                    Timer.setTimer(ROUND_STARTING_TIME, null)
                     starting()
                 }
             }
             GameState.IN_GAME -> {
-                Timer.setTimerState(TimerState.ACTIVE)
-                Timer.setTimer(GameTime.IN_GAME_TIME)
+                Timer.setTimerState(TimerState.ACTIVE, null)
+                Timer.setTimer(GameTime.IN_GAME_TIME, null)
                 startRound()
             }
             GameState.ROUND_END -> {
-                Timer.setTimerState(TimerState.ACTIVE)
-                Timer.setTimer(GameTime.ROUND_END_TIME)
+                Timer.setTimerState(TimerState.ACTIVE, null)
+                Timer.setTimer(GameTime.ROUND_END_TIME, null)
                 roundEnd()
             }
             GameState.GAME_END -> {
-                Timer.setTimerState(TimerState.ACTIVE)
-                Timer.setTimer(GAME_END_TIME)
+                Timer.setTimerState(TimerState.ACTIVE, null)
+                Timer.setTimer(GAME_END_TIME, null)
                 gameEnd()
             }
             GameState.OVERTIME -> {
-                Timer.setTimerState(TimerState.ACTIVE)
-                Timer.setTimer(GameTime.OVERTIME_TIME)
+                Timer.setTimerState(TimerState.ACTIVE, null)
+                Timer.setTimer(GameTime.OVERTIME_TIME, null)
                 startOvertime()
             }
         }
@@ -104,6 +107,7 @@ object GameManager {
     }
 
     private fun starting() {
+        InfoBoardManager.updateRound()
         if(RoundManager.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
                 player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
@@ -197,7 +201,7 @@ object RoundManager {
 
     fun setRound(newRound : Round) {
         if(newRound == round) return
-        ChatUtility.broadcastDev("<dark_gray>Round updated from $round to $newRound.", true)
+        ChatUtility.broadcastDev("<dark_gray>Round Updated: <red>$round<reset> <aqua>-> <green>$newRound<dark_gray>.", true)
         this.round = newRound
     }
 
@@ -210,24 +214,28 @@ object RoundManager {
     }
 }
 
-object CapturePointManager {
-
-}
-
 object Timer {
     private var timer = 0
     private var timerState = TimerState.INACTIVE
 
-    fun setTimer(newTime: Int) {
+    fun setTimer(newTime: Int, sender: CommandSender?) {
         this.timer = newTime
+        if(sender != null) {
+            ChatUtility.broadcastDev("<dark_gray>Timer Updated: <yellow>${newTime}s<green> remaining<dark_gray> [${sender.name}].", true)
+        }
     }
 
     fun getTimer(): Int {
         return this.timer
     }
 
-    fun setTimerState(newState : TimerState) {
+    fun getDisplayTimer(): String {
+        return GameTask.getDisplayTime()
+    }
+
+    fun setTimerState(newState : TimerState, sender: CommandSender?) {
         if(newState == timerState) return
+        ChatUtility.broadcastDev("<dark_gray>Timer State: <red>$timerState<reset> <aqua>-> <green>$newState<dark_gray>${if(sender != null) " [${sender.name}]." else "."}", false)
         this.timerState = newState
     }
 
@@ -249,12 +257,6 @@ enum class Round {
     ONE,
     TWO,
     THREE
-}
-
-enum class CapturePoint {
-    CAPTURE_POINT_ONE,
-    CAPTURE_POINT_TWO,
-    CAPTURE_POINT_THREE
 }
 
 enum class TimerState {
