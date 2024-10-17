@@ -1,7 +1,6 @@
 package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.Formatting
-import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
 
@@ -18,15 +17,10 @@ import java.time.Duration
 object GameTask {
     private var gameRunnables = mutableMapOf<Int, BukkitRunnable>()
     private var currentGameTaskId = 0
-    private var displayTime = "00:00"
 
     fun startGameLoop() {
-
         val gameRunnable = object : BukkitRunnable() {
             override fun run() {
-                displayTime = String.format("%02d:%02d", Timer.getTimer() / 60, Timer.getTimer() % 60)
-                InfoBoardManager.updateTimer()
-
                 /** STARTING **/
                 if(GameManager.getGameState() == GameState.STARTING && Timer.getTimerState() == TimerState.ACTIVE) {
                     if(RoundManager.getRound() == Round.ONE) {
@@ -37,7 +31,7 @@ object GameTask {
                                     Component.text(""),
                                     Title.Times.times(
                                         Duration.ofSeconds(0),
-                                        Duration.ofSeconds(10),
+                                        Duration.ofSeconds(3),
                                         Duration.ofSeconds(1)
                                         )
                                     )
@@ -45,10 +39,10 @@ object GameTask {
                                 player.playSound(Sounds.Music.GAME_INTRO_JINGLE)
                             }
                         }
-                        if(Timer.getTimer() == 76) {
+                        if(Timer.getTimer() == 77) {
                             for(player in Bukkit.getOnlinePlayers()) {
                                 player.showTitle(Title.title(
-                                    Formatting.allTags.deserialize("<burbcolour>Suburbination"),
+                                    Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
                                     Component.text(""),
                                     Title.Times.times(
                                         Duration.ofSeconds(1),
@@ -191,7 +185,7 @@ object GameTask {
 
                 /** TIMER DECREMENTS IF ACTIVE **/
                 if(Timer.getTimerState() == TimerState.ACTIVE) {
-                    Timer.setTimer(Timer.getTimer() - 1, null)
+                    Timer.decrement()
                 }
             }
         }
@@ -203,10 +197,5 @@ object GameTask {
     fun stopGameLoop() {
         gameRunnables.remove(currentGameTaskId)?.cancel()
         Timer.setTimer(0, null)
-        displayTime = "00:00"
-    }
-
-    fun getDisplayTime(): String {
-        return this.displayTime
     }
 }

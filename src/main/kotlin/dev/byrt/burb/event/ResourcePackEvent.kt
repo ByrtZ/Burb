@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitRunnable
 
 class ResourcePackEvent: Listener {
     @EventHandler
@@ -21,8 +22,12 @@ class ResourcePackEvent: Listener {
                 if(!Jukebox.getJukeboxMap().containsKey(e.player.uniqueId)) {
                     Jukebox.startMusicLoop(e.player, plugin, Music.LOBBY_WAITING)
                 }
-                e.player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
-                e.player.removePotionEffect(PotionEffectType.BLINDNESS)
+                object : BukkitRunnable() {
+                    override fun run() {
+                        e.player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
+                        e.player.removePotionEffect(PotionEffectType.BLINDNESS)
+                    }
+                }.runTaskLater(plugin, 10L)
             }
         }
     }

@@ -1,5 +1,6 @@
 package dev.byrt.burb.chat
 
+import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.Noxesium
 
 import net.kyori.adventure.text.Component
@@ -46,8 +47,9 @@ object Formatting {
     }
 
     private val BURB_COLOUR = TagResolver.resolver("burbcolour", Tag.styling(TextColor.color(34, 224, 97)))
-    private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(TextColor.color(21, 237, 50)))
-    private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(TextColor.color(136, 21, 237)))
+    private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(Teams.PLANTS.teamColour))
+    private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(Teams.ZOMBIES.teamColour))
+    private val SPECTATOR_COLOUR = TagResolver.resolver("speccolour", Tag.styling(Teams.SPECTATOR.teamColour))
     private val NOTIFICATION_COLOUR = TagResolver.resolver("notifcolour", Tag.styling(TextColor.color(219, 0, 96)))
 
     val allTags = MiniMessage.builder()
@@ -58,6 +60,7 @@ object Formatting {
                 .resolver(BURB_COLOUR)
                 .resolver(PLANTS_COLOUR)
                 .resolver(ZOMBIES_COLOUR)
+                .resolver(SPECTATOR_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .resolver(prefix())
                 .resolver(actionBar())
@@ -75,6 +78,7 @@ object Formatting {
                 .resolver(BURB_COLOUR)
                 .resolver(PLANTS_COLOUR)
                 .resolver(ZOMBIES_COLOUR)
+                .resolver(SPECTATOR_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .build()
         )

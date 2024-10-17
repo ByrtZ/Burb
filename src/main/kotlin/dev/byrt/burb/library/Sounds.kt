@@ -35,6 +35,8 @@ object Sounds {
     }
     object Score {
         val ELIMINATION = Sound.sound(Key.key("burb.generic.vanquish"), Sound.Source.VOICE, 1f, 1f)
+        val DEATH = Sound.sound(Key.key("item.trident.thunder"), Sound.Source.VOICE, 1f, 1.25f)
+        val RESPAWN = Sound.sound(Key.key("block.bubble_column.upwards_inside"), Sound.Source.VOICE, 1.0f, 0.0f)
     }
     object Alert {
         const val GENERAL_ALERT = "mcc.game.map_alert"
@@ -45,7 +47,7 @@ object Sounds {
         const val TUTORIAL_POP = "entity.item.pickup"
     }
     object Misc {
-        val ADMIN_MESSAGE = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 1f, 2f)
+        val ADMIN_MESSAGE = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 0.5f, 2f)
     }
     object Weapon {
         val FOOT_SOLDIER_WEAPON_FIRE = Sound.sound(Key.key("burb.weapon.foot_soldier.fire"), Sound.Source.VOICE, 0.75f, 1f)

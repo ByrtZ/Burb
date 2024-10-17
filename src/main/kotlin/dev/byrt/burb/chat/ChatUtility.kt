@@ -4,6 +4,7 @@ import dev.byrt.burb.chat.Formatting.allTags
 import dev.byrt.burb.chat.Formatting.restrictedTags
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.util.Noxesium
+
 import io.papermc.paper.chat.ChatRenderer
 
 import net.kyori.adventure.audience.Audience
@@ -41,11 +42,8 @@ object ChatUtility {
 
     /** Sends a message to the admin channel which includes all online admins. **/
     fun broadcastAdmin(rawMessage: String, isSilent: Boolean) {
-        val admin = Audience.audience(Bukkit.getOnlinePlayers())
-            .filterAudience { (it as Player).hasPermission("burb.group.admin") }
-        admin.sendMessage(
-            allTags.deserialize("<prefix:admin>: $rawMessage")
-        )
+        val admin = Audience.audience(Bukkit.getOnlinePlayers()).filterAudience { (it as Player).hasPermission("burb.group.admin") }
+        admin.sendMessage(allTags.deserialize("<speccolour>[<reset><prefix:admin><speccolour>]<reset> $rawMessage"))
         if(!isSilent) {
             admin.playSound(Sounds.Misc.ADMIN_MESSAGE)
         }
@@ -53,11 +51,8 @@ object ChatUtility {
 
     /** Sends a message to the dev channel which includes all online devs. **/
     fun broadcastDev(rawMessage: String, isSilent: Boolean) {
-        val dev = Audience.audience(Bukkit.getOnlinePlayers())
-            .filterAudience { (it as Player).hasPermission("burb.group.dev") }
-        dev.sendMessage(
-            allTags.deserialize("<prefix:dev>: $rawMessage")
-        )
+        val dev = Audience.audience(Bukkit.getOnlinePlayers()).filterAudience { (it as Player).hasPermission("burb.group.dev") }
+        dev.sendMessage(allTags.deserialize("<speccolour>[<reset><prefix:dev><speccolour>]<reset> $rawMessage"))
         if(!isSilent) {
             dev.playSound(Sounds.Misc.ADMIN_MESSAGE)
         }

@@ -26,9 +26,13 @@ object Game {
 
     fun cleanup() {
         InfoBoardManager.destroyScoreboard()
+        CapturePointManager.testDestroyCapPoints()
     }
 
     fun reload() {
-
+        InfoBoardManager.updateStatus()
+        InfoBoardManager.updateRound()
+        InfoBoardManager.updateTimer()
+        CapturePointManager.testDestroyCapPoints()
     }
 }

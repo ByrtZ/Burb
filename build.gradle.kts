@@ -25,6 +25,7 @@ version = "1.0-$commitHash"
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://maven.noxcrew.com/public")
 }
 
 dependencies {
@@ -43,6 +44,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.1")
     implementation("io.ktor:ktor-client-cio:2.3.5")
     implementation("io.ktor:ktor-client-logging:2.0.3")
+    implementation("com.noxcrew.noxesium:api:2.3.3")
 }
 
 kotlin {

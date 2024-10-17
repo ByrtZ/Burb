@@ -53,7 +53,7 @@ class Main : JavaPlugin() {
             .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
             .buildOnEnable(this)
 
-        annotationParser = AnnotationParser(commandManager,  CommandSourceStack::class.java)
+        annotationParser = AnnotationParser(commandManager, CommandSourceStack::class.java)
         annotationParser.parseContainers()
 
         setupCommandConfirmation()
