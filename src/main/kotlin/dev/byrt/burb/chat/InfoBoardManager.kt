@@ -135,6 +135,8 @@ object InfoBoardManager {
     fun updateTimer() {
         if(GameManager.getGameState() == GameState.OVERTIME) {
             gameStatusLine.suffix(Formatting.allTags.deserialize(""))
+        } else if(GameManager.getGameState() == GameState.IDLE) {
+            gameStatusLine.suffix(Formatting.allTags.deserialize("<gray><font:burb:font>AWAITING<reset> <font:burb:font><gray>PLAYERS..."))
         } else {
             gameStatusLine.suffix(Formatting.allTags.deserialize("<font:burb:font>${Timer.getDisplayTimer()}"))
         }
@@ -142,7 +144,9 @@ object InfoBoardManager {
 
     fun updatePlacements() {
         if(GameManager.getGameState() == GameState.IDLE) {
+            firstPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font>dark_gray-<reset> "))
             firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour><font:burb:font>PLANTS<white>:<reset> <font:burb:font>0"))
+            secondPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font><dark_gray>-<reset> "))
             secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour><font:burb:font>ZOMBIES<white>:<reset> <font:burb:font>0"))
         } else {
             firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour><font:burb:font>PLANTS<white>:<reset> <font:burb:font>0"))

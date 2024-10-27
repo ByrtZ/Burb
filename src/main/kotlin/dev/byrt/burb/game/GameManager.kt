@@ -24,6 +24,8 @@ import net.kyori.adventure.title.Title
 import org.bukkit.*
 
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Display
+import org.bukkit.entity.TextDisplay
 import org.bukkit.scheduler.BukkitRunnable
 
 import java.time.Duration
@@ -107,8 +109,7 @@ object GameManager {
     private fun startRound() {
         for(player in Bukkit.getOnlinePlayers()) {
             player.playSound(player.location, Sounds.Timer.STARTING_GO, 1f, 1f)
-            player.playSound(player.location, Sounds.Timer.CLOCK_TICK_HIGH, 1f, 1f)
-            player.playSound(player.location, Sounds.Round.ENTRANCE, 1f, 1f)
+            player.playSound(Sounds.Timer.CLOCK_TICK_HIGH)
             player.resetTitle()
         }
     }
@@ -119,6 +120,8 @@ object GameManager {
             for(player in Bukkit.getOnlinePlayers()) {
                 player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
                 player.playSound(player.location, Sounds.Start.START_GAME_SUCCESS, 1f, 1f)
+                player.stopSound(Sounds.Music.LOBBY_INTRO)
+                Jukebox.stopMusicLoop(player, Music.LOBBY_WAITING)
             }
             CapturePointManager.testCreateCapPoints()
         }
@@ -130,9 +133,9 @@ object GameManager {
 
     private fun gameEnd() {
         for(player in Bukkit.getOnlinePlayers()) {
-            player.playSound(player.location, Sounds.GameOver.GAME_OVER, 1f, 1f)
-            Jukebox.stopMusicLoop(player, Music.MAIN)
-            Jukebox.stopMusicLoop(player, Music.OVERTIME)
+            player.playSound(Sounds.Round.GAME_OVER)
+            player.playSound(Sounds.Round.ROUND_END)
+            Jukebox.startMusicLoop(player, plugin, Music.NULL)
             player.playSound(player.location, Sounds.Music.GAME_OVER_MUSIC, SoundCategory.VOICE, 0.85f, 1f)
             player.showTitle(
                     Title.title(
@@ -150,9 +153,8 @@ object GameManager {
 
     private fun roundEnd() {
         for(player in Bukkit.getOnlinePlayers()) {
-            player.playSound(player.location, Sounds.Round.ROUND_END, 1f, 1f)
-            Jukebox.stopMusicLoop(player, Music.MAIN)
-            Jukebox.stopMusicLoop(player, Music.OVERTIME)
+            Jukebox.startMusicLoop(player, plugin, Music.NULL)
+            player.playSound(Sounds.Round.ROUND_END)
             player.playSound(player.location, Sounds.Music.ROUND_OVER_MUSIC, SoundCategory.VOICE, 0.85f, 1f)
             player.showTitle(
                 Title.title(
@@ -230,7 +232,7 @@ object Timer {
     fun setTimer(newTime: Int, sender: CommandSender?) {
         if(newTime == timer) return
         this.timer = newTime
-        this.displayTime = String.format("%02d:%02d", this.timer / 60, this.timer % 60)
+        this.displayTime = String.format("%02d:%02d", (this.timer + 1) / 60, (this.timer + 1 ) % 60)
         InfoBoardManager.updateTimer()
         if(sender != null) {
             ChatUtility.broadcastDev("<dark_gray>Timer Updated: <yellow>${newTime}s<green> remaining<dark_gray> [${sender.name}].", true)
@@ -263,7 +265,9 @@ object Timer {
 object CapturePointManager {
     private val capturePoints = mutableMapOf<CapturePoint, Location>()
     private val capturePointsLoopMap = mutableMapOf<CapturePoint, BukkitRunnable>()
-    const val SCORE_REQUIRED_TO_CAPTURE = 500
+    private val capturedPoints = mutableMapOf<CapturePoint, Teams>()
+    private var suburbinatingTeam = Teams.NULL
+    const val REQUIRED_CAPTURE_SCORE = 500
     fun testCreateCapPoints() {
         addCapturePoint(CapturePoint.A, Location(Bukkit.getWorlds()[0], -25.5, 4.0, 0.5))
         addCapturePoint(CapturePoint.B, Location(Bukkit.getWorlds()[0], 11.5, 0.0, -44.5))
@@ -274,6 +278,51 @@ object CapturePointManager {
         removeCapturePoint(CapturePoint.A)
         removeCapturePoint(CapturePoint.B)
         removeCapturePoint(CapturePoint.C)
+
+        for(world in Bukkit.getWorlds()) {
+            for(td in world.getEntitiesByClasses(TextDisplay::class.java)) {
+                if(td.scoreboardTags.contains("burb.game.capture_point.text_display")) {
+                    td.remove()
+                }
+            }
+        }
+    }
+
+    fun suburbinationCheck() {
+        val frequency = capturedPoints.values.groupingBy { it }.eachCount()
+        if(frequency[Teams.PLANTS] == 3) {
+            if(this.suburbinatingTeam == Teams.PLANTS) return
+            this.suburbinatingTeam = Teams.PLANTS
+            for(player in Bukkit.getOnlinePlayers()) {
+                player.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>SUBURBINATION<reset>: The plants are now suburbinating."))
+                if(Timer.getTimer() > 50) {
+                    Jukebox.startMusicLoop(player, plugin, Music.SUBURBINATION_PLANTS)
+                }
+            }
+        }
+        else if(frequency[Teams.ZOMBIES] == 3) {
+            if(this.suburbinatingTeam == Teams.ZOMBIES) return
+            this.suburbinatingTeam = Teams.ZOMBIES
+            for(player in Bukkit.getOnlinePlayers()) {
+                player.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>SUBURBINATION<reset>: The zombies are now suburbinating."))
+                if(Timer.getTimer() > 50) {
+                    Jukebox.startMusicLoop(player, plugin, Music.SUBURBINATION_ZOMBIES)
+                }
+            }
+        } else {
+            if(this.suburbinatingTeam == Teams.NULL || this.suburbinatingTeam == Teams.SPECTATOR) return
+            this.suburbinatingTeam = Teams.NULL
+            for(player in Bukkit.getOnlinePlayers()) {
+                player.sendMessage(Formatting.allTags.deserialize("<speccolour><bold>SUBURBINATION<reset>: Suburbination is no longer active."))
+                if(Timer.getTimer() > 50) {
+                    Jukebox.startMusicLoop(player, plugin, Music.NULL)
+                }
+            }
+        }
+    }
+
+    fun getCapturedPoints(): Map<CapturePoint, Teams> {
+        return this.capturedPoints
     }
 
     fun capturePointRunnable(capturePoint: CapturePoint) {
@@ -287,16 +336,20 @@ object CapturePointManager {
             var playersInPoint = mutableSetOf<BurbPlayer>()
             var numPlantsInPoint = 0
             var numZombiesInPoint = 0
+            var textDisplay = capturePoint.location.world.spawn(Location(capturePoint.location.world, capturePoint.location.x, capturePoint.location.y + 7, capturePoint.location.z), TextDisplay::class.java)
             override fun run() {
+                if(!textDisplay.scoreboardTags.contains("burb.game.capture_point.text_display")) textDisplay.addScoreboardTag("burb.game.capture_point.text_display")
+                textDisplay.alignment = TextDisplay.TextAlignment.CENTER
+                textDisplay.billboard = Display.Billboard.VERTICAL
+                textDisplay.text(Formatting.allTags.deserialize("<yellow><bold>CAPTURE POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><reset>Dominating Team: ${if(dominatingTeam == Teams.NULL) "<speccolour>None" else "${dominatingTeam.teamColourTag}${dominatingTeam.teamName}"}<newline><reset>Capture Status: <burbcolour>${if(dominatingTeam == Teams.PLANTS && plantCapturePointProgress > zombieCapturePointProgress && plantCapturePointProgress != 501) "Plants taking over..." else if(dominatingTeam == Teams.ZOMBIES && zombieCapturePointProgress > plantCapturePointProgress && zombieCapturePointProgress != 501) "Zombies taking over..." else if(dominatingTeam == Teams.PLANTS && plantCapturePointProgress < zombieCapturePointProgress && plantCapturePointProgress != 501) "Plants taking down zombies..." else if(dominatingTeam == Teams.ZOMBIES && zombieCapturePointProgress < plantCapturePointProgress && zombieCapturePointProgress != 501) "Zombies taking down plants..." else if(dominatingTeam == Teams.PLANTS && plantCapturePointProgress == 501) "Plants own point" else if(dominatingTeam == Teams.ZOMBIES && zombieCapturePointProgress == 501) "Zombies own point" else "<reset><red>Uncontested"}<reset><newline>"))
                 // Work out who is in range of the point
                 val participants = TeamManager.getParticipants()
                 for(participant in participants) {
-                    if(capturePoint.location.distanceSquared(participant.getBukkitPlayer().location) <= 25.0 && !playersInPoint.contains(participant)) {
+                    if(participant.getBukkitPlayer().location.distanceSquared(capturePoint.location) <= 25.0 && !playersInPoint.contains(participant)) {
                         playersInPoint.add(participant)
-                        participant.getBukkitPlayer().sendActionBar(Formatting.allTags.deserialize("in capture point $capturePoint | plant progress $plantCapturePointProgress | zombie progress $zombieCapturePointProgress | dominating team $dominatingTeam | is contested $isContested"))
+                        participant.getBukkitPlayer().sendActionBar(Formatting.allTags.deserialize("In capture point $capturePoint | plant progress $plantCapturePointProgress | zombie progress $zombieCapturePointProgress | dominating team $dominatingTeam"))
                     } else {
                         playersInPoint.remove(participant)
-                        participant.getBukkitPlayer().sendActionBar(Formatting.allTags.deserialize(""))
                     }
                 }
                 // Calculate how many of each team are in the point
@@ -307,7 +360,6 @@ object CapturePointManager {
                     if(playerInPoint.playerTeam == Teams.ZOMBIES) numZombiesInPoint++
                 }
                 // Set the dominating team
-                // Do not update if same amount of participants in point
                 if(numPlantsInPoint > numZombiesInPoint) dominatingTeam = Teams.PLANTS
                 if(numZombiesInPoint > numPlantsInPoint) dominatingTeam = Teams.ZOMBIES
                 // Set if point is contested
@@ -319,12 +371,19 @@ object CapturePointManager {
                             if(zombieCapturePointProgress > 0) {
                                 zombieCapturePointProgress--
                             } else {
-                                if(plantCapturePointProgress < SCORE_REQUIRED_TO_CAPTURE) {
+                                if(zombieCapturePointProgress == 0 && suburbinatingTeam == Teams.ZOMBIES) {
+                                    capturedPoints.remove(capturePoint)
+                                    suburbinationCheck()
+                                }
+                                if(plantCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     plantCapturePointProgress++
                                 }
-                                if(plantCapturePointProgress == SCORE_REQUIRED_TO_CAPTURE) {
+                                if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
-                                    plantCapturePointProgress = SCORE_REQUIRED_TO_CAPTURE + 1
+                                    capturedPoints.remove(capturePoint)
+                                    capturedPoints[capturePoint] = dominatingTeam
+                                    suburbinationCheck()
+                                    plantCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
                                 }
                             }
                         }
@@ -332,12 +391,19 @@ object CapturePointManager {
                             if(plantCapturePointProgress > 0) {
                                 plantCapturePointProgress--
                             } else {
-                                if(zombieCapturePointProgress < SCORE_REQUIRED_TO_CAPTURE) {
+                                if(plantCapturePointProgress == 0 && suburbinatingTeam == Teams.PLANTS) {
+                                    capturedPoints.remove(capturePoint)
+                                    suburbinationCheck()
+                                }
+                                if(zombieCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     zombieCapturePointProgress++
                                 }
-                                if(zombieCapturePointProgress == SCORE_REQUIRED_TO_CAPTURE) {
+                                if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
-                                    zombieCapturePointProgress = SCORE_REQUIRED_TO_CAPTURE + 1
+                                    capturedPoints.remove(capturePoint)
+                                    capturedPoints[capturePoint] = dominatingTeam
+                                    suburbinationCheck()
+                                    zombieCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
                                 }
                             }
                         }
@@ -359,7 +425,7 @@ object CapturePointManager {
     private fun capturePointParticleCircle(capturePoint: CapturePoint, location: Location, dominatingTeam: Teams) {
         object : BukkitRunnable() {
             override fun run() {
-                for(i in 0 .. 21) {
+                for(i in 0 .. 31) {
                     // TODO: TEMPORARY RADII
                     val x = cos(i.toDouble()) * 5.0
                     val z = sin(i.toDouble()) * 5.0
@@ -369,9 +435,14 @@ object CapturePointManager {
                         location.y + 0.25,
                         location.z + z + 0.5,
                         1,
-                        Particle.DustOptions(if(dominatingTeam == Teams.PLANTS) Color.LIME else if(dominatingTeam == Teams.ZOMBIES) Color.PURPLE else Color.WHITE, 0.75f)
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                        Particle.DustOptions(if(dominatingTeam == Teams.PLANTS) Color.LIME else if(dominatingTeam == Teams.ZOMBIES) Color.PURPLE else Color.WHITE, 0.75f),
+                        true
                     )
-                    if(i == 21) {
+                    if(i == 31) {
                         cancel()
                     }
                 }
@@ -394,6 +465,47 @@ object CapturePointManager {
         }
         capturePoints.remove(capturePoint, capturePoint.location)
         capturePoint.location = Location(Bukkit.getWorlds()[0], 0.5, 30.0 ,0.5)
+    }
+}
+
+object ScoreManager {
+    private var plantsScore = 0
+    private var zombiesScore = 0
+
+    fun getPlacementMap(): Map<Teams, Int> {
+        return mutableMapOf(Pair(Teams.PLANTS, plantsScore), Pair(Teams.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
+    }
+
+    fun addPlantsScore(score: Int) {
+        this.plantsScore += score
+    }
+
+    fun addZombiesScore(score: Int) {
+        this.zombiesScore += score
+    }
+
+    fun subPlantsScore(score: Int) {
+        this.plantsScore -= score
+    }
+
+    fun subZombiesScore(score: Int) {
+        this.zombiesScore -= score
+    }
+
+    fun setPlantsScore(score: Int) {
+        this.plantsScore = score
+    }
+
+    fun setZombiesScore(score: Int) {
+        this.zombiesScore = score
+    }
+
+    fun getPlantsScore(): Int {
+        return this.plantsScore
+    }
+
+    fun getZombiesScore(): Int {
+        return this.zombiesScore
     }
 }
 
@@ -421,5 +533,5 @@ enum class TimerState {
 enum class CapturePoint(var location: Location) {
     A(Location(Bukkit.getWorlds()[0], 0.5, 30.0 ,0.5)),
     B(Location(Bukkit.getWorlds()[0], 0.5, 30.0 ,0.5)),
-    C(Location(Bukkit.getWorlds()[0], 0.5, 30.0 ,0.5))
+    C(Location(Bukkit.getWorlds()[0], 0.5, 30.0 ,0.5));
 }

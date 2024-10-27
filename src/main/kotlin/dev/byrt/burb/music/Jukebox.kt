@@ -13,6 +13,11 @@ import java.util.*
 object Jukebox {
     private val jukeboxMap = mutableMapOf<UUID, BukkitRunnable>()
     fun startMusicLoop(player : Player, plugin : Plugin, music : Music) {
+        if(jukeboxMap.containsKey(player.uniqueId)) {
+            for(tracks in Music.entries) {
+                if(tracks != music) stopMusicLoop(player, tracks)
+            }
+        }
         val bukkitRunnable = object: BukkitRunnable() {
             var musicTimer = 0
             override fun run() {
@@ -47,7 +52,11 @@ object Jukebox {
 
 enum class Music(val track: Sound, val trackLengthSecs: Int) {
     MAIN(Sounds.Music.GAME_MUSIC, 30),
-    OVERTIME(Sounds.Music.OVERTIME_MUSIC, 23),
+    OVERTIME(Sounds.Music.OVERTIME_MUSIC, 60),
+    SUBURBINATION_PLANTS(Sounds.Music.SUBURBINATION_PLANTS, 58),
+    SUBURBINATION_ZOMBIES(Sounds.Music.SUBURBINATION_ZOMBIES, 58),
     LOBBY_WAITING(Sounds.Music.LOBBY_WAITING, 59),
-    NULL(Sounds.Music.NULL, 0)
+    DOWNTIME_LOOP(Sounds.Music.DOWNTIME_LOOP, 191),
+    DOWNTIME_SUSPENSE(Sounds.Music.DOWNTIME_SUSPENSE, 219),
+    NULL(Sounds.Music.NULL, Int.MAX_VALUE)
 }

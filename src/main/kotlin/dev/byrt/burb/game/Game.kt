@@ -2,6 +2,10 @@ package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.music.Jukebox
+import dev.byrt.burb.music.Music
+import dev.byrt.burb.plugin
+import org.bukkit.Bukkit
 
 object Game {
     fun start() {
@@ -34,5 +38,8 @@ object Game {
         InfoBoardManager.updateRound()
         InfoBoardManager.updateTimer()
         CapturePointManager.testDestroyCapPoints()
+        for(player in Bukkit.getOnlinePlayers()) {
+            Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+        }
     }
 }

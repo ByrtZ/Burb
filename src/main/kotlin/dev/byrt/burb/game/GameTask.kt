@@ -1,7 +1,10 @@
 package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.music.Jukebox
+import dev.byrt.burb.music.Music
 import dev.byrt.burb.plugin
 
 import net.kyori.adventure.text.Component
@@ -21,6 +24,7 @@ object GameTask {
     fun startGameLoop() {
         val gameRunnable = object : BukkitRunnable() {
             override fun run() {
+                InfoBoardManager.updateTimer()
                 /** STARTING **/
                 if(GameManager.getGameState() == GameState.STARTING && Timer.getTimerState() == TimerState.ACTIVE) {
                     if(RoundManager.getRound() == Round.ONE) {
@@ -39,7 +43,7 @@ object GameTask {
                                 player.playSound(Sounds.Music.GAME_INTRO_JINGLE)
                             }
                         }
-                        if(Timer.getTimer() == 77) {
+                        if(Timer.getTimer() == 75) {
                             for(player in Bukkit.getOnlinePlayers()) {
                                 player.showTitle(Title.title(
                                     Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
@@ -86,13 +90,13 @@ object GameTask {
                                     )
                                 )
                             )
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
                     if(Timer.getTimer() in 1..3) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK, 1f, 1f)
-                            player.playSound(player.location, Sounds.Timer.STARTING_123, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK)
+                            player.playSound(Sounds.Timer.STARTING_123)
                             if(Timer.getTimer() == 3) {
                                 player.showTitle(Title.title(
                                     Component.text("Starting in").color(NamedTextColor.AQUA),
@@ -138,14 +142,19 @@ object GameTask {
 
                 /** IN GAME **/
                 if(GameManager.getGameState() == GameState.IN_GAME && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if(Timer.getTimer() == 50) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
+                        }
+                    }
                     if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
                     if(Timer.getTimer() in 0..10) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK_HIGH, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK_HIGH)
                         }
                     }
                     if(Timer.getTimer() <= 0) {
@@ -157,12 +166,12 @@ object GameTask {
                 if(GameManager.getGameState() == GameState.OVERTIME && Timer.getTimerState() == TimerState.ACTIVE) {
                     if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
                     if(Timer.getTimer() in 0..10) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(player.location, Sounds.Timer.CLOCK_TICK_HIGH, 1f, 1f)
+                            player.playSound(Sounds.Timer.CLOCK_TICK_HIGH)
                         }
                     }
                     if(Timer.getTimer() <= 0) {

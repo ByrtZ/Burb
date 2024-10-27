@@ -2,6 +2,7 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.plugin
@@ -20,7 +21,12 @@ class ResourcePackEvent: Listener {
         if(e.status == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
             if(GameManager.getGameState() == GameState.IDLE) {
                 if(!Jukebox.getJukeboxMap().containsKey(e.player.uniqueId)) {
-                    Jukebox.startMusicLoop(e.player, plugin, Music.LOBBY_WAITING)
+                    e.player.playSound(Sounds.Music.LOBBY_INTRO)
+                    object : BukkitRunnable() {
+                        override fun run() {
+                            if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(e.player, plugin, Music.LOBBY_WAITING)
+                        }
+                    }.runTaskLater(plugin, 1240L)
                 }
                 object : BukkitRunnable() {
                     override fun run() {
