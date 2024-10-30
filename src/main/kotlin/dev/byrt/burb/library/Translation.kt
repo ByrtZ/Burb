@@ -4,6 +4,14 @@ object Translation {
     object Generic {
         const val ARROW_PREFIX = "[<yellow>▶<reset>] "
     }
+    object Tutorial {
+        const val BLANK_LINE = "<newline>"
+        const val STANDBY = "<red><italic>Standby for the game to begin...<reset>"
+    }
+    object Teams {
+        const val JOIN_TEAM = "You are now on team %d%s<reset>."
+        const val LEAVE_TEAM = "You are no longer on team %d%s<reset.>"
+    }
     object Overtime {
         const val OVERTIME_PREFIX = "<red><bold>OVERTIME: "
         const val OVERTIME_REASON = "burb.game.state.overtime.prefix"

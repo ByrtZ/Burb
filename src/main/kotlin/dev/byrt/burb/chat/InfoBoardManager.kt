@@ -17,7 +17,7 @@ import java.util.*
 @Suppress("DEPRECATION")
 object InfoBoardManager {
     private var scoreboard = Bukkit.getScoreboardManager().mainScoreboard
-    private var objective = scoreboard.registerNewObjective("${plugin.name.lowercase()}-info-${UUID.randomUUID()}", Criteria.DUMMY, Formatting.allTags.deserialize("<burbcolour><bold><font:burb:font>SUBURBINATION<reset>"))
+    private var objective = scoreboard.registerNewObjective("${plugin.name.lowercase()}-info-${UUID.randomUUID()}", Criteria.DUMMY, Formatting.allTags.deserialize("<burbcolour><bold>${ChatUtility.BURB_FONT_TAG}SUBURBINATION<reset>"))
 
     private var currentGameLine = scoreboard.registerNewTeam("currentGameLine")
     private val currentGameLineKey = ChatColor.STRIKETHROUGH.toString()
@@ -47,26 +47,26 @@ object InfoBoardManager {
 
         // Modifiable game text
         currentGameLine.addEntry(currentGameLineKey)
-        currentGameLine.prefix(Formatting.allTags.deserialize("<aqua><font:burb:font>GAME:<reset> "))
-        currentGameLine.suffix(Formatting.allTags.deserialize("<font:burb:font>SUBURBINATION"))
+        currentGameLine.prefix(Formatting.allTags.deserialize("<aqua>${ChatUtility.BURB_FONT_TAG}GAME:<reset> "))
+        currentGameLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}SUBURBINATION"))
         objective.getScore(currentGameLineKey).score = 10
 
         // Modifiable map text
         currentMapLine.addEntry(currentMapLineKey)
-        currentMapLine.prefix(Formatting.allTags.deserialize("<aqua><font:burb:font>MAP:<reset> "))
-        currentMapLine.suffix(Formatting.allTags.deserialize("<font:burb:font>THE<reset> <font:burb:font>BURB<reset> <font:burb:font>ZONE"))
+        currentMapLine.prefix(Formatting.allTags.deserialize("<aqua>${ChatUtility.BURB_FONT_TAG}MAP:<reset> "))
+        currentMapLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}THE<reset> ${ChatUtility.BURB_FONT_TAG}BURB<reset> ${ChatUtility.BURB_FONT_TAG}ZONE"))
         objective.getScore(currentMapLineKey).score = 9
 
         // Modifiable round information
         currentRoundLine.addEntry(currentRoundLineKey)
-        currentRoundLine.prefix(Formatting.allTags.deserialize("<green><font:burb:font>ROUND:<reset> "))
-        currentRoundLine.suffix(Formatting.allTags.deserialize("<font:burb:font>NONE"))
+        currentRoundLine.prefix(Formatting.allTags.deserialize("<green>${ChatUtility.BURB_FONT_TAG}ROUND:<reset> "))
+        currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}NONE"))
         objective.getScore(currentRoundLineKey).score = 8
 
         // Modifiable game status information
         gameStatusLine.addEntry(gameStatusLineKey)
-        gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>GAME<reset> <font:burb:font><red>STATUS:<reset> "))
-        gameStatusLine.suffix(Formatting.allTags.deserialize("<gray><font:burb:font>AWAITING<reset> <font:burb:font><gray>PLAYERS..."))
+        gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>STATUS:<reset> "))
+        gameStatusLine.suffix(Formatting.allTags.deserialize("<gray>${ChatUtility.BURB_FONT_TAG}AWAITING<reset> ${ChatUtility.BURB_FONT_TAG}<gray>PLAYERS..."))
         objective.getScore(gameStatusLineKey).score = 7
 
         // Static blank space
@@ -74,20 +74,20 @@ object InfoBoardManager {
 
         // Static score multiplier
         currentScoreLine.addEntry(currentScoreLineKey)
-        currentScoreLine.prefix(Formatting.allTags.deserialize("<aqua><font:burb:font>GAME<reset> <aqua><font:burb:font>STANDINGS:"))
+        currentScoreLine.prefix(Formatting.allTags.deserialize("<aqua>${ChatUtility.BURB_FONT_TAG}GAME<reset> <aqua>${ChatUtility.BURB_FONT_TAG}STANDINGS:"))
         currentScoreLine.suffix(Formatting.allTags.deserialize(""))
         objective.getScore(currentScoreLineKey).score = 5
 
         // Modifiable first placement score
         firstPlaceLine.addEntry(firstPlaceLineKey)
-        firstPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font>1.<reset> "))
-        firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour><font:burb:font>PLANTS<white>:<reset> <font:burb:font>0"))
+        firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
+        firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour>${ChatUtility.BURB_FONT_TAG}PLANTS<white>:<reset> ${ChatUtility.BURB_FONT_TAG}0"))
         objective.getScore(firstPlaceLineKey).score = 4
 
         // Modifiable second placement score
         secondPlaceLine.addEntry(secondPlaceLineKey)
-        secondPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font>2.<reset> "))
-        secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour><font:burb:font>ZOMBIES<white>:<reset> <font:burb:font>0"))
+        secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
+        secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}0"))
         objective.getScore(secondPlaceLineKey).score = 3
 
         // Static blank space
@@ -98,36 +98,36 @@ object InfoBoardManager {
 
     fun updateRound() {
         if(GameManager.getGameState() == GameState.IDLE) {
-            currentRoundLine.suffix(Formatting.allTags.deserialize("<font:burb:font>NONE"))
+            currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}NONE"))
         } else {
-            currentRoundLine.suffix(Formatting.allTags.deserialize("<font:burb:font>${RoundManager.getRound().ordinal + 1}/${RoundManager.getTotalRounds()}"))
+            currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}${RoundManager.getRound().ordinal + 1}/${RoundManager.getTotalRounds()}"))
         }
     }
 
     fun updateStatus() {
         when(GameManager.getGameState()) {
             GameState.IDLE -> {
-                gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>GAME<reset> <font:burb:font><red>STATUS:<reset> "))
-                gameStatusLine.suffix(Formatting.allTags.deserialize("<gray><font:burb:font>AWAITING<reset> <font:burb:font><gray>PLAYERS..."))
+                gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>STATUS:<reset> "))
+                gameStatusLine.suffix(Formatting.allTags.deserialize("<gray>${ChatUtility.BURB_FONT_TAG}AWAITING<reset> ${ChatUtility.BURB_FONT_TAG}<gray>PLAYERS..."))
             }
             GameState.STARTING -> {
                 if(RoundManager.getRound() == Round.ONE) {
-                    gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>GAME<reset> <font:burb:font><red>BEGINS:<reset> "))
+                    gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>BEGINS:<reset> "))
                 } else {
-                    gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>ROUND<reset> <font:burb:font><red>BEGINS:<reset> "))
+                    gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}ROUND<reset> ${ChatUtility.BURB_FONT_TAG}<red>BEGINS:<reset> "))
                 }
             }
             GameState.IN_GAME -> {
-                gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>TIME<reset> <font:burb:font><red>LEFT:<reset> "))
+                gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}TIME<reset> ${ChatUtility.BURB_FONT_TAG}<red>LEFT:<reset> "))
             }
             GameState.ROUND_END -> {
-                gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>NEXT<reset> <font:burb:font><red>ROUND:<reset> "))
+                gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}NEXT<reset> ${ChatUtility.BURB_FONT_TAG}<red>ROUND:<reset> "))
             }
             GameState.GAME_END -> {
-                gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>GAME<reset> <font:burb:font><red>ENDING:<reset> "))
+                gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>ENDING:<reset> "))
             }
             GameState.OVERTIME -> {
-                gameStatusLine.prefix(Formatting.allTags.deserialize("<red><font:burb:font>OVERTIME<reset> "))
+                gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}OVERTIME<reset> "))
             }
         }
     }
@@ -136,21 +136,25 @@ object InfoBoardManager {
         if(GameManager.getGameState() == GameState.OVERTIME) {
             gameStatusLine.suffix(Formatting.allTags.deserialize(""))
         } else if(GameManager.getGameState() == GameState.IDLE) {
-            gameStatusLine.suffix(Formatting.allTags.deserialize("<gray><font:burb:font>AWAITING<reset> <font:burb:font><gray>PLAYERS..."))
+            gameStatusLine.suffix(Formatting.allTags.deserialize("<gray>${ChatUtility.BURB_FONT_TAG}AWAITING<reset> ${ChatUtility.BURB_FONT_TAG}<gray>PLAYERS..."))
         } else {
-            gameStatusLine.suffix(Formatting.allTags.deserialize("<font:burb:font>${Timer.getDisplayTimer()}"))
+            gameStatusLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}${Timer.getDisplayTimer()}"))
         }
     }
 
-    fun updatePlacements() {
+    fun updateScore() {
         if(GameManager.getGameState() == GameState.IDLE) {
-            firstPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font>dark_gray-<reset> "))
-            firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour><font:burb:font>PLANTS<white>:<reset> <font:burb:font>0"))
-            secondPlaceLine.prefix(Formatting.allTags.deserialize("<font:burb:font><dark_gray>-<reset> "))
-            secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour><font:burb:font>ZOMBIES<white>:<reset> <font:burb:font>0"))
+            firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}dark_gray-<reset> "))
+            firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour>${ChatUtility.BURB_FONT_TAG}PLANTS<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
+            secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
+            secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
         } else {
-            firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour><font:burb:font>PLANTS<white>:<reset> <font:burb:font>0"))
-            secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour><font:burb:font>ZOMBIES<white>:<reset> <font:burb:font>0"))
+            val placementKeys = ScoreManager.getPlacementMap().keys.toTypedArray()
+            val placementValues = ScoreManager.getPlacementMap().values.toTypedArray()
+            firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}1.<reset> "))
+            firstPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
+            secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}2.<reset> "))
+            secondPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
         }
     }
 

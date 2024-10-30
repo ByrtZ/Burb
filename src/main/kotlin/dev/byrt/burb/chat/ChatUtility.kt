@@ -16,6 +16,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 object ChatUtility {
+    const val BURB_FONT_TAG = "<font:burb:font>"
     /** Sends a message to the specified audience. **/
     fun messageAudience(recipient: Audience, message: String, restricted: Boolean, vararg placeholders: TagResolver) {
         val resolvers = mutableListOf<TagResolver>()

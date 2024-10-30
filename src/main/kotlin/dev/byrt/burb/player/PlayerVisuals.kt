@@ -28,7 +28,7 @@ object PlayerVisuals {
         parseDeathMessage(player, plainDeathMessage)
 
         player.clearActivePotionEffects()
-        player.setCooldown(Material.GOLDEN_SWORD, 10 * 20)
+        player.inventory.clear()
 
         val deathVehicle = player.world.spawn(player.location, AreaEffectCloud::class.java)
         deathVehicle.duration = Int.MAX_VALUE
@@ -39,7 +39,6 @@ object PlayerVisuals {
         deathVehicle.addPassenger(player)
 
         hidePlayer(player)
-
         deathEffects(player)
 
         /** Scheduled Respawn and Post Respawn **/

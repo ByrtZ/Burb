@@ -291,7 +291,10 @@ object CapturePointManager {
     fun suburbinationCheck() {
         val frequency = capturedPoints.values.groupingBy { it }.eachCount()
         if(frequency[Teams.PLANTS] == 3) {
-            if(this.suburbinatingTeam == Teams.PLANTS) return
+            if(this.suburbinatingTeam == Teams.PLANTS) {
+                ScoreManager.addPlantsScore(3)
+                return
+            }
             this.suburbinatingTeam = Teams.PLANTS
             for(player in Bukkit.getOnlinePlayers()) {
                 player.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>SUBURBINATION<reset>: The plants are now suburbinating."))
@@ -301,7 +304,10 @@ object CapturePointManager {
             }
         }
         else if(frequency[Teams.ZOMBIES] == 3) {
-            if(this.suburbinatingTeam == Teams.ZOMBIES) return
+            if(this.suburbinatingTeam == Teams.ZOMBIES) {
+                ScoreManager.addZombiesScore(3)
+                return
+            }
             this.suburbinatingTeam = Teams.ZOMBIES
             for(player in Bukkit.getOnlinePlayers()) {
                 player.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>SUBURBINATION<reset>: The zombies are now suburbinating."))
@@ -377,6 +383,9 @@ object CapturePointManager {
                                 }
                                 if(plantCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     plantCapturePointProgress++
+                                    if(plantCapturePointProgress % 5 == 0) {
+                                        ScoreManager.addPlantsScore(1)
+                                    }
                                 }
                                 if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
@@ -384,6 +393,9 @@ object CapturePointManager {
                                     capturedPoints[capturePoint] = dominatingTeam
                                     suburbinationCheck()
                                     plantCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
+                                }
+                                if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.PLANTS) {
+                                    ScoreManager.addPlantsScore(2)
                                 }
                             }
                         }
@@ -397,6 +409,9 @@ object CapturePointManager {
                                 }
                                 if(zombieCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     zombieCapturePointProgress++
+                                    if(zombieCapturePointProgress % 5 == 0) {
+                                        ScoreManager.addZombiesScore(1)
+                                    }
                                 }
                                 if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
@@ -404,6 +419,9 @@ object CapturePointManager {
                                     capturedPoints[capturePoint] = dominatingTeam
                                     suburbinationCheck()
                                     zombieCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
+                                }
+                                if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.ZOMBIES) {
+                                    ScoreManager.addZombiesScore(2)
                                 }
                             }
                         }
@@ -447,17 +465,17 @@ object CapturePointManager {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L)
+        }.runTask(plugin)
     }
 
-    fun addCapturePoint(capturePoint: CapturePoint, location: Location) {
+    private fun addCapturePoint(capturePoint: CapturePoint, location: Location) {
         if(capturePoints.containsKey(capturePoint)) return
         capturePoints[capturePoint] = location
         capturePoint.location = location
         capturePointRunnable(capturePoint)
     }
 
-    fun removeCapturePoint(capturePoint: CapturePoint) {
+    private fun removeCapturePoint(capturePoint: CapturePoint) {
         if(!capturePoints.containsKey(capturePoint)) return
         if(capturePointsLoopMap.containsKey(capturePoint)) {
             capturePointsLoopMap[capturePoint]!!.cancel()
@@ -471,6 +489,19 @@ object CapturePointManager {
 object ScoreManager {
     private var plantsScore = 0
     private var zombiesScore = 0
+    private const val WIN_SCORE = 1000
+
+    fun getWinningTeam(): Teams {
+        if(plantsScore > zombiesScore) return Teams.PLANTS
+        if(zombiesScore > plantsScore) return Teams.ZOMBIES
+        return Teams.NULL
+    }
+
+    private fun teamScoreWinCheck() {
+        if((plantsScore >= WIN_SCORE || zombiesScore >= WIN_SCORE) && (GameManager.getGameState() == GameState.IN_GAME || GameManager.getGameState() == GameState.OVERTIME)) {
+            GameManager.nextState()
+        }
+    }
 
     fun getPlacementMap(): Map<Teams, Int> {
         return mutableMapOf(Pair(Teams.PLANTS, plantsScore), Pair(Teams.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
@@ -478,26 +509,38 @@ object ScoreManager {
 
     fun addPlantsScore(score: Int) {
         this.plantsScore += score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun addZombiesScore(score: Int) {
         this.zombiesScore += score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun subPlantsScore(score: Int) {
         this.plantsScore -= score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun subZombiesScore(score: Int) {
         this.zombiesScore -= score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun setPlantsScore(score: Int) {
         this.plantsScore = score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun setZombiesScore(score: Int) {
         this.zombiesScore = score
+        InfoBoardManager.updateScore()
+        teamScoreWinCheck()
     }
 
     fun getPlantsScore(): Int {

@@ -2,6 +2,7 @@ package dev.byrt.burb.team
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerType
@@ -35,7 +36,7 @@ object TeamManager {
                 player.setType(PlayerType.INVALID)
             }
         }
-        player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize("You are now on team ${team.teamColourTag}${team.teamName}<reset>."))
+        player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
     }
 
     fun shuffleTeams(sender: CommandSender?, players: Set<Player>, ignoreAdmins: Boolean) {
