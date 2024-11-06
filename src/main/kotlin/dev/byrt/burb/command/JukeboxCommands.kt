@@ -23,7 +23,7 @@ class JukeboxCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             Jukebox.startMusicLoop(player, plugin, music)
-            player.sendMessage(ChatUtility.formatMessage("<green>Music track <yellow>$music<green> started.", false))
+            player.sendMessage(ChatUtility.formatMessage("<green>Now playing music track <yellow>$music<green>.", false))
         }
     }
 

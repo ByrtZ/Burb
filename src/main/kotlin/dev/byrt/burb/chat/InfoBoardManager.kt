@@ -5,14 +5,18 @@ import dev.byrt.burb.game.Timer
 import dev.byrt.burb.plugin
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat
+import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.bossbar.BossBar.Color
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot
 
 import java.util.*
+import kotlin.concurrent.timer
 
 @Suppress("DEPRECATION")
 object InfoBoardManager {
@@ -81,13 +85,13 @@ object InfoBoardManager {
         // Modifiable first placement score
         firstPlaceLine.addEntry(firstPlaceLineKey)
         firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
-        firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour>${ChatUtility.BURB_FONT_TAG}PLANTS<white>:<reset> ${ChatUtility.BURB_FONT_TAG}0"))
+        firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour>${ChatUtility.BURB_FONT_TAG}PLANTS<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
         objective.getScore(firstPlaceLineKey).score = 4
 
         // Modifiable second placement score
         secondPlaceLine.addEntry(secondPlaceLineKey)
         secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
-        secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}0"))
+        secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
         objective.getScore(secondPlaceLineKey).score = 3
 
         // Static blank space
@@ -142,9 +146,45 @@ object InfoBoardManager {
         }
     }
 
+    fun timerBossBar() {
+        object : BukkitRunnable() {
+            val timerBossBar = BossBar.bossBar(Formatting.allTags.deserialize(""), 0f, Color.RED, BossBar.Overlay.PROGRESS)
+            override fun run() {
+                if(GameManager.getGameState() != GameState.IDLE) {
+                    for(player in Bukkit.getOnlinePlayers()) {
+                        if(!player.activeBossBars().contains(timerBossBar)) timerBossBar.addViewer(player)
+                    }
+                }
+                when(GameManager.getGameState()) {
+                    GameState.IDLE -> {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            timerBossBar.removeViewer(player)
+                        }
+                        this.cancel()
+                    }
+                    GameState.STARTING -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-127>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}STARTING<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                    }
+                    GameState.IN_GAME -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}TIME<reset> ${ChatUtility.BURB_FONT_TAG}LEFT:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                    }
+                    GameState.ROUND_END -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-119>${ChatUtility.BURB_FONT_TAG}NEXT<reset> ${ChatUtility.BURB_FONT_TAG}ROUND<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                    }
+                    GameState.GAME_END -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-112>${ChatUtility.BURB_FONT_TAG}BACK<reset> ${ChatUtility.BURB_FONT_TAG}TO<reset> ${ChatUtility.BURB_FONT_TAG}HUB:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                    }
+                    GameState.OVERTIME -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-94>${ChatUtility.BURB_FONT_TAG}<red>OVERTIME<reset>"))
+                    }
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L)
+    }
+
     fun updateScore() {
         if(GameManager.getGameState() == GameState.IDLE) {
-            firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}dark_gray-<reset> "))
+            firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
             firstPlaceLine.suffix(Formatting.allTags.deserialize("<plantscolour>${ChatUtility.BURB_FONT_TAG}PLANTS<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
             secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))

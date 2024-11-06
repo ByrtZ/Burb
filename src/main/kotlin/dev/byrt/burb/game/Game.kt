@@ -37,6 +37,8 @@ object Game {
         InfoBoardManager.updateStatus()
         InfoBoardManager.updateRound()
         InfoBoardManager.updateTimer()
+        ScoreManager.setPlantsScore(0)
+        ScoreManager.setZombiesScore(0)
         CapturePointManager.testDestroyCapPoints()
         for(player in Bukkit.getOnlinePlayers()) {
             Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)

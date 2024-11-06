@@ -76,6 +76,7 @@ object GameManager {
                     Timer.setTimerState(TimerState.ACTIVE, null)
                     Timer.setTimer(GameTime.GAME_STARTING_TIME, null)
                     GameTask.startGameLoop()
+                    InfoBoardManager.timerBossBar()
                     starting()
                 } else {
                     Timer.setTimerState(TimerState.ACTIVE, null)
@@ -148,6 +149,7 @@ object GameManager {
                     )
                 )
             )
+            player.sendMessage(Formatting.allTags.deserialize("WINNING TEAM: ${ScoreManager.getWinningTeam()}"))
         }
     }
 
@@ -190,7 +192,7 @@ object GameManager {
     object GameTime {
         const val GAME_STARTING_TIME = 80
         const val ROUND_STARTING_TIME = 30
-        const val IN_GAME_TIME = 300
+        const val IN_GAME_TIME = 900
         const val ROUND_END_TIME = 15
         const val GAME_END_TIME = 60
         const val OVERTIME_TIME = 30
@@ -372,6 +374,22 @@ object CapturePointManager {
                 isContested = numPlantsInPoint == numZombiesInPoint
                 // If the dominating team is a participant team and the point is not contested, continue to add score
                 if(dominatingTeam != Teams.NULL || dominatingTeam != Teams.SPECTATOR) {
+                    if(dominatingTeam == Teams.PLANTS) {
+                        if(plantCapturePointProgress % 5 == 0 && suburbinatingTeam != Teams.PLANTS) {
+                            ScoreManager.addPlantsScore(1)
+                        }
+                        if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.PLANTS) {
+                            ScoreManager.addPlantsScore(2)
+                        }
+                    }
+                    if(dominatingTeam == Teams.ZOMBIES) {
+                        if(zombieCapturePointProgress % 5 == 0 && suburbinatingTeam != Teams.ZOMBIES) {
+                            ScoreManager.addZombiesScore(1)
+                        }
+                        if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.ZOMBIES) {
+                            ScoreManager.addZombiesScore(2)
+                        }
+                    }
                     if(!isContested) {
                         if(dominatingTeam == Teams.PLANTS) {
                             if(zombieCapturePointProgress > 0) {
@@ -383,9 +401,6 @@ object CapturePointManager {
                                 }
                                 if(plantCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     plantCapturePointProgress++
-                                    if(plantCapturePointProgress % 5 == 0) {
-                                        ScoreManager.addPlantsScore(1)
-                                    }
                                 }
                                 if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
@@ -393,9 +408,6 @@ object CapturePointManager {
                                     capturedPoints[capturePoint] = dominatingTeam
                                     suburbinationCheck()
                                     plantCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
-                                }
-                                if(plantCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.PLANTS) {
-                                    ScoreManager.addPlantsScore(2)
                                 }
                             }
                         }
@@ -409,9 +421,6 @@ object CapturePointManager {
                                 }
                                 if(zombieCapturePointProgress < REQUIRED_CAPTURE_SCORE) {
                                     zombieCapturePointProgress++
-                                    if(zombieCapturePointProgress % 5 == 0) {
-                                        ScoreManager.addZombiesScore(1)
-                                    }
                                 }
                                 if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE) {
                                     Bukkit.getOnlinePlayers().forEach { player -> player.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint has been captured by $dominatingTeam")) }
@@ -419,9 +428,6 @@ object CapturePointManager {
                                     capturedPoints[capturePoint] = dominatingTeam
                                     suburbinationCheck()
                                     zombieCapturePointProgress = REQUIRED_CAPTURE_SCORE + 1
-                                }
-                                if(zombieCapturePointProgress == REQUIRED_CAPTURE_SCORE + 1 && suburbinatingTeam != Teams.ZOMBIES) {
-                                    ScoreManager.addZombiesScore(2)
                                 }
                             }
                         }
@@ -489,7 +495,7 @@ object CapturePointManager {
 object ScoreManager {
     private var plantsScore = 0
     private var zombiesScore = 0
-    private const val WIN_SCORE = 1000
+    private const val WIN_SCORE = 10000
 
     fun getWinningTeam(): Teams {
         if(plantsScore > zombiesScore) return Teams.PLANTS

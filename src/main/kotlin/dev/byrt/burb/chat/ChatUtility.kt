@@ -17,6 +17,7 @@ import org.bukkit.entity.Player
 
 object ChatUtility {
     const val BURB_FONT_TAG = "<font:burb:font>"
+    const val NO_SHADOW_TAG = "<#4E5C24>"
     /** Sends a message to the specified audience. **/
     fun messageAudience(recipient: Audience, message: String, restricted: Boolean, vararg placeholders: TagResolver) {
         val resolvers = mutableListOf<TagResolver>()

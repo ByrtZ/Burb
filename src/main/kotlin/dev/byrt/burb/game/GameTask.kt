@@ -142,7 +142,7 @@ object GameTask {
 
                 /** IN GAME **/
                 if(GameManager.getGameState() == GameState.IN_GAME && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 50) {
+                    if(Timer.getTimer() == 90) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
                         }
