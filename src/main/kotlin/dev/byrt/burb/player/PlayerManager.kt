@@ -24,7 +24,7 @@ object PlayerManager {
     }
 
     fun unregisterPlayer(burbPlayer: BurbPlayer) {
-        burbPlayer.setTeam(Teams.SPECTATOR)
+        burbPlayer.setTeam(Teams.NULL)
         burbPlayers.remove(burbPlayer)
     }
 

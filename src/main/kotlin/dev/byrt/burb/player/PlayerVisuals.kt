@@ -13,8 +13,10 @@ import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -29,6 +31,9 @@ object PlayerVisuals {
 
         player.clearActivePotionEffects()
         player.inventory.clear()
+        val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN, 1)
+        deathOverlayItem.addEnchantment(Enchantment.BINDING_CURSE, 1)
+        player.inventory.helmet = deathOverlayItem
 
         val deathVehicle = player.world.spawn(player.location, AreaEffectCloud::class.java)
         deathVehicle.duration = Int.MAX_VALUE
@@ -107,6 +112,7 @@ object PlayerVisuals {
         player.teleport(Bukkit.getWorlds()[0].spawnLocation)
         player.fireTicks = 0
         player.health = 20.0
+        player.inventory.helmet = null
         showPlayer(player)
     }
 
@@ -115,6 +121,7 @@ object PlayerVisuals {
             player.vehicle?.remove()
             showPlayer(player)
             player.teleport(Bukkit.getWorlds()[0].spawnLocation)
+            player.inventory.helmet = null
         }
     }
 }

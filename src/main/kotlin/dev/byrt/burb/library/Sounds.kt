@@ -21,7 +21,7 @@ object Sounds {
     }
     object Timer {
         val STARTING_123 = Sound.sound(Key.key("block.note_block.pling"), Sound.Source.VOICE, 1f, 1f)
-        const val STARTING_GO = ""
+        val STARTING_GO = Sound.sound(Key.key("block.end_portal.spawn"), Sound.Source.VOICE, 0.75f, 1f)
         val CLOCK_TICK = Sound.sound(Key.key("block.note_block.bass"), Sound.Source.VOICE, 1f, 1f)
         val CLOCK_TICK_HIGH = Sound.sound(Key.key("block.note_block.bass"), Sound.Source.VOICE, 1f, 2f)
     }
@@ -37,6 +37,10 @@ object Sounds {
         val ELIMINATION = Sound.sound(Key.key("burb.generic.vanquish"), Sound.Source.VOICE, 1f, 1f)
         val DEATH = Sound.sound(Key.key("item.trident.thunder"), Sound.Source.VOICE, 1f, 1.25f)
         val RESPAWN = Sound.sound(Key.key("block.bubble_column.upwards_inside"), Sound.Source.VOICE, 0.75f, 0.0f)
+        val PLANTS_WIN = Sound.sound(Key.key("burb.game.win.plants"), Sound.Source.VOICE, 0.75f, 1f)
+        val PLANTS_LOSE = Sound.sound(Key.key("burb.game.lose.plants"), Sound.Source.VOICE, 0.75f, 1f)
+        val ZOMBIES_WIN = Sound.sound(Key.key("burb.game.win.zombies"), Sound.Source.VOICE, 0.75f, 1f)
+        val ZOMBIES_LOSE = Sound.sound(Key.key("burb.game.lose.zombies"), Sound.Source.VOICE, 0.75f, 1f)
     }
     object Alert {
         const val GENERAL_ALERT = "mcc.game.map_alert"

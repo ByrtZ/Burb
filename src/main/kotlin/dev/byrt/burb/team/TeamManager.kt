@@ -2,12 +2,14 @@ package dev.byrt.burb.team
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerType
 
 import net.kyori.adventure.text.format.TextColor
+import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -36,6 +38,7 @@ object TeamManager {
                 player.setType(PlayerType.INVALID)
             }
         }
+        ItemManager.givePlayerTeamBoots(player.getBukkitPlayer(), team)
         player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
     }
 
@@ -75,9 +78,9 @@ object TeamManager {
     }
 }
 
-enum class Teams(val teamName: String, val teamColour: TextColor, val teamColourTag: String) {
-    SPECTATOR("Spectator", TextColor.fromHexString("#aaaaaa")!!, "<speccolour>"),
-    PLANTS("Plants", TextColor.color(21, 237, 50), "<plantscolour>"),
-    ZOMBIES("Zombies", TextColor.color(136, 21, 237), "<zombiescolour>"),
-    NULL("null", TextColor.color(0, 0, 0), "")
+enum class Teams(val teamName: String, val teamHexColour: TextColor, val teamColour: Color, val teamColourTag: String) {
+    SPECTATOR("Spectator", TextColor.fromHexString("#aaaaaa")!!, Color.GRAY, "<speccolour>"),
+    PLANTS("Plants", TextColor.color(21, 237, 50), Color.LIME, "<plantscolour>"),
+    ZOMBIES("Zombies", TextColor.color(136, 21, 237), Color.PURPLE, "<zombiescolour>"),
+    NULL("null", TextColor.color(0, 0, 0), Color.BLACK,"")
 }
