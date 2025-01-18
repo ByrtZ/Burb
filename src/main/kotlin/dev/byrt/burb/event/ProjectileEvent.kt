@@ -1,12 +1,15 @@
 package dev.byrt.burb.event
 
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
+import org.bukkit.NamespacedKey
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.persistence.PersistentDataType
 
 class ProjectileEvent: Listener {
     @EventHandler
@@ -20,8 +23,9 @@ class ProjectileEvent: Listener {
                     if(shooter.burbPlayer().playerTeam == Teams.SPECTATOR) return
                     if(player.burbPlayer().playerTeam != shooter.burbPlayer().playerTeam) {
                         player.damage(0.001, shooter)
-                        if(player.health >= 0.85) {
-                            player.health -= 0.85
+                        val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
+                        if(player.health >= damageDealt) {
+                            player.health -= damageDealt
                         } else {
                             player.health = 0.0
                         }

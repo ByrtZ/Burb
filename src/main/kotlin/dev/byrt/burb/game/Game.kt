@@ -2,9 +2,11 @@ package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.misc.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.plugin
+
 import org.bukkit.Bukkit
 
 object Game {
@@ -31,6 +33,7 @@ object Game {
     fun cleanup() {
         InfoBoardManager.destroyScoreboard()
         CapturePointManager.testDestroyCapPoints()
+        LobbyBall.cleanup()
     }
 
     fun reload() {

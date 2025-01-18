@@ -8,6 +8,7 @@ import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.logger
+import dev.byrt.burb.misc.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.BurbPlayer
@@ -22,14 +23,15 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-import org.bukkit.*
 
+import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
 import org.bukkit.scheduler.BukkitRunnable
 
 import java.time.Duration
+
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -78,6 +80,7 @@ object GameManager {
                     Timer.setTimer(GameTime.GAME_STARTING_TIME, null)
                     GameTask.startGameLoop()
                     InfoBoardManager.timerBossBar()
+                    LobbyBall.cleanup()
                     starting()
                 } else {
                     Timer.setTimerState(TimerState.ACTIVE, null)
@@ -124,6 +127,12 @@ object GameManager {
                 player.playSound(player.location, Sounds.Start.START_GAME_SUCCESS, 1f, 1f)
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
                 Jukebox.stopMusicLoop(player, Music.LOBBY_WAITING)
+                if(player.burbPlayer().playerTeam == Teams.PLANTS) {
+                    player.sendMessage(Formatting.allTags.deserialize(Translation.Character.PLANTS_CHOOSE_CHARACTER))
+                }
+                if(player.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                    player.sendMessage(Formatting.allTags.deserialize(Translation.Character.ZOMBIES_CHOOSE_CHARACTER))
+                }
             }
             CapturePointManager.testCreateCapPoints()
         }
@@ -281,11 +290,11 @@ object CapturePointManager {
     private val capturePointsLoopMap = mutableMapOf<CapturePoint, BukkitRunnable>()
     private val capturedPoints = mutableMapOf<CapturePoint, Teams>()
     private var suburbinatingTeam = Teams.NULL
-    const val REQUIRED_CAPTURE_SCORE = 500
+    const val REQUIRED_CAPTURE_SCORE = 400
     fun testCreateCapPoints() {
         addCapturePoint(CapturePoint.A, Location(Bukkit.getWorlds()[0], -25.5, 4.0, 0.5))
         addCapturePoint(CapturePoint.B, Location(Bukkit.getWorlds()[0], 11.5, 0.0, -44.5))
-        addCapturePoint(CapturePoint.C, Location(Bukkit.getWorlds()[0], 7.5, 2.0, 49.5))
+        addCapturePoint(CapturePoint.C, Location(Bukkit.getWorlds()[0], 7.5, 0.0, 49.5))
     }
 
     fun testDestroyCapPoints() {
@@ -306,7 +315,7 @@ object CapturePointManager {
         val frequency = capturedPoints.values.groupingBy { it }.eachCount()
         if(frequency[Teams.PLANTS] == 3) {
             if(this.suburbinatingTeam == Teams.PLANTS) {
-                ScoreManager.addPlantsScore(1)
+                ScoreManager.addPlantsScore(3)
                 return
             }
             this.suburbinatingTeam = Teams.PLANTS
@@ -345,6 +354,7 @@ object CapturePointManager {
         return this.capturedPoints
     }
 
+    //TODO: REWRITE ENTIRE CAP POINT SYSTEM
     fun capturePointRunnable(capturePoint: CapturePoint) {
         val capturePointRunnable = object : BukkitRunnable() {
             var capturePointTicks = 0
@@ -366,25 +376,20 @@ object CapturePointManager {
                     // Work out who is in range of the point
                     val participants = TeamManager.getParticipants()
                     for(participant in participants) {
-                        if(participant.getBukkitPlayer().location.distanceSquared(capturePoint.location) <= 25.0 && !playersInPoint.contains(participant)) {
+                        if(capturePoint.location.distanceSquared(participant.getBukkitPlayer().location) <= 25.0 && !playersInPoint.contains(participant)) {
                             playersInPoint.add(participant)
                             participant.getBukkitPlayer().sendActionBar(Formatting.allTags.deserialize("In capture point $capturePoint | plant progress $plantCapturePointProgress | zombie progress $zombieCapturePointProgress | dominating team $dominatingTeam"))
                         } else {
                             playersInPoint.remove(participant)
                         }
                     }
-                    // Calculate how many of each team are in the point
-                    numPlantsInPoint = 0
-                    numZombiesInPoint = 0
-                    for(playerInPoint in playersInPoint) {
-                        if(playerInPoint.playerTeam == Teams.PLANTS) numPlantsInPoint++
-                        if(playerInPoint.playerTeam == Teams.ZOMBIES) numZombiesInPoint++
-                    }
+                    numPlantsInPoint = playersInPoint.filter { burbPlayer -> burbPlayer.playerTeam == Teams.PLANTS }.size
+                    numZombiesInPoint = playersInPoint.filter { burbPlayer -> burbPlayer.playerTeam == Teams.PLANTS }.size
                     // Set the dominating team
                     if(numPlantsInPoint > numZombiesInPoint) dominatingTeam = Teams.PLANTS
                     if(numZombiesInPoint > numPlantsInPoint) dominatingTeam = Teams.ZOMBIES
                     // Set if point is contested
-                    isContested = numPlantsInPoint == numZombiesInPoint
+                    isContested = (numPlantsInPoint > 0 && numZombiesInPoint > 0) && (numPlantsInPoint == numZombiesInPoint)
                     // If the dominating team is a participant team and the point is not contested, continue to add score
                     suburbinationCheck()
                     if(dominatingTeam != Teams.NULL || dominatingTeam != Teams.SPECTATOR) {
@@ -510,7 +515,7 @@ object CapturePointManager {
 object ScoreManager {
     private var plantsScore = 0
     private var zombiesScore = 0
-    private const val WIN_SCORE = 10000
+    private const val WIN_SCORE = 100000
 
     fun getWinningTeam(): Teams {
         if(plantsScore > zombiesScore) return Teams.PLANTS

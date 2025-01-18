@@ -1,8 +1,14 @@
 package dev.byrt.burb.library
 
+import dev.byrt.burb.item.BurbCharacter
+
 object Translation {
     object Generic {
         const val ARROW_PREFIX = "[<yellow>▶<reset>] "
+    }
+    object Character {
+        val PLANTS_CHOOSE_CHARACTER = "${Generic.ARROW_PREFIX}Choose your class:<yellow><newline>${Generic.ARROW_PREFIX}${BurbCharacter.PLANTS_SCOUT}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.PLANTS_HEAVY}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.PLANTS_HEALER}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.PLANTS_RANGED}"
+        val ZOMBIES_CHOOSE_CHARACTER = "${Generic.ARROW_PREFIX}Choose your class:<yellow><newline>${Generic.ARROW_PREFIX}${BurbCharacter.ZOMBIES_SCOUT}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.ZOMBIES_HEAVY}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.ZOMBIES_HEALER}<newline>${Generic.ARROW_PREFIX}${BurbCharacter.ZOMBIES_RANGED}"
     }
     object Tutorial {
         const val BLANK_LINE = "<newline>"

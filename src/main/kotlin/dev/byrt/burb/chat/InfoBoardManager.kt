@@ -16,7 +16,6 @@ import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot
 
 import java.util.*
-import kotlin.concurrent.timer
 
 @Suppress("DEPRECATION")
 object InfoBoardManager {
@@ -163,10 +162,10 @@ object InfoBoardManager {
                         this.cancel()
                     }
                     GameState.STARTING -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-127>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}STARTING<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-127>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}STARTING<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
                     }
                     GameState.IN_GAME -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}TIME<reset> ${ChatUtility.BURB_FONT_TAG}LEFT:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}TIME<reset> ${ChatUtility.BURB_FONT_TAG}LEFT:<reset> ${ChatUtility.BURB_FONT_TAG}${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
                     }
                     GameState.ROUND_END -> {
                         timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-119>${ChatUtility.BURB_FONT_TAG}NEXT<reset> ${ChatUtility.BURB_FONT_TAG}ROUND<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
