@@ -7,8 +7,15 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerType
+import dev.byrt.burb.plugin
 
+import fr.skytasul.glowingentities.GlowingEntities
+
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -17,22 +24,47 @@ object TeamManager {
     private val spectators = mutableSetOf<BurbPlayer>()
     private val plants = mutableSetOf<BurbPlayer>()
     private val zombies = mutableSetOf<BurbPlayer>()
+
+    private var plantsDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("b_plants")
+    private var zombiesDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("c_zombies")
+    private var spectatorDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("z_spectator")
+    private var adminDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("a_admin")
+
+    private val GlowingEntities = GlowingEntities(plugin)
+
     fun setTeam(player: BurbPlayer, team: Teams) {
-        if(spectators.contains(player)) spectators.remove(player)
-        if(plants.contains(player)) plants.remove(player)
-        if(zombies.contains(player)) zombies.remove(player)
+        if(spectators.contains(player)) {
+            spectators.remove(player)
+            spectatorDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
+            adminDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
+        }
+        if(plants.contains(player)) {
+            plants.remove(player)
+            plantsDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
+        }
+        if(zombies.contains(player)) {
+            zombies.remove(player)
+            zombiesDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
+        }
         when(team) {
             Teams.SPECTATOR -> {
                 spectators.add(player)
                 player.setType(PlayerType.SPECTATOR)
+                if(player.getBukkitPlayer().isOp) {
+                    adminDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
+                } else {
+                    spectatorDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
+                }
             }
             Teams.PLANTS -> {
                 plants.add(player)
                 player.setType(PlayerType.PARTICIPANT)
+                plantsDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
             }
             Teams.ZOMBIES -> {
                 zombies.add(player)
                 player.setType(PlayerType.PARTICIPANT)
+                zombiesDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
             }
             Teams.NULL -> {
                 player.setType(PlayerType.INVALID)
@@ -75,6 +107,76 @@ object TeamManager {
             playerNames.add(player.playerName)
         }
         return playerNames
+    }
+
+    fun Teams.getTeammates(burbPlayer: BurbPlayer): Set<Player> {
+        val teamMates = mutableSetOf<Player>()
+        when(this) {
+            Teams.PLANTS -> {
+                for(teamMate in plants) {
+                    if(teamMate != burbPlayer) {
+                        teamMates.add(teamMate.getBukkitPlayer())
+                    }
+                }
+            }
+            Teams.ZOMBIES -> {
+                for(teamMate in plants) {
+                    if(teamMate != burbPlayer) {
+                        teamMates.add(teamMate.getBukkitPlayer())
+                    }
+                }
+            }
+            else -> { /* do nothing */ }
+        }
+        return teamMates
+    }
+
+    fun enableTeamGlowing(player: Player) {
+        val teamMates = player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())
+        if(player.burbPlayer().playerTeam.getTeammates(player.burbPlayer()).isNotEmpty()) {
+            for(teamMate in teamMates) {
+                GlowingEntities.setGlowing(teamMate, player)
+            }
+        }
+    }
+
+    fun disableTeamGlowing(player: Player) {
+        for(teamMate in player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())) {
+            GlowingEntities.unsetGlowing(teamMate, player)
+        }
+    }
+
+    fun buildDisplayTeams() {
+        plantsDisplayTeam.color(NamedTextColor.GREEN)
+        plantsDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
+        plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
+        plantsDisplayTeam.displayName(Component.text("Plants").color(NamedTextColor.GREEN))
+        plantsDisplayTeam.setAllowFriendlyFire(false)
+
+        zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
+        zombiesDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
+        zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
+        zombiesDisplayTeam.displayName(Component.text("Zombies").color(NamedTextColor.DARK_PURPLE))
+        zombiesDisplayTeam.setAllowFriendlyFire(false)
+
+        adminDisplayTeam.color(NamedTextColor.DARK_RED)
+        adminDisplayTeam.prefix(Component.text("\uD002 ").color(NamedTextColor.WHITE))
+        adminDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
+        adminDisplayTeam.displayName(Component.text("Admin").color(NamedTextColor.DARK_RED))
+        adminDisplayTeam.setAllowFriendlyFire(false)
+
+        spectatorDisplayTeam.color(NamedTextColor.GRAY)
+        spectatorDisplayTeam.prefix(Component.text("\uD003 ").color(NamedTextColor.WHITE))
+        spectatorDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
+        spectatorDisplayTeam.displayName(Component.text("Spectator").color(NamedTextColor.GRAY))
+        spectatorDisplayTeam.setAllowFriendlyFire(false)
+    }
+
+    fun destroyDisplayTeams() {
+        plantsDisplayTeam.unregister()
+        zombiesDisplayTeam.unregister()
+        adminDisplayTeam.unregister()
+        spectatorDisplayTeam.unregister()
     }
 }
 

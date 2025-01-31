@@ -5,7 +5,10 @@ import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.misc.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.TeamManager
+import dev.byrt.burb.team.Teams
 
 import org.bukkit.Bukkit
 
@@ -28,11 +31,13 @@ object Game {
 
     fun setup() {
         InfoBoardManager.buildScoreboard()
+        TeamManager.buildDisplayTeams()
     }
 
     fun cleanup() {
+        TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
-        CapturePointManager.testDestroyCapPoints()
+        CapturePointManager.clearCapturePoints()
         LobbyBall.cleanup()
     }
 
@@ -42,9 +47,12 @@ object Game {
         InfoBoardManager.updateTimer()
         ScoreManager.setPlantsScore(0)
         ScoreManager.setZombiesScore(0)
-        CapturePointManager.testDestroyCapPoints()
+        CapturePointManager.clearCapturePoints()
         for(player in Bukkit.getOnlinePlayers()) {
             Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
+                TeamManager.disableTeamGlowing(player)
+            }
         }
     }
 }

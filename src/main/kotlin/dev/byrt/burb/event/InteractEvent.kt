@@ -29,8 +29,6 @@ class InteractEvent: Listener {
             // Verify item if it has all necessary data to be used
             if(ItemManager.verifyItem(usedItem)) {
                 val burbPlayer = e.player.burbPlayer()
-                // Fire rate
-                e.player.setCooldown(Material.POPPED_CHORUS_FRUIT, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.fire_rate"), PersistentDataType.INTEGER)!!)
 
                 // Ammo decrement
                 if(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER)!! <= 1) {
@@ -66,6 +64,8 @@ class InteractEvent: Listener {
                     )
                     newAmmoMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER)!! - 1)
                     usedItem.itemMeta = newAmmoMeta
+                    // Fire rate
+                    e.player.setCooldown(Material.POPPED_CHORUS_FRUIT, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.fire_rate"), PersistentDataType.INTEGER)!!)
                 }
                 val snowball = e.player.world.spawn(e.player.eyeLocation, Snowball::class.java)
                 snowball.shooter = e.player

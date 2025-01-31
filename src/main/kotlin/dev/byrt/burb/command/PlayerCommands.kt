@@ -39,7 +39,7 @@ class PlayerCommands {
         css.sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s team is <gold>${player.burbPlayer().playerTeam}<yellow>."))
     }
 
-    @Command("player set character <character>")
+    @Command("character <character>")
     @CommandDescription("Sets the executing player's character.")
     @Permission("burb.cmd.player")
     fun setCharacter(css: CommandSourceStack, @Argument("character") character : BurbCharacter) {
