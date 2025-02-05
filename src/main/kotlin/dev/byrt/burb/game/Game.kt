@@ -49,10 +49,10 @@ object Game {
         ScoreManager.setZombiesScore(0)
         CapturePointManager.clearCapturePoints()
         for(player in Bukkit.getOnlinePlayers()) {
-            Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.disableTeamGlowing(player)
             }
+            Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
         }
     }
 }

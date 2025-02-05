@@ -2,7 +2,9 @@ package dev.byrt.burb.player
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 
 import net.kyori.adventure.audience.Audience
@@ -30,8 +32,8 @@ object PlayerVisuals {
         parseDeathMessage(player, plainDeathMessage)
 
         player.clearActivePotionEffects()
-        player.inventory.clear()
-        val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN, 1)
+        ItemManager.clearItems(player)
+        val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN)
         deathOverlayItem.addEnchantment(Enchantment.BINDING_CURSE, 1)
         player.inventory.helmet = deathOverlayItem
 
@@ -114,6 +116,8 @@ object PlayerVisuals {
         player.health = 20.0
         player.inventory.helmet = null
         showPlayer(player)
+        ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+        ItemManager.giveCharacterItems(player)
     }
 
     fun disconnectInterruptDeath(player: Player) {

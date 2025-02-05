@@ -5,7 +5,9 @@ import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -186,6 +188,33 @@ object GameTask {
 
                 /** GAME END **/
                 if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if(Timer.getTimer() == 85) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.sendMessage(Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
+                            player.showTitle(
+                                Title.title(
+                                    Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}"),
+                                    Formatting.allTags.deserialize("won the game!")
+                                )
+                            )
+                            when(ScoreManager.getWinningTeam()) {
+                                Teams.PLANTS -> {
+                                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_WIN)
+                                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                }
+                                Teams.ZOMBIES -> {
+                                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
+                                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_WIN)
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
+                    if(Timer.getTimer() == 80) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.playSound(Sounds.Music.POST_GAME_MUSIC)
+                        }
+                    }
                     if(Timer.getTimer() <= 0) {
                         GameManager.nextState()
                         stopGameLoop()

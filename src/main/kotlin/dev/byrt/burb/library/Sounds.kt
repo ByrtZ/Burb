@@ -8,7 +8,7 @@ object Sounds {
         val GAME_MUSIC = Sound.sound(Key.key(""), Sound.Source.VOICE, 1f, 1f)
         val OVERTIME_MUSIC = Sound.sound(Key.key("burb.game.overtime.1"), Sound.Source.VOICE, 0.75f, 1f)
         const val GAME_STARTING_MUSIC = ""
-        const val GAME_OVER_MUSIC = ""
+        val POST_GAME_MUSIC = Sound.sound(Key.key("burb.game.post_game.1"), Sound.Source.VOICE, 0.75f, 1f)
         const val ROUND_OVER_MUSIC = ""
         val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.75f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
@@ -55,5 +55,9 @@ object Sounds {
     }
     object Weapon {
         val FOOT_SOLDIER_WEAPON_FIRE = Sound.sound(Key.key("burb.weapon.foot_soldier.fire"), Sound.Source.VOICE, 0.75f, 1f)
+
+        val PEASHOOTER_EXPLOSIVE_FIRE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.fire"), Sound.Source.VOICE, 1f, 1f)
+        val PEASHOOTER_EXPLOSIVE_VOICE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.voice"), Sound.Source.VOICE, 2f, 1f)
+        val PEASHOOTER_EXPLOSIVE_EXPLODE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.explode"), Sound.Source.VOICE, 2.5f, 1f)
     }
 }

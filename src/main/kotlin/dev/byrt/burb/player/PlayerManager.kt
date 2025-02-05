@@ -3,7 +3,7 @@ package dev.byrt.burb.player
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.exception.PlayerManagerException
-import dev.byrt.burb.item.BurbCharacter
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.ResourcePacker
 
@@ -17,6 +17,7 @@ object PlayerManager {
         burbPlayers.add(burbPlayer)
         ResourcePacker.applyPackPlayer(player)
         InfoBoardManager.showScoreboard(player)
+        ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)
     }
 

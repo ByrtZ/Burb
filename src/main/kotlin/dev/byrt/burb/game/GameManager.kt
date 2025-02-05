@@ -149,7 +149,6 @@ object GameManager {
             player.playSound(Sounds.Round.GAME_OVER)
             player.playSound(Sounds.Round.ROUND_END)
             Jukebox.startMusicLoop(player, plugin, Music.NULL)
-            player.playSound(player.location, Sounds.Music.GAME_OVER_MUSIC, SoundCategory.VOICE, 0.85f, 1f)
             player.showTitle(
                     Title.title(
                     Component.text("Game Over!", NamedTextColor.RED, TextDecoration.BOLD),
@@ -161,18 +160,6 @@ object GameManager {
                     )
                 )
             )
-            player.sendMessage(Formatting.allTags.deserialize("WINNING TEAM: ${ScoreManager.getWinningTeam()}"))
-            when(ScoreManager.getWinningTeam()) {
-                Teams.PLANTS -> {
-                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_WIN)
-                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
-                }
-                Teams.ZOMBIES -> {
-                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
-                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_WIN)
-                }
-                else -> {}
-            }
         }
     }
 
@@ -217,7 +204,7 @@ object GameManager {
         const val ROUND_STARTING_TIME = 30
         const val IN_GAME_TIME = 900
         const val ROUND_END_TIME = 15
-        const val GAME_END_TIME = 60
+        const val GAME_END_TIME = 100
         const val OVERTIME_TIME = 30
     }
 }

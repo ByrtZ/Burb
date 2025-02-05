@@ -1,5 +1,6 @@
 package dev.byrt.burb.event
 
+import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.*
@@ -8,7 +9,7 @@ import org.bukkit.event.inventory.*
 class InventoryEvent: Listener {
     @EventHandler
     private fun onInventoryClick(e : InventoryClickEvent) {
-        e.isCancelled = !e.whoClicked.isOp
+        e.isCancelled = e.whoClicked.gameMode != GameMode.CREATIVE
     }
 
     @EventHandler
@@ -18,7 +19,7 @@ class InventoryEvent: Listener {
 
     @EventHandler
     private fun onInventoryDrag(e : InventoryDragEvent) {
-        e.isCancelled = !e.whoClicked.isOp
+        e.isCancelled = e.whoClicked.gameMode != GameMode.CREATIVE
     }
 
     @EventHandler

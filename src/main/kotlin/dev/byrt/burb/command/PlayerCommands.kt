@@ -1,7 +1,7 @@
 package dev.byrt.burb.command
 
 import dev.byrt.burb.chat.Formatting
-import dev.byrt.burb.item.BurbCharacter
+import dev.byrt.burb.player.BurbCharacter
 
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 
@@ -22,7 +22,9 @@ class PlayerCommands {
     @CommandDescription("Gets all information about a player that is stored.")
     @Permission("burb.cmd.player")
     fun getPlayer(css: CommandSourceStack, @Argument("player") player : Player) {
-        css.sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<reset>"))
+        val abilityNames = mutableSetOf<String>()
+        player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> abilityNames.add(ability.abilityName) }
+        css.sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}"))
     }
 
     @Command("player get <player> type")

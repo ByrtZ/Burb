@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 class ServerListEvent: Listener {
     @EventHandler
     private fun onServerPing(e: PaperServerListPingEvent) {
-        e.version = "Byrtrium v1.21.x"
+        e.version = "Byrtrium v1.21.1"
         e.motd(ChatUtility.formatMessage("${Translation.TabList.SERVER_LIST_PADDING}${Translation.TabList.SERVER_LIST_TITLE}${Translation.TabList.SERVER_LIST_PADDING}<newline>${Translation.TabList.SERVER_LIST_VERSION}${Translation.TabList.SERVER_LIST_GAME}${Translation.TabList.SERVER_LIST_EXTRA}", false))
     }
 }

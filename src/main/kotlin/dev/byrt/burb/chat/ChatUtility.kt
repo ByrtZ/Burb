@@ -3,6 +3,8 @@ package dev.byrt.burb.chat
 import dev.byrt.burb.chat.Formatting.allTags
 import dev.byrt.burb.chat.Formatting.restrictedTags
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.Noxesium
 
 import io.papermc.paper.chat.ChatRenderer
@@ -71,7 +73,7 @@ object GlobalRenderer : ChatRenderer {
                 .append(allTags.deserialize("<prefix:admin> <dark_red>${source.name}<reset>: $plainMessage"))
         } else {
             playerHead
-                .append(allTags.deserialize("<prefix:spectator> <white>${source.name}<reset>: $plainMessage"))
+                .append(allTags.deserialize("${if (source.burbPlayer().playerTeam == Teams.SPECTATOR) "<prefix:spectator> <white>" else if (source.burbPlayer().playerTeam == Teams.PLANTS) "TODO <plantscolour>"  else if (source.burbPlayer().playerTeam == Teams.ZOMBIES) "TODO <zombiescolour>" else ""}${source.name}<reset>: $plainMessage"))
         }
     }
 }

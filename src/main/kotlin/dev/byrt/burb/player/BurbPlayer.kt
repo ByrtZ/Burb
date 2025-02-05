@@ -1,7 +1,6 @@
 package dev.byrt.burb.player
 
 import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.item.BurbCharacter
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
@@ -11,7 +10,6 @@ import org.bukkit.entity.Player
 
 import java.util.UUID
 
-/*, var selectedClass : BurbClass*/
 class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerTeam: Teams, var playerCharacter: BurbCharacter) {
     init {
         setTeam(Teams.SPECTATOR)

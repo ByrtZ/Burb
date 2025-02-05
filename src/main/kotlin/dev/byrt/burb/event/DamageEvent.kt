@@ -16,12 +16,10 @@ class DamageEvent: Listener {
             || e.cause == EntityDamageEvent.DamageCause.FIRE
             || e.cause == EntityDamageEvent.DamageCause.FIRE_TICK
             || e.cause == EntityDamageEvent.DamageCause.CRAMMING
-            || e.cause == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION
             || e.cause == EntityDamageEvent.DamageCause.LIGHTNING
             || e.cause == EntityDamageEvent.DamageCause.WITHER
             || e.cause == EntityDamageEvent.DamageCause.VOID
             || e.cause == EntityDamageEvent.DamageCause.DRAGON_BREATH
-            || e.cause == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION
             || e.cause == EntityDamageEvent.DamageCause.POISON
             || e.cause == EntityDamageEvent.DamageCause.FREEZE
             || e.cause == EntityDamageEvent.DamageCause.SONIC_BOOM

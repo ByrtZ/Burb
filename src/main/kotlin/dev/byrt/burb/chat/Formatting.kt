@@ -13,10 +13,10 @@ import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 object Formatting {
     /** Prefix enum for allowing MiniMessage usage of the <prefix:NAME> tag in messages. **/
     enum class Prefix(val prefixName: String, val value: String) {
+        NO_PREFIX("", ""),
         DEV_PREFIX("dev", "\uD001"),
         ADMIN_PREFIX("admin", "\uD002"),
-        STAFF_MODE_PREFIX("staff", "\uD004"),
-        NO_PREFIX("", ""),
+        SPECTATOR_PREFIX("spectator", "\uD003"),
         WARNING_PREFIX("warning", "⚠"),
         SKULL_PREFIX("skull", "☠");
 

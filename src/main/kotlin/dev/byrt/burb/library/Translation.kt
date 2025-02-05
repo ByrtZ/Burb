@@ -1,6 +1,6 @@
 package dev.byrt.burb.library
 
-import dev.byrt.burb.item.BurbCharacter
+import dev.byrt.burb.player.BurbCharacter
 
 object Translation {
     object Generic {
@@ -26,7 +26,7 @@ object Translation {
         const val SERVER_LIST_PADDING = "<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■"
         const val SERVER_LIST_TITLE = " <gold><bold>Byrt's Server<reset> "
         const val SERVER_LIST_VERSION = "<dark_gray>v1.0.0<reset>"
-        const val SERVER_LIST_GAME = "<white> ● <gold><bold>???<reset>"
-        const val SERVER_LIST_EXTRA = "<white> ● <yellow>Coming soon...<reset>"
+        const val SERVER_LIST_GAME = "<white> ● <burbcolour><bold>???<reset>"
+        const val SERVER_LIST_EXTRA = "<white> ● <yellow>Co<obfuscated>m</obfuscated>ing s<obfuscated>o</obfuscated>on.<obfuscated>.</obfuscated>.<reset>"
     }
 }
