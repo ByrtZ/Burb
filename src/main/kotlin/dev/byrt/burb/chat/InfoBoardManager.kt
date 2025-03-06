@@ -191,12 +191,10 @@ object InfoBoardManager {
         } else {
             val placementKeys = ScoreManager.getPlacementMap().keys.toTypedArray()
             val placementValues = ScoreManager.getPlacementMap().values.toTypedArray()
-            val first = placementValues[0].div(100000).times(100)
-            val second = placementValues[1].div(100000).times(100)
             firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}1.<reset> "))
-            firstPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${first}"))
+            firstPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}2.<reset> "))
-            secondPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${second}"))
+            secondPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
         }
     }
 

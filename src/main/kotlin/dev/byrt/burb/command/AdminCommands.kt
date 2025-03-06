@@ -1,6 +1,8 @@
 package dev.byrt.burb.command
 
 import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.interfaces.BurbInterface
+import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 
@@ -87,6 +89,16 @@ class AdminCommands {
                 typeTestItem.itemMeta = typeTestItemMeta
                 player.inventory.addItem(ItemStack(typeTestItem))
             }
+        }
+    }
+
+    @Command("interface <type>")
+    @CommandDescription("Debug command for interfaces.")
+    @Permission("burb.cmd.interfaces")
+    fun interfaceCommand(css: CommandSourceStack, @Argument("type") type: BurbInterfaceType) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbInterface(player, type)
         }
     }
 }

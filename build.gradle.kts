@@ -45,6 +45,7 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:2.3.5")
     implementation("io.ktor:ktor-client-logging:2.0.3")
     implementation("com.noxcrew.noxesium:api:2.3.3")
+    implementation("com.noxcrew.interfaces:interfaces:1.3.2")
 }
 
 kotlin {

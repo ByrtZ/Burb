@@ -17,16 +17,35 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.AreaEffectCloud
+import org.bukkit.entity.Display
 import org.bukkit.entity.Player
+import org.bukkit.entity.TextDisplay
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Duration
 
 import kotlin.random.Random
 
 object PlayerVisuals {
+    fun damageIndicator(player: Player, damage: Double) {
+        val damageTaken = BigDecimal(damage).setScale(1, RoundingMode.HALF_EVEN)
+        val damageIndicatorEntity = player.location.world.spawn(player.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
+            alignment = TextDisplay.TextAlignment.CENTER
+            billboard = Display.Billboard.VERTICAL
+            isCustomNameVisible = true
+            customName(Formatting.allTags.deserialize("${if(damageTaken.toInt() <= 3) "<yellow>" else if(damageTaken.toInt() in 4..6) "<gold>" else if(damageTaken.toInt() >= 7) "<red>" else "<#000000>"}${damageTaken}"))
+        }
+        object : BukkitRunnable() {
+            override fun run() {
+                damageIndicatorEntity.remove()
+            }
+        }.runTaskLater(plugin, 30L)
+    }
+
     fun death(player: Player, deathMessage: Component) {
         val plainDeathMessage = if(player.hasPotionEffect(PotionEffectType.INVISIBILITY)) { PlainTextComponentSerializer.plainText().serialize(deathMessage).replace(player.name, "<obfuscated>*<reset>".repeat(Random.nextInt(4, 16))) } else { PlainTextComponentSerializer.plainText().serialize(deathMessage) }
         parseDeathMessage(player, plainDeathMessage)

@@ -7,6 +7,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerType
+import dev.byrt.burb.player.characterSelect
 import dev.byrt.burb.plugin
 
 import fr.skytasul.glowingentities.GlowingEntities
@@ -14,11 +15,14 @@ import fr.skytasul.glowingentities.GlowingEntities
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+
+import java.time.Duration
 
 object TeamManager {
     private val spectators = mutableSetOf<BurbPlayer>()
@@ -72,6 +76,14 @@ object TeamManager {
         }
         ItemManager.givePlayerTeamBoots(player.getBukkitPlayer(), team)
         player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
+        player.getBukkitPlayer().showTitle(
+            Title.title(
+                Formatting.allTags.deserialize(""),
+                Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)),
+                Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
+            )
+        )
+        player.characterSelect()
     }
 
     fun shuffleTeams(sender: CommandSender?, players: Set<Player>, ignoreAdmins: Boolean) {
@@ -120,7 +132,7 @@ object TeamManager {
                 }
             }
             Teams.ZOMBIES -> {
-                for(teamMate in plants) {
+                for(teamMate in zombies) {
                     if(teamMate != burbPlayer) {
                         teamMates.add(teamMate.getBukkitPlayer())
                     }

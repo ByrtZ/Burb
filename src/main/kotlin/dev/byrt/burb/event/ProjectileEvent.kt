@@ -1,6 +1,7 @@
 package dev.byrt.burb.event
 
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import org.bukkit.NamespacedKey
@@ -11,6 +12,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
 
+@Suppress("unused")
 class ProjectileEvent: Listener {
     @EventHandler
     private fun onProjectileHit(e: ProjectileHitEvent) {
@@ -31,6 +33,7 @@ class ProjectileEvent: Listener {
                         }
                         player.world.playSound(player.location, "entity.player.hurt", 0.5f, 1f)
                         shooter.playSound(shooter.location, "entity.arrow.hit_player", 0.25f, 0f)
+                        PlayerVisuals.damageIndicator(player, damageDealt)
                         e.entity.remove()
                         e.isCancelled = true
                     }

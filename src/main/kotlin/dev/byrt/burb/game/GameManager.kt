@@ -148,7 +148,7 @@ object GameManager {
         for(player in Bukkit.getOnlinePlayers()) {
             player.playSound(Sounds.Round.GAME_OVER)
             player.playSound(Sounds.Round.ROUND_END)
-            Jukebox.startMusicLoop(player, plugin, Music.NULL)
+            Jukebox.disconnect(player)
             player.showTitle(
                     Title.title(
                     Component.text("Game Over!", NamedTextColor.RED, TextDecoration.BOLD),
@@ -165,7 +165,7 @@ object GameManager {
 
     private fun roundEnd() {
         for(player in Bukkit.getOnlinePlayers()) {
-            Jukebox.startMusicLoop(player, plugin, Music.NULL)
+            Jukebox.disconnect(player)
             player.playSound(Sounds.Round.ROUND_END)
             player.playSound(player.location, Sounds.Music.ROUND_OVER_MUSIC, SoundCategory.VOICE, 0.85f, 1f)
             player.showTitle(
@@ -474,7 +474,7 @@ object CapturePointManager {
 object ScoreManager {
     private var plantsScore = 0
     private var zombiesScore = 0
-    const val WIN_SCORE = 50000
+    private const val WIN_SCORE = 100000
 
     fun getWinningTeam(): Teams {
         if (plantsScore > zombiesScore) return Teams.PLANTS
@@ -533,6 +533,19 @@ object ScoreManager {
         this.zombiesScore = score
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
+    }
+
+    fun getDisplayScore(teams: Teams): Int {
+        return when(teams) {
+            Teams.PLANTS -> {
+                (this.plantsScore / 100000) * 100
+            }
+            Teams.ZOMBIES -> {
+                (this.zombiesScore / 100000) * 100
+            } else ->  {
+                0
+            }
+        }
     }
 
     fun getPlantsScore(): Int {

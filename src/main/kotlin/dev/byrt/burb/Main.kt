@@ -1,5 +1,6 @@
 package dev.byrt.burb
 
+import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.messenger.NoxesiumMessenger
@@ -40,6 +41,7 @@ class Main : JavaPlugin() {
         setupEventListeners()
         setupConfigs()
         setupPluginMessageListener()
+        InterfacesListeners.install(this)
     }
 
     override fun onDisable() {

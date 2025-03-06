@@ -35,6 +35,8 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         this.playerCharacter = newCharacter
         if(this.playerCharacter != BurbCharacter.NULL) {
             ItemManager.giveCharacterItems(this.getBukkitPlayer())
+        } else {
+            ItemManager.clearItems(this.getBukkitPlayer())
         }
         ChatUtility.broadcastDev("<dark_gray>Character: ${this.playerName} now has value ${this.playerCharacter}.", false)
     }

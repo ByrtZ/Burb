@@ -2,6 +2,8 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.interfaces.BurbInterface
+import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -32,6 +34,7 @@ class ResourcePackEvent: Listener {
                     override fun run() {
                         e.player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
                         e.player.removePotionEffect(PotionEffectType.BLINDNESS)
+                        BurbInterface(e.player, BurbInterfaceType.TEAM_SELECT)
                     }
                 }.runTaskLater(plugin, 10L)
             }

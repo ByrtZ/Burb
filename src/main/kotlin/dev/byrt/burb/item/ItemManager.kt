@@ -7,8 +7,8 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.Color
 
+import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
@@ -145,14 +145,14 @@ object ItemManager {
  */
 enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: String, val weaponType: BurbMainWeaponType, val weaponDamage: Double, val fireRate: Int, val reloadSpeed: Int, val maxAmmo: Int, val projectileVelocity: Double, val weaponMaterial: Material, val useSound: String, val customModelData: Int) {
     NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", 0),
-    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.25, 8, 40, 12, 1.75, Material.POPPED_CHORUS_FRUIT, "null",0),
+    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.25, 8, 40, 12, 2.0, Material.POPPED_CHORUS_FRUIT, "null",7),
     PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",3),
-    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,1.0, 3, 55, 30, 3.0, Material.POPPED_CHORUS_FRUIT, "null",0),
-    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 12, 35, 16, 4.0, Material.POPPED_CHORUS_FRUIT, "null",0),
-    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 2, 50, 30, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
+    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,1.0, 2, 55, 30, 3.0, Material.POPPED_CHORUS_FRUIT, "null",0),
+    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 14, 45, 16, 4.0, Material.POPPED_CHORUS_FRUIT, "null",8),
+    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 4, 50, 30, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
     ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",1),
-    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,4.0, 14, 65, 16, 2.5, Material.POPPED_CHORUS_FRUIT, "null",4),
-    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 16, 60, 12, 4.25, Material.POPPED_CHORUS_FRUIT, "null",6)
+    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,2.0, 16, 65, 16, 1.5, Material.POPPED_CHORUS_FRUIT, "null",4),
+    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 18, 60, 12, 4.25, Material.POPPED_CHORUS_FRUIT, "null",6)
 }
 
 enum class BurbMainWeaponType(val weaponTypeName: String) {

@@ -1,9 +1,12 @@
 package dev.byrt.burb.command
 
 import dev.byrt.burb.chat.Formatting
-import dev.byrt.burb.player.BurbCharacter
-
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
+import dev.byrt.burb.interfaces.BurbInterface
+import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -41,13 +44,23 @@ class PlayerCommands {
         css.sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s team is <gold>${player.burbPlayer().playerTeam}<yellow>."))
     }
 
-    @Command("character <character>")
-    @CommandDescription("Sets the executing player's character.")
-    @Permission("burb.cmd.player")
-    fun setCharacter(css: CommandSourceStack, @Argument("character") character : BurbCharacter) {
-        if(css.sender is Player) {
+    @Command("character")
+    @CommandDescription("Opens character selection screen.")
+    fun setCharacter(css: CommandSourceStack) {
+        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE) {
             val player = css.sender as Player
-            player.burbPlayer().setCharacter(character)
+            if(player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
+            }
+        }
+    }
+
+    @Command("teams")
+    @CommandDescription("Opens team selection screen.")
+    fun setTeam(css: CommandSourceStack) {
+        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE) {
+            val player = css.sender as Player
+            BurbInterface(player, BurbInterfaceType.TEAM_SELECT)
         }
     }
 }

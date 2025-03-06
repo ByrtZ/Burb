@@ -1,11 +1,14 @@
 package dev.byrt.burb.event
 
+import dev.byrt.burb.player.PlayerVisuals
+
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 
-@Suppress("unstableApiUsage")
+@Suppress("unused", "unstableApiUsage")
 class DamageEvent: Listener {
     @EventHandler
     private fun onDamage(e: EntityDamageEvent) {
@@ -25,6 +28,13 @@ class DamageEvent: Listener {
             || e.cause == EntityDamageEvent.DamageCause.SONIC_BOOM
             || e.cause == EntityDamageEvent.DamageCause.FALL) {
             e.isCancelled = true
+        } else {
+            if(e.entity is Player) {
+                val player = e.entity as Player
+                if(e.damage.toInt() > 0) {
+                    PlayerVisuals.damageIndicator(player, e.damage)
+                }
+            }
         }
     }
 
