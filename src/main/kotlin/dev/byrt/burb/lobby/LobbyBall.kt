@@ -24,7 +24,7 @@ object LobbyBall {
     private val ballMap = mutableMapOf<Int, LobbyBallPhysics>()
     val lobbyBallSpawnLocation = Location(Bukkit.getWorlds()[0], 40.0, 10.5, 61.5)
     private val lobbyBallAreaMin = Location(Bukkit.getWorlds()[0], 29.5, -1.0, 41.5)
-    private val lobbyBallAreaMax = Location(Bukkit.getWorlds()[0], 50.5, 13.0, 81.5)
+    private val lobbyBallAreaMax = Location(Bukkit.getWorlds()[0], 50.5, 55.0, 81.5)
     private val lobbyBallNetPlantsMin = Location(Bukkit.getWorlds()[0], 36.0, -1.0, 78.0)
     private val lobbyBallNetPlantsMax = Location(Bukkit.getWorlds()[0], 44.0, 4.0, 80.0)
     private val lobbyBallNetZombiesMin = Location(Bukkit.getWorlds()[0], 35.0, -1.0, 43.0)

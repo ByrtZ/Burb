@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable
 object LobbyManager {
     fun playerJoinTitleScreen(player: Player) {
         PlayerVisuals.hidePlayer(player)
-        val titleVehicle = player.world.spawn(Location(player.world, 983.5, 6.0, 992.5, -70.0f, 5.0f), AreaEffectCloud::class.java)
+        val titleVehicle = player.world.spawn(Location(player.world, 983.5, 6.0, 992.5, -63f, 10f), AreaEffectCloud::class.java)
         titleVehicle.duration = Int.MAX_VALUE
         titleVehicle.radius = 0F
         titleVehicle.waitTime = 0
@@ -29,7 +29,6 @@ object LobbyManager {
         titleVehicle.addScoreboardTag("${player.uniqueId}-title-vehicle")
         player.teleport(titleVehicle)
         titleVehicle.addPassenger(player)
-        player.removePotionEffect(PotionEffectType.BLINDNESS)
         player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 0, false, false))
         player.playSound(Sounds.Misc.TITLE_SCREEN_ENTER)
 
@@ -53,6 +52,8 @@ object LobbyManager {
                 }
             }
         }.runTaskTimer(plugin, 0L, 5L)
+
+        player.removePotionEffect(PotionEffectType.BLINDNESS)
     }
 
     fun playerJoinHub(player: Player) {

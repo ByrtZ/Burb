@@ -11,7 +11,7 @@ object Sounds {
         val POST_GAME_MUSIC = Sound.sound(Key.key("burb.game.post_game.1"), Sound.Source.VOICE, 0.75f, 1f)
         const val ROUND_OVER_MUSIC = ""
         val LOBBY_TITLE_SCREEN = Sound.sound(Key.key("burb.lobby.title_screen"), Sound.Source.VOICE, 0.35f, 1f)
-        val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.75f, 1f)
+        val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.4f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
         val GAME_INTRO_JINGLE = Sound.sound(Key.key("burb.game.intro_jingle"), Sound.Source.VOICE, 1f, 1f)
         val SUBURBINATION_PLANTS = Sound.sound(Key.key("burb.game.suburbination.plants"), Sound.Source.VOICE, 0.5f, 1f)

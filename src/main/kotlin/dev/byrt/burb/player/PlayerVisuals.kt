@@ -140,7 +140,7 @@ object PlayerVisuals {
         player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
     }
 
-    fun disconnectInterruptDeath(player: Player) {
+    fun disconnectInterrupt(player: Player) {
         if(player.vehicle is AreaEffectCloud) {
             player.vehicle?.remove()
             showPlayer(player)

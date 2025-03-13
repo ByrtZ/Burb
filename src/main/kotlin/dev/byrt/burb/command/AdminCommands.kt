@@ -5,6 +5,7 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.lobby.LobbyManager
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -99,6 +100,16 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             BurbInterface(player, type)
+        }
+    }
+
+    @Command("class")
+    @CommandDescription("Returns to title screen.")
+    @Permission("burb.cmd.class")
+    fun classCommand(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            LobbyManager.playerJoinTitleScreen(player)
         }
     }
 }
