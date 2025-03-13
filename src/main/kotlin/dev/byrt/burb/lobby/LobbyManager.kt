@@ -37,7 +37,7 @@ object LobbyManager {
             if(GameManager.getGameState() == GameState.IDLE) {
                 object : BukkitRunnable() {
                     override fun run() {
-                        Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+                        Jukebox.startMusicLoop(player, plugin, Music.LOBBY_TITLE_SCREEN)
                     }
                 }.runTaskLater(plugin, 20L)
             }
