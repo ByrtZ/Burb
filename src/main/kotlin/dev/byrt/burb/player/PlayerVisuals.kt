@@ -14,6 +14,7 @@ import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
 import org.bukkit.Color
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.AreaEffectCloud
@@ -112,7 +113,7 @@ object PlayerVisuals {
         player.playSound(Sounds.Score.DEATH)
     }
 
-    private fun respawn(player: Player) {
+    fun respawn(player: Player) {
         player.showTitle(
             Title.title(
                 Formatting.allTags.deserialize("\uD000"),
@@ -127,16 +128,16 @@ object PlayerVisuals {
         player.playSound(Sounds.Score.RESPAWN)
     }
 
-    private fun postRespawn(player: Player, deathVehicle: AreaEffectCloud) {
+    fun postRespawn(player: Player, vehicle: AreaEffectCloud) {
         player.eject()
-        deathVehicle.remove()
-        player.teleport(Bukkit.getWorlds()[0].spawnLocation)
+        vehicle.remove()
         player.fireTicks = 0
         player.health = 20.0
         player.inventory.helmet = null
         showPlayer(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
+        player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
     }
 
     fun disconnectInterruptDeath(player: Player) {

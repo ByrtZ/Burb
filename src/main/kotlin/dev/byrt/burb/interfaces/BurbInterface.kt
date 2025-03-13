@@ -10,13 +10,16 @@ import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.StaticElement
 import com.noxcrew.interfaces.interfaces.buildChestInterface
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.lobby.LobbyManager
 
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Material
+import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 import java.time.Duration
 
@@ -42,24 +45,44 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
         initialTitle = Formatting.allTags.deserialize(interfaceType.interfaceName)
         rows = 3
         withTransform { pane, _ ->
-            val plantsTeamItem = ItemStack(Material.LIME_DYE)
-            val plantsTeamItemMeta = plantsTeamItem.itemMeta
-            plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<plantscolour>Plants").decoration(TextDecoration.ITALIC, false))
-            plantsTeamItem.itemMeta = plantsTeamItemMeta
-            pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
-                player.burbPlayer().setTeam(Teams.PLANTS)
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
-                player.closeInventory()
+            if(player.burbPlayer().playerTeam == Teams.PLANTS) {
+                val plantsTeamItem = ItemStack(Material.BARRIER)
+                val plantsTeamItemMeta = plantsTeamItem.itemMeta
+                plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>You are already on this team!").decoration(TextDecoration.ITALIC, false))
+                plantsTeamItem.itemMeta = plantsTeamItemMeta
+                pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT_FAIL)
+                }
+            } else {
+                val plantsTeamItem = ItemStack(Material.LIME_DYE)
+                val plantsTeamItemMeta = plantsTeamItem.itemMeta
+                plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<plantscolour>Plants").decoration(TextDecoration.ITALIC, false))
+                plantsTeamItem.itemMeta = plantsTeamItemMeta
+                pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
+                    player.burbPlayer().setTeam(Teams.PLANTS)
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+                }
             }
 
-            val zombiesTeamItem = ItemStack(Material.PURPLE_DYE)
-            val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
-            zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<zombiescolour>Zombies").decoration(TextDecoration.ITALIC, false))
-            zombiesTeamItem.itemMeta = zombiesTeamItemMeta
-            pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
-                player.burbPlayer().setTeam(Teams.ZOMBIES)
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
-                player.closeInventory()
+            if(player.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                val zombiesTeamItem = ItemStack(Material.BARRIER)
+                val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
+                zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>You are already on this team!").decoration(TextDecoration.ITALIC, false))
+                zombiesTeamItem.itemMeta = zombiesTeamItemMeta
+                pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT_FAIL)
+                }
+            } else {
+                val zombiesTeamItem = ItemStack(Material.PURPLE_DYE)
+                val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
+                zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<zombiescolour>Zombies").decoration(TextDecoration.ITALIC, false))
+                zombiesTeamItem.itemMeta = zombiesTeamItemMeta
+                pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
+                    player.burbPlayer().setTeam(Teams.ZOMBIES)
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+                }
             }
 
             if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
@@ -69,17 +92,35 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 closeMenuItem.itemMeta = closeMenuItemMeta
                 pane[2, 4] = StaticElement(drawable(closeMenuItem)) {
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
-                    player.closeInventory()
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is AreaEffectCloud) {
+                            val aec = player.vehicle as AreaEffectCloud
+                            if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                LobbyManager.playerJoinHub(player)
+                            }
+                        }
+                    }
                 }
             } else {
-                val spectatorsTeamItem = ItemStack(Material.GRAY_DYE)
+                val spectatorsTeamItem = ItemStack(Material.LIGHT_GRAY_DYE)
                 val spectatorsTeamItemMeta = spectatorsTeamItem.itemMeta
                 spectatorsTeamItemMeta.displayName(Formatting.allTags.deserialize("<speccolour>Spectators").decoration(TextDecoration.ITALIC, false))
                 spectatorsTeamItem.itemMeta = spectatorsTeamItemMeta
                 pane[2, 4] = StaticElement(drawable(spectatorsTeamItem)) {
                     player.burbPlayer().setTeam(Teams.SPECTATOR)
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
-                    player.closeInventory()
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is AreaEffectCloud) {
+                            val aec = player.vehicle as AreaEffectCloud
+                            if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                LobbyManager.playerJoinHub(player)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -106,7 +147,7 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                             if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
                                 player.burbPlayer().setCharacter(character.characterName.getCharacter())
                                 player.playSound(Sounds.Misc.INTERFACE_INTERACT)
-                                player.closeInventory()
+                                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
                                 player.showTitle(
                                     Title.title(
                                         Formatting.allTags.deserialize(""),
@@ -114,6 +155,15 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                                         Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
                                     )
                                 )
+
+                                if(player.vehicle != null) {
+                                    if(player.vehicle is AreaEffectCloud) {
+                                        val aec = player.vehicle as AreaEffectCloud
+                                        if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                            LobbyManager.playerJoinHub(player)
+                                        }
+                                    }
+                                }
                             }
                         }
                         i++

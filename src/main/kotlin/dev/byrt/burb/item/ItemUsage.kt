@@ -148,7 +148,7 @@ object ItemUsage {
                     }
                 }.runTaskTimer(plugin, 0L, 1L)
             }
-            BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityId -> {
+            BurbAbility.PLANTS_SCOUT_ABILITY_3.abilityId -> {
                 player.setCooldown(Material.DISC_FRAGMENT_5, 300)
                 player.world.playSound(player.location, "burb.weapon.peashooter.ability.zoom.use", SoundCategory.VOICE, 2f, 1f)
                 player.addPotionEffects(listOf(

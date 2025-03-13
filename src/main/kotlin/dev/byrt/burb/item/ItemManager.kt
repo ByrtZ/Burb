@@ -47,6 +47,7 @@ object ItemManager {
     }
 
     fun giveCharacterItems(player: Player) {
+        if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
         val burbPlayer = player.burbPlayer()
         val burbPlayerCharacter = burbPlayer.playerCharacter
 

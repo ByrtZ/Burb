@@ -2,7 +2,7 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
-import dev.byrt.burb.misc.LobbyBall
+import dev.byrt.burb.lobby.LobbyBall
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

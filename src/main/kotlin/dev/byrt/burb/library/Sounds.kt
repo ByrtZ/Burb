@@ -36,7 +36,7 @@ object Sounds {
     object Score {
         val ELIMINATION = Sound.sound(Key.key("burb.generic.vanquish"), Sound.Source.VOICE, 1f, 1f)
         val DEATH = Sound.sound(Key.key("item.trident.thunder"), Sound.Source.VOICE, 1f, 1.25f)
-        val RESPAWN = Sound.sound(Key.key("block.bubble_column.upwards_inside"), Sound.Source.VOICE, 0.75f, 0.0f)
+        val RESPAWN = Sound.sound(Key.key("block.bubble_column.upwards_inside"), Sound.Source.VOICE, 2f, 0.0f)
         val PLANTS_WIN = Sound.sound(Key.key("burb.game.win.plants"), Sound.Source.VOICE, 0.75f, 1f)
         val PLANTS_LOSE = Sound.sound(Key.key("burb.game.lose.plants"), Sound.Source.VOICE, 0.75f, 1f)
         val ZOMBIES_WIN = Sound.sound(Key.key("burb.game.win.zombies"), Sound.Source.VOICE, 0.75f, 1f)
@@ -53,6 +53,8 @@ object Sounds {
     object Misc {
         val ADMIN_MESSAGE = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 0.5f, 2f)
         val INTERFACE_INTERACT = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 0.5f, 1f)
+        val INTERFACE_INTERACT_FAIL = Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.MASTER, 0.5f, 0f)
+        val TITLE_SCREEN_ENTER = Sound.sound(Key.key("entity.breeze.shoot"), Sound.Source.MASTER, 1f, 0.75f)
     }
     object Weapon {
         val FOOT_SOLDIER_WEAPON_FIRE = Sound.sound(Key.key("burb.weapon.foot_soldier.fire"), Sound.Source.VOICE, 0.75f, 1f)

@@ -1,4 +1,4 @@
-package dev.byrt.burb.misc
+package dev.byrt.burb.lobby
 
 import dev.byrt.burb.plugin
 

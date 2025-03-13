@@ -33,7 +33,7 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     fun setCharacter(newCharacter: BurbCharacter) {
         if(newCharacter == this.playerCharacter) return
         this.playerCharacter = newCharacter
-        if(this.playerCharacter != BurbCharacter.NULL) {
+        if(this.playerCharacter != BurbCharacter.NULL && this.getBukkitPlayer().vehicle != null) {
             ItemManager.giveCharacterItems(this.getBukkitPlayer())
         } else {
             ItemManager.clearItems(this.getBukkitPlayer())

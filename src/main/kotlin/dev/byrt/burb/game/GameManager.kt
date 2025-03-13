@@ -8,7 +8,7 @@ import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.logger
-import dev.byrt.burb.misc.LobbyBall
+import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -17,7 +17,6 @@ import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.audience.Audience
-
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -126,12 +125,6 @@ object GameManager {
                 player.playSound(player.location, Sounds.Start.START_GAME_SUCCESS, 1f, 1f)
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
                 Jukebox.stopMusicLoop(player, Music.LOBBY_WAITING)
-                if (player.burbPlayer().playerTeam == Teams.PLANTS) {
-                    player.sendMessage(Formatting.allTags.deserialize(Translation.Character.PLANTS_CHOOSE_CHARACTER))
-                }
-                if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
-                    player.sendMessage(Formatting.allTags.deserialize(Translation.Character.ZOMBIES_CHOOSE_CHARACTER))
-                }
                 if (player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                     TeamManager.enableTeamGlowing(player)
                 }
@@ -291,11 +284,7 @@ object CapturePointManager {
 
     fun clearCapturePoints() {
         capturePoints.keys.forEach { removeCapturePoint(it) }
-        Bukkit.getWorlds().forEach { world ->
-            world.getEntitiesByClass(TextDisplay::class.java)
-                .filter { it.scoreboardTags.contains("burb.game.capture_point.text_display") }
-                .forEach { it.remove() }
-        }
+        suburbinatingTeam = Teams.NULL
     }
 
     private fun addCapturePoint(capturePoint: CapturePoint, location: Location) {
@@ -309,7 +298,6 @@ object CapturePointManager {
         capturePoints[capturePoint]?.let {
             capturePointTasks[capturePoint]?.cancel()
             capturePointTasks.remove(capturePoint)
-            capturePoints.remove(capturePoint)
             capturedPoints.remove(capturePoint)
 
             capturePoint.location = Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5)
@@ -320,6 +308,7 @@ object CapturePointManager {
                     .forEach { it.remove() }
             }
         }
+        capturePoints.remove(capturePoint)
     }
 
     fun updateSuburbination() {
