@@ -1,10 +1,10 @@
 package dev.byrt.burb.lobby
 
-import dev.byrt.burb.chat.ChatUtility.BURB_FONT_TAG
 import dev.byrt.burb.chat.Formatting
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerVisuals
@@ -43,9 +43,11 @@ object LobbyManager {
         }
 
         object : BukkitRunnable() {
+            var i = 0
             override fun run() {
                 if(player.vehicle == titleVehicle) {
-                    player.sendActionBar(Formatting.allTags.deserialize("${BURB_FONT_TAG}PRESS<reset> <burbcolour>${BURB_FONT_TAG}<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}JOIN<reset> ${BURB_FONT_TAG}THE<reset> ${BURB_FONT_TAG}FIGHT<reset>"))
+                    player.sendActionBar(Formatting.allTags.deserialize(if(i % 10 == 0) Translation.Generic.TITLE_SCREEN_ACTIONBAR.replace("<reset>", "<reset><yellow>") else Translation.Generic.TITLE_SCREEN_ACTIONBAR))
+                    i++
                 } else {
                     player.sendActionBar(Formatting.allTags.deserialize(""))
                     cancel()

@@ -11,7 +11,6 @@ import net.kyori.adventure.bossbar.BossBar.Color
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scoreboard.Criteria
 import org.bukkit.scoreboard.DisplaySlot
@@ -46,7 +45,7 @@ object InfoBoardManager {
 
     fun buildScoreboard() {
         plugin.logger.info("Building scoreboard...")
-        objective.displaySlot = DisplaySlot.SIDEBAR
+        objective.displaySlot = null
         objective.numberFormat(NumberFormat.blank())
 
         // Modifiable game text
@@ -113,8 +112,10 @@ object InfoBoardManager {
             GameState.IDLE -> {
                 gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>STATUS:<reset> "))
                 gameStatusLine.suffix(Formatting.allTags.deserialize("<gray>${ChatUtility.BURB_FONT_TAG}AWAITING<reset> ${ChatUtility.BURB_FONT_TAG}<gray>PLAYERS..."))
+                objective.displaySlot = null
             }
             GameState.STARTING -> {
+                objective.displaySlot = DisplaySlot.SIDEBAR
                 if(RoundManager.getRound() == Round.ONE) {
                     gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>BEGINS:<reset> "))
                 } else {
@@ -196,10 +197,6 @@ object InfoBoardManager {
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}2.<reset> "))
             secondPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
         }
-    }
-
-    fun showScoreboard(player : Player) {
-        player.scoreboard = scoreboard
     }
 
     fun destroyScoreboard() {

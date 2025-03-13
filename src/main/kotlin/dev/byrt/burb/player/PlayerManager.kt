@@ -18,7 +18,6 @@ object PlayerManager {
         burbPlayers.add(burbPlayer)
         player.gameMode = GameMode.ADVENTURE
         ResourcePacker.applyPackPlayer(player)
-        InfoBoardManager.showScoreboard(player)
         ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)
     }
