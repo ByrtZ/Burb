@@ -9,6 +9,7 @@ import dev.byrt.burb.team.Teams
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.StaticElement
 import com.noxcrew.interfaces.interfaces.buildChestInterface
+import dev.byrt.burb.library.Sounds
 
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextDecoration
@@ -42,21 +43,44 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
         rows = 3
         withTransform { pane, _ ->
             val plantsTeamItem = ItemStack(Material.LIME_DYE)
+            val plantsTeamItemMeta = plantsTeamItem.itemMeta
+            plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<plantscolour>Plants").decoration(TextDecoration.ITALIC, false))
+            plantsTeamItem.itemMeta = plantsTeamItemMeta
             pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
                 player.burbPlayer().setTeam(Teams.PLANTS)
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                 player.closeInventory()
             }
 
             val zombiesTeamItem = ItemStack(Material.PURPLE_DYE)
+            val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
+            zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<zombiescolour>Zombies").decoration(TextDecoration.ITALIC, false))
+            zombiesTeamItem.itemMeta = zombiesTeamItemMeta
             pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
                 player.burbPlayer().setTeam(Teams.ZOMBIES)
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                 player.closeInventory()
             }
 
-            val spectatorsTeamItem = ItemStack(Material.GRAY_DYE)
-            pane[2, 4] = StaticElement(drawable(spectatorsTeamItem)) {
-                player.burbPlayer().setTeam(Teams.SPECTATOR)
-                player.closeInventory()
+            if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
+                val closeMenuItem = ItemStack(Material.BARRIER)
+                val closeMenuItemMeta = closeMenuItem.itemMeta
+                closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
+                closeMenuItem.itemMeta = closeMenuItemMeta
+                pane[2, 4] = StaticElement(drawable(closeMenuItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory()
+                }
+            } else {
+                val spectatorsTeamItem = ItemStack(Material.GRAY_DYE)
+                val spectatorsTeamItemMeta = spectatorsTeamItem.itemMeta
+                spectatorsTeamItemMeta.displayName(Formatting.allTags.deserialize("<speccolour>Spectators").decoration(TextDecoration.ITALIC, false))
+                spectatorsTeamItem.itemMeta = spectatorsTeamItemMeta
+                pane[2, 4] = StaticElement(drawable(spectatorsTeamItem)) {
+                    player.burbPlayer().setTeam(Teams.SPECTATOR)
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory()
+                }
             }
         }
     }
@@ -81,6 +105,7 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                         pane[1, i] = StaticElement(drawable(characterItem)) {
                             if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
                                 player.burbPlayer().setCharacter(character.characterName.getCharacter())
+                                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                                 player.closeInventory()
                                 player.showTitle(
                                     Title.title(

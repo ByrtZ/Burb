@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 object PlayerManager {
     private val burbPlayers = mutableSetOf<BurbPlayer>()
     fun registerPlayer(player: Player) {
-        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registering player ${player.name} as BurbPlayer.", false)
+        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registering player ${player.name} as BurbPlayer.", true)
         val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL)
         burbPlayers.add(burbPlayer)
         ResourcePacker.applyPackPlayer(player)

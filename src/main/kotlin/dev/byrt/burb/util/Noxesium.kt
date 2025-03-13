@@ -23,10 +23,10 @@ object Noxesium {
         if(protocolVersion >= NOXESIUM_MINIMUM_PROTOCOL) {
             noxesiumUsers[player.uniqueId] = protocolVersion
             logger.info("Passed ${player.name} as a Noxesium user.")
-            ChatUtility.broadcastDev("<green>Passed player <yellow>${player.name}<green> as <red>Noxesium<green> user.", false)
+            ChatUtility.broadcastDev("<green>Passed player <yellow>${player.name}<green> as <red>Noxesium<green> user.", true)
         } else {
             logger.warning("Unable to pass ${player.name} as Noxesium user as their protocol version is $protocolVersion when it should be $NOXESIUM_MINIMUM_PROTOCOL or higher.")
-            ChatUtility.broadcastDev("<red>Failed to pass player <yellow>${player.name}<red> as Noxesium user, their protocol version is <yellow>$protocolVersion<red> when it should be <yellow>$NOXESIUM_MINIMUM_PROTOCOL<red> or higher..", false)
+            ChatUtility.broadcastDev("<red>Failed to pass player <yellow>${player.name}<red> as Noxesium user, their protocol version is <yellow>$protocolVersion<red> when it should be <yellow>$NOXESIUM_MINIMUM_PROTOCOL<red> or higher.", false)
         }
     }
 

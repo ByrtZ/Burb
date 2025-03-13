@@ -42,7 +42,7 @@ class AdminCommands {
     fun devChat(css: CommandSourceStack, @Argument("text") text: Array<String>) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            ChatUtility.broadcastAdmin("<skull:${player.name}><gold>${player.name}<white>: ${text.joinToString(" ")}", false)
+            ChatUtility.broadcastDev("<skull:${player.name}><gold>${player.name}<white>: ${text.joinToString(" ")}", false)
         }
     }
 

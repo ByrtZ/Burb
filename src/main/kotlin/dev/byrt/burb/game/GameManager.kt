@@ -265,7 +265,7 @@ object Timer {
 
     fun setTimerState(newState : TimerState, sender: CommandSender?) {
         if (newState == timerState) return
-        ChatUtility.broadcastDev("<dark_gray>Timer State: <red>$timerState<reset> <aqua>-> <green>$newState<dark_gray>${if (sender != null) " [${sender.name}]." else "."}", false)
+        ChatUtility.broadcastDev("<dark_gray>Timer State: <red>$timerState<reset> <aqua>-> <green>$newState<dark_gray>${if (sender != null) " [${sender.name}]." else "."}", true)
         this.timerState = newState
     }
 

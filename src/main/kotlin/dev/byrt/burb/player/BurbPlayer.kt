@@ -14,20 +14,20 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     init {
         setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
-        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registered player ${this.playerName} as BurbPlayer.", false)
+        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registered player ${this.playerName} as BurbPlayer.", true)
     }
 
     fun setType(newType: PlayerType) {
         if(newType == this.playerType) return
         this.playerType = newType
-        ChatUtility.broadcastDev("<dark_gray>Type: ${this.playerName} now has value ${this.playerType}.", false)
+        ChatUtility.broadcastDev("<dark_gray>Type: ${this.playerName} now has value ${this.playerType}.", true)
     }
 
     fun setTeam(newTeam: Teams) {
         if(newTeam == this.playerTeam) return
         this.playerTeam = newTeam
         TeamManager.setTeam(this, this.playerTeam)
-        ChatUtility.broadcastDev("<dark_gray>Teams: ${this.playerName} now has value ${this.playerTeam}.", false)
+        ChatUtility.broadcastDev("<dark_gray>Teams: ${this.playerName} now has value ${this.playerTeam}.", true)
     }
 
     fun setCharacter(newCharacter: BurbCharacter) {
@@ -38,7 +38,7 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         } else {
             ItemManager.clearItems(this.getBukkitPlayer())
         }
-        ChatUtility.broadcastDev("<dark_gray>Character: ${this.playerName} now has value ${this.playerCharacter}.", false)
+        ChatUtility.broadcastDev("<dark_gray>Character: ${this.playerName} now has value ${this.playerCharacter}.", true)
     }
 
     fun getBukkitPlayer(): Player {

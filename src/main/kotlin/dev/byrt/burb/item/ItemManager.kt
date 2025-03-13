@@ -164,27 +164,50 @@ enum class BurbMainWeaponType(val weaponTypeName: String) {
 
 enum class BurbAbility(val abilityName: String, val abilityLore: String, val abilityId: String, val abilityMaterial: Material) {
     NULL("null", "null", "null", Material.AIR),
+
     PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", Material.DISC_FRAGMENT_5),
-    PLANTS_SCOUT_ABILITY_2("Hyper", "Zoomies!", "burb.character.plants_scout.ability.2", Material.DISC_FRAGMENT_5),
-    PLANTS_HEAVY_ABILITY_1("", "", "burb.character.plants_heavy.ability.1", Material.POTATO),
-    PLANTS_HEALER_ABILITY_1("", "", "burb.character.plants_healer.ability.1", Material.POTATO),
-    PLANTS_RANGED_ABILITY_1("", "", "burb.character.plants_ranged.ability.1", Material.POTATO),
-    ZOMBIES_SCOUT_ABILITY_1("", "", "burb.character.zombies_scout.ability.1", Material.POTATO),
-    ZOMBIES_HEAVY_ABILITY_1("", "", "burb.character.zombies_heavy.ability.1", Material.POTATO),
-    ZOMBIES_HEALER_ABILITY_1("", "", "burb.character.zombies_healer.ability.1", Material.POTATO),
-    ZOMBIES_RANGED_ABILITY_1("", "", "burb.character.zombies_ranged.ability.1", Material.POTATO)
+    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "", "burb.character.plants_scout.ability.2", Material.POTATO),
+    PLANTS_SCOUT_ABILITY_3("Hyper", "Zoomies!", "burb.character.plants_scout.ability.3", Material.DISC_FRAGMENT_5),
+
+    PLANTS_HEAVY_ABILITY_1("Goop", "", "burb.character.plants_heavy.ability.1", Material.POTATO),
+    PLANTS_HEAVY_ABILITY_2("Burrow", "", "burb.character.plants_heavy.ability.2", Material.POTATO),
+    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", Material.POTATO),
+
+    PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", Material.POTATO),
+    PLANTS_HEALER_ABILITY_2("Sunbeam", "", "burb.character.plants_healer.ability.2", Material.POTATO),
+    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", Material.POTATO),
+
+    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", Material.POTATO),
+    PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", Material.POTATO),
+    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", Material.POTATO),
+
+    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "", "burb.character.zombies_scout.ability.1", Material.POTATO),
+    ZOMBIES_SCOUT_ABILITY_2("ZPG", "", "burb.character.zombies_scout.ability.2", Material.POTATO),
+    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "", "burb.character.zombies_scout.ability.3", Material.POTATO),
+
+    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", Material.POTATO),
+    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", Material.POTATO),
+    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "", "burb.character.zombies_heavy.ability.3", Material.POTATO),
+
+    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", Material.POTATO),
+    ZOMBIES_HEALER_ABILITY_2("Warp", "", "burb.character.zombies_healer.ability.2", Material.POTATO),
+    ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", Material.POTATO),
+
+    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", Material.POTATO),
+    ZOMBIES_RANGED_ABILITY_2("Parrot Pal", "", "burb.character.zombies_ranged.ability.2", Material.POTATO),
+    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "", "burb.character.zombies_ranged.ability.3", Material.POTATO)
 }
 
 enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set<BurbAbility>) {
     NULL("null", setOf(BurbAbility.NULL)),
-    PLANTS_SCOUT_ABILITIES("Peashooter Abilities", setOf(BurbAbility.PLANTS_SCOUT_ABILITY_1, BurbAbility.PLANTS_SCOUT_ABILITY_2)),
-    PLANTS_HEAVY_ABILITIES("Chomper Abilities", setOf(BurbAbility.PLANTS_HEAVY_ABILITY_1)),
-    PLANTS_HEALER_ABILITIES("Sunflower Abilities", setOf(BurbAbility.PLANTS_HEALER_ABILITY_1)),
-    PLANTS_RANGED_ABILITIES("Cactus Abilities", setOf(BurbAbility.PLANTS_RANGED_ABILITY_1)),
-    ZOMBIES_SCOUT_ABILITIES("Foot Soldier Abilities", setOf(BurbAbility.ZOMBIES_SCOUT_ABILITY_1)),
-    ZOMBIES_HEAVY_ABILITIES("Super Brainz Abilities", setOf(BurbAbility.ZOMBIES_HEAVY_ABILITY_1)),
-    ZOMBIES_HEALER_ABILITIES("Scientist Abilities", setOf(BurbAbility.ZOMBIES_HEALER_ABILITY_1)),
-    ZOMBIES_RANGED_ABILITIES("Deadbeard Abilities", setOf(BurbAbility.ZOMBIES_RANGED_ABILITY_1))
+    PLANTS_SCOUT_ABILITIES("Peashooter Abilities", setOf(BurbAbility.PLANTS_SCOUT_ABILITY_1, BurbAbility.PLANTS_SCOUT_ABILITY_2, BurbAbility.PLANTS_SCOUT_ABILITY_3)),
+    PLANTS_HEAVY_ABILITIES("Chomper Abilities", setOf(BurbAbility.PLANTS_HEAVY_ABILITY_1, BurbAbility.PLANTS_HEAVY_ABILITY_2, BurbAbility.PLANTS_HEAVY_ABILITY_3)),
+    PLANTS_HEALER_ABILITIES("Sunflower Abilities", setOf(BurbAbility.PLANTS_HEALER_ABILITY_1, BurbAbility.PLANTS_HEALER_ABILITY_2, BurbAbility.PLANTS_HEALER_ABILITY_3)),
+    PLANTS_RANGED_ABILITIES("Cactus Abilities", setOf(BurbAbility.PLANTS_RANGED_ABILITY_1, BurbAbility.PLANTS_RANGED_ABILITY_2, BurbAbility.PLANTS_RANGED_ABILITY_3)),
+    ZOMBIES_SCOUT_ABILITIES("Foot Soldier Abilities", setOf(BurbAbility.ZOMBIES_SCOUT_ABILITY_1, BurbAbility.ZOMBIES_SCOUT_ABILITY_2, BurbAbility.ZOMBIES_SCOUT_ABILITY_3)),
+    ZOMBIES_HEAVY_ABILITIES("Super Brainz Abilities", setOf(BurbAbility.ZOMBIES_HEAVY_ABILITY_1, BurbAbility.ZOMBIES_HEAVY_ABILITY_2, BurbAbility.ZOMBIES_HEAVY_ABILITY_3)),
+    ZOMBIES_HEALER_ABILITIES("Scientist Abilities", setOf(BurbAbility.ZOMBIES_HEALER_ABILITY_1, BurbAbility.ZOMBIES_HEALER_ABILITY_2, BurbAbility.ZOMBIES_HEALER_ABILITY_3)),
+    ZOMBIES_RANGED_ABILITIES("Deadbeard Abilities", setOf(BurbAbility.ZOMBIES_RANGED_ABILITY_1, BurbAbility.ZOMBIES_RANGED_ABILITY_2, BurbAbility.ZOMBIES_RANGED_ABILITY_3))
 }
 
 enum class ItemRarity(val rarityName : String, val rarityColour : String, val rarityGlyph : String) {
