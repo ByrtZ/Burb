@@ -24,6 +24,6 @@ object Translation {
         const val SERVER_LIST_TITLE = " <gold><bold>Byrt's Server<reset> "
         const val SERVER_LIST_VERSION = "<dark_gray>v1.0.0<reset>"
         const val SERVER_LIST_GAME = "<white> ● <burbcolour><bold>???<reset>"
-        const val SERVER_LIST_EXTRA = "<white> ● <yellow>Co<obfuscated>m</obfuscated>ing s<obfuscated>o</obfuscated>on.<obfuscated>.</obfuscated>.<reset>"
+        const val SERVER_LIST_EXTRA = "<white> ● <yellow>Coming soon...<reset>"
     }
 }

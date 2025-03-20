@@ -3,6 +3,7 @@ package dev.byrt.burb.item
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -18,6 +19,8 @@ import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.util.Vector
+
 import java.time.Duration
 
 import kotlin.random.Random
@@ -53,13 +56,15 @@ object ItemUsage {
                 // Projectile velocity
                 val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
                 snowball.velocity = snowballVelocity
+                // Offset projectile direction
+                snowball.location.direction = snowball.location.direction.add(Vector(Random.nextDouble(-0.25, 0.25), Random.nextDouble(-0.25, 0.25), Random.nextDouble(-0.25, 0.25)))
                 // Projectile damage
                 usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)?.let { snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, it) }
                 // Projectile trail
                 object : BukkitRunnable() {
                     val shooter = player
                     override fun run() {
-                        if(snowball.isDead) {
+                        if(snowball.isDead || !player.isOnline) {
                             this.cancel()
                         } else {
                             snowball.location.world.spawnParticle(
@@ -74,7 +79,7 @@ object ItemUsage {
                 }.runTaskTimer(plugin, 0L, 2L)
             }
             // Use sound
-            player.world.playSound(player.location, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING).toString(), 1f, 1f)
+            player.world.playSound(player.location, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING).toString(), 0.75f, 1f)
         }
     }
 
@@ -97,23 +102,10 @@ object ItemUsage {
                     )
                     newAmmoMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.max_ammo"), PersistentDataType.INTEGER)!!)
                     usedItem.itemMeta = newAmmoMeta
-                    player.showTitle(
-                        Title.title(
-                            Formatting.allTags.deserialize(""),
-                            Formatting.allTags.deserialize("<green>Reloaded!"),
-                            Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(0))
-                        )
-                    )
                 }
             }.runTaskLater(plugin, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!.toLong())
             player.setCooldown(Material.POPPED_CHORUS_FRUIT, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!)
-            player.showTitle(
-                Title.title(
-                    Formatting.allTags.deserialize(""),
-                    Formatting.allTags.deserialize("<red>Reloading..."),
-                    Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(5), Duration.ofSeconds(0))
-                )
-            )
+            PlayerVisuals.reloadWeapon(player, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!)
         }
     }
 
@@ -126,7 +118,7 @@ object ItemUsage {
         val abilityId = usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING)!!
         when(abilityId) {
             BurbAbility.PLANTS_SCOUT_ABILITY_1.abilityId -> {
-                player.setCooldown(Material.DISC_FRAGMENT_5, 200)
+                player.setCooldown(Material.DISC_FRAGMENT_5, 500)
                 player.world.playSound(player.location, "burb.weapon.peashooter.ability.explosive.fire", SoundCategory.VOICE, 1f, 1f)
                 val tnt = player.world.spawn(player.eyeLocation, TNTPrimed::class.java)
                 tnt.source = player
@@ -149,12 +141,29 @@ object ItemUsage {
                 }.runTaskTimer(plugin, 0L, 1L)
             }
             BurbAbility.PLANTS_SCOUT_ABILITY_3.abilityId -> {
-                player.setCooldown(Material.DISC_FRAGMENT_5, 300)
+                player.setCooldown(Material.DISC_FRAGMENT_5, 450)
                 player.world.playSound(player.location, "burb.weapon.peashooter.ability.zoom.use", SoundCategory.VOICE, 2f, 1f)
                 player.addPotionEffects(listOf(
                     PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 12, 6, false, true),
                     PotionEffect(PotionEffectType.SPEED, 20 * 12, 6, false, true)
                 ))
+            }
+            BurbAbility.ZOMBIES_SCOUT_ABILITY_3.abilityId -> {
+                player.setCooldown(Material.DISC_FRAGMENT_5, 400)
+                player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)
+                player.velocity = player.velocity.setY(1.3)
+            }
+            BurbAbility.ZOMBIES_HEALER_ABILITY_2.abilityId -> {
+                player.setCooldown(Material.DISC_FRAGMENT_5, 300)
+                val block = player.getTargetBlock(null, 12)
+                val location = block.location
+                val pitch = player.eyeLocation.pitch
+                val yaw = player.eyeLocation.yaw
+                location.add(0.5, 1.0, 0.5)
+                location.yaw = yaw
+                location.pitch = pitch
+                player.teleport(location)
+                player.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.75f)
             }
         }
     }

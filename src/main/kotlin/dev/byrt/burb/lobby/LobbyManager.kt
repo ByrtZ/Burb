@@ -11,6 +11,7 @@ import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 
 import org.bukkit.Color
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Player
@@ -20,7 +21,11 @@ import org.bukkit.scheduler.BukkitRunnable
 
 object LobbyManager {
     fun playerJoinTitleScreen(player: Player) {
+        player.gameMode = GameMode.ADVENTURE
+        player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
+        player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 0, false, false))
         PlayerVisuals.hidePlayer(player)
+
         val titleVehicle = player.world.spawn(Location(player.world, 983.5, 6.0, 992.5, -63f, 10f), AreaEffectCloud::class.java)
         titleVehicle.duration = Int.MAX_VALUE
         titleVehicle.radius = 0F
@@ -29,7 +34,6 @@ object LobbyManager {
         titleVehicle.addScoreboardTag("${player.uniqueId}-title-vehicle")
         player.teleport(titleVehicle)
         titleVehicle.addPassenger(player)
-        player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 0, false, false))
         player.playSound(Sounds.Misc.TITLE_SCREEN_ENTER)
 
         if(!Jukebox.getJukeboxMap().containsKey(player.uniqueId)) {

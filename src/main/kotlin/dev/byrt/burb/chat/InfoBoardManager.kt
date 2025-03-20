@@ -179,6 +179,30 @@ object InfoBoardManager {
                         timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-94>${ChatUtility.BURB_FONT_TAG}<red>OVERTIME<reset>"))
                     }
                 }
+                /*when(GameManager.getGameState()) {
+                    GameState.IDLE -> {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            timerBossBar.removeViewer(player)
+                        }
+                        this.cancel()
+                    }
+                    GameState.STARTING -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}<translate:offset.55:\uD011>${ChatUtility.NO_SHADOW_TAG.replace("#", "/#")}${ChatUtility.BURB_FONT_TAG}GAME  STARTING  IN:  ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}"))
+                        //timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-127:'GAME STARTING IN: ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}'>"))
+                    }
+                    GameState.IN_GAME -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-107:'TIME LEFT: ${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}'>"))
+                    }
+                    GameState.ROUND_END -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-119:'NEXT ROUND IN: <#ffff00>${Timer.getDisplayTimer()}'>"))
+                    }
+                    GameState.GAME_END -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-112:'BACK TO HUB: <#ffff00>${Timer.getDisplayTimer()}'>"))
+                    }
+                    GameState.OVERTIME -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-94:'<red>OVERTIME'>"))
+                    }
+                }*/
             }
         }.runTaskTimer(plugin, 0L, 1L)
     }

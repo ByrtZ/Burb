@@ -140,6 +140,42 @@ object PlayerVisuals {
         player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
     }
 
+    fun reloadWeapon(player: Player, reloadTime: Int) {
+        var timer = 0
+        var reloadPhase = 0.0
+        var pitch = 0f
+        object : BukkitRunnable() {
+            override fun run() {
+                if(!player.isOnline) cancel()
+                if(timer < reloadTime) {
+                    if(timer % 2 == 0) {
+                        player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.5f, pitch)
+                        player.showTitle(
+                            Title.title(
+                                Formatting.allTags.deserialize(""),
+                                Formatting.allTags.deserialize("<transition:red:green:$reloadPhase>Reloading..."),
+                                Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(5), Duration.ofSeconds(0))
+                            )
+                        )
+                        pitch += 0.075f
+                        if(reloadPhase < 1) reloadPhase += 0.05 else reloadPhase = 1.0
+                    }
+                } else {
+                    player.showTitle(
+                        Title.title(
+                            Formatting.allTags.deserialize(""),
+                            Formatting.allTags.deserialize("<green>Reloaded!"),
+                            Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(1), Duration.ofMillis(250))
+                        )
+                    )
+                    player.playSound(Sounds.Weapon.RELOAD_SUCCESS)
+                    cancel()
+                }
+                timer++
+            }
+        }.runTaskTimer(plugin, 0L, 1L)
+    }
+
     fun disconnectInterrupt(player: Player) {
         if(player.vehicle is AreaEffectCloud) {
             player.vehicle?.remove()

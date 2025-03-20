@@ -5,14 +5,15 @@ import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.getCharacter
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.lobby.LobbyManager
 
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.StaticElement
 import com.noxcrew.interfaces.interfaces.buildChestInterface
-import dev.byrt.burb.library.Sounds
-import dev.byrt.burb.lobby.LobbyManager
 
 import kotlinx.coroutines.runBlocking
+
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 
@@ -21,6 +22,7 @@ import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+
 import java.time.Duration
 
 class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {

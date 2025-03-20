@@ -1,12 +1,10 @@
 package dev.byrt.burb.player
 
 import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.exception.PlayerManagerException
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.ResourcePacker
-import org.bukkit.GameMode
 
 import org.bukkit.entity.Player
 
@@ -16,7 +14,6 @@ object PlayerManager {
         ChatUtility.broadcastDev("<dark_gray>Player Manager: Registering player ${player.name} as BurbPlayer.", true)
         val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL)
         burbPlayers.add(burbPlayer)
-        player.gameMode = GameMode.ADVENTURE
         ResourcePacker.applyPackPlayer(player)
         ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)

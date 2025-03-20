@@ -5,11 +5,8 @@ import net.kyori.adventure.sound.Sound
 
 object Sounds {
     object Music {
-        val GAME_MUSIC = Sound.sound(Key.key(""), Sound.Source.VOICE, 1f, 1f)
-        val OVERTIME_MUSIC = Sound.sound(Key.key("burb.game.overtime.1"), Sound.Source.VOICE, 0.75f, 1f)
-        const val GAME_STARTING_MUSIC = ""
+        val OVERTIME_MUSIC = Sound.sound(Key.key("burb.game.overtime"), Sound.Source.VOICE, 0.75f, 1f)
         val POST_GAME_MUSIC = Sound.sound(Key.key("burb.game.post_game.1"), Sound.Source.VOICE, 0.75f, 1f)
-        const val ROUND_OVER_MUSIC = ""
         val LOBBY_TITLE_SCREEN = Sound.sound(Key.key("burb.lobby.title_screen"), Sound.Source.VOICE, 0.35f, 1f)
         val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.4f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
@@ -21,22 +18,22 @@ object Sounds {
         val NULL = Sound.sound(Key.key(""), Sound.Source.VOICE, 0f, 0f)
     }
     object Timer {
-        val STARTING_123 = Sound.sound(Key.key("block.note_block.pling"), Sound.Source.VOICE, 1f, 1f)
+        val STARTING_123 = Sound.sound(Key.key("burb.generic.tick"), Sound.Source.VOICE, 1.25f, 1f)
         val STARTING_GO = Sound.sound(Key.key("block.end_portal.spawn"), Sound.Source.VOICE, 0.75f, 1f)
-        val CLOCK_TICK = Sound.sound(Key.key("block.note_block.bass"), Sound.Source.VOICE, 1f, 1f)
-        val CLOCK_TICK_HIGH = Sound.sound(Key.key("block.note_block.bass"), Sound.Source.VOICE, 1f, 2f)
+        val TICK = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1f)
+        val CLOCK_TICK = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1f)
+        val CLOCK_TICK_HIGH = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1.25f)
     }
     object Round {
         val ROUND_END = Sound.sound(Key.key("block.respawn_anchor.deplete"), Sound.Source.VOICE, 1f, 1f)
         val GAME_OVER = Sound.sound(Key.key("ui.toast.challenge_complete"), Sound.Source.VOICE, 0.75f, 1f)
     }
-    object Start {
-        const val START_GAME_SUCCESS = "block.respawn_anchor.set_spawn"
-        const val START_GAME_FAIL = "entity.enderman.teleport"
-    }
     object Score {
         val ELIMINATION = Sound.sound(Key.key("burb.generic.vanquish"), Sound.Source.VOICE, 1f, 1f)
-        val DEATH = Sound.sound(Key.key("item.trident.thunder"), Sound.Source.VOICE, 1f, 1.25f)
+        val CAPTURE_FRIENDLY = Sound.sound(Key.key("burb.game.capture.friendly"), Sound.Source.VOICE, 1.25f, 1f)
+        val CAPTURE_UNFRIENDLY = Sound.sound(Key.key("burb.game.capture.unfriendly"), Sound.Source.VOICE, 1.25f, 1f)
+        val DEATH = Sound.sound(Key.key("burb.game.death"), Sound.Source.VOICE, 1f, 1f)
+        val DEATH_STATS = Sound.sound(Key.key("burb.game.death_stats"), Sound.Source.VOICE, 0.75f, 1f)
         val RESPAWN = Sound.sound(Key.key("block.bubble_column.upwards_inside"), Sound.Source.VOICE, 2f, 0.0f)
         val PLANTS_WIN = Sound.sound(Key.key("burb.game.win.plants"), Sound.Source.VOICE, 0.75f, 1f)
         val PLANTS_LOSE = Sound.sound(Key.key("burb.game.lose.plants"), Sound.Source.VOICE, 0.75f, 1f)
@@ -44,9 +41,7 @@ object Sounds {
         val ZOMBIES_LOSE = Sound.sound(Key.key("burb.game.lose.zombies"), Sound.Source.VOICE, 0.75f, 1f)
     }
     object Alert {
-        const val GENERAL_ALERT = "mcc.game.map_alert"
-        const val GENERAL_UPDATE = "mcc.game.map_update"
-        const val OVERTIME_ALERT = "block.portal.travel"
+        val ALARM = Sound.sound(Key.key("burb.generic.alarm"), Sound.Source.VOICE, 1.25f, 1f)
     }
     object Tutorial {
         const val TUTORIAL_POP = "entity.item.pickup"
@@ -56,12 +51,10 @@ object Sounds {
         val INTERFACE_INTERACT = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 0.5f, 1f)
         val INTERFACE_INTERACT_FAIL = Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.MASTER, 0.5f, 0f)
         val TITLE_SCREEN_ENTER = Sound.sound(Key.key("entity.breeze.shoot"), Sound.Source.MASTER, 1f, 0.75f)
+        val ODE_TO_JOY = Sound.sound(Key.key("burb.generic.ode_to_joy"), Sound.Source.VOICE, 1f, 1f)
     }
     object Weapon {
-        val FOOT_SOLDIER_WEAPON_FIRE = Sound.sound(Key.key("burb.weapon.foot_soldier.fire"), Sound.Source.VOICE, 0.75f, 1f)
-
-        val PEASHOOTER_EXPLOSIVE_FIRE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.fire"), Sound.Source.VOICE, 1f, 1f)
-        val PEASHOOTER_EXPLOSIVE_VOICE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.voice"), Sound.Source.VOICE, 2f, 1f)
-        val PEASHOOTER_EXPLOSIVE_EXPLODE = Sound.sound(Key.key("burb.weapon.peashooter.ability.explosive.explode"), Sound.Source.VOICE, 2.5f, 1f)
+        const val RELOAD_TICK = "block.note_block.hat"
+        val RELOAD_SUCCESS = Sound.sound(Key.key("block.note_block.pling"), Sound.Source.MASTER, 1f, 1.5f)
     }
 }

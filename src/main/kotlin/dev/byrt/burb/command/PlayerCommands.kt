@@ -47,7 +47,7 @@ class PlayerCommands {
     @Command("character")
     @CommandDescription("Opens character selection screen.")
     fun setCharacter(css: CommandSourceStack) {
-        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE) {
+        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
             val player = css.sender as Player
             if(player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
@@ -58,7 +58,7 @@ class PlayerCommands {
     @Command("teams")
     @CommandDescription("Opens team selection screen.")
     fun setTeam(css: CommandSourceStack) {
-        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE) {
+        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
             val player = css.sender as Player
             BurbInterface(player, BurbInterfaceType.TEAM_SELECT)
         }

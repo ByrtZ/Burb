@@ -2,10 +2,7 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
-import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.LobbyManager
-import dev.byrt.burb.music.Jukebox
-import dev.byrt.burb.music.Music
 import dev.byrt.burb.plugin
 
 import org.bukkit.event.EventHandler
@@ -13,6 +10,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerResourcePackStatusEvent
 import org.bukkit.scheduler.BukkitRunnable
 
+@Suppress("unused")
 class ResourcePackEvent: Listener {
     @EventHandler
     private fun onResourcePackStatusUpdate(e: PlayerResourcePackStatusEvent) {

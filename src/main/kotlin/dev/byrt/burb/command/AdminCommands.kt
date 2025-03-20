@@ -1,11 +1,14 @@
 package dev.byrt.burb.command
 
 import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.game.ScoreManager
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -110,6 +113,16 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             LobbyManager.playerJoinTitleScreen(player)
+        }
+    }
+
+    @Command("debug displayscore <team>")
+    @CommandDescription("Debug.")
+    @Permission("burb.cmd.debug")
+    fun debugDisplayScore(css: CommandSourceStack, @Argument("team") team: Teams) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            player.sendMessage(Formatting.allTags.deserialize("$team: DIS: ${ScoreManager.getDisplayScore(team)}"))
         }
     }
 }

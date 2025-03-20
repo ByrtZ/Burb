@@ -122,7 +122,6 @@ object GameManager {
         if (RoundManager.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
                 player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
-                player.playSound(player.location, Sounds.Start.START_GAME_SUCCESS, 1f, 1f)
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
                 Jukebox.stopMusicLoop(player, Music.LOBBY_WAITING)
                 if (player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
@@ -160,7 +159,6 @@ object GameManager {
         for(player in Bukkit.getOnlinePlayers()) {
             Jukebox.disconnect(player)
             player.playSound(Sounds.Round.ROUND_END)
-            player.playSound(player.location, Sounds.Music.ROUND_OVER_MUSIC, SoundCategory.VOICE, 0.85f, 1f)
             player.showTitle(
                 Title.title(
                     Component.text("Round Over!", NamedTextColor.RED, TextDecoration.BOLD),
@@ -283,30 +281,28 @@ object CapturePointManager {
     }
 
     fun clearCapturePoints() {
-        capturePoints.keys.forEach { removeCapturePoint(it) }
+        for(point in capturePoints) removeCapturePoint(point.key)
         suburbinatingTeam = Teams.NULL
     }
 
     private fun addCapturePoint(capturePoint: CapturePoint, location: Location) {
-        if (capturePoints.containsKey(capturePoint)) return
+        if(capturePoints.containsKey(capturePoint)) return
         capturePoints[capturePoint] = location
         capturePoint.location = location
         capturePointTask(capturePoint)
     }
 
     private fun removeCapturePoint(capturePoint: CapturePoint) {
-        capturePoints[capturePoint]?.let {
-            capturePointTasks[capturePoint]?.cancel()
-            capturePointTasks.remove(capturePoint)
-            capturedPoints.remove(capturePoint)
+        capturePointTasks[capturePoint]?.cancel()
+        capturePointTasks.remove(capturePoint)
+        capturedPoints.remove(capturePoint)
 
-            capturePoint.location = Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5)
+        capturePoint.location = Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5)
 
-            Bukkit.getWorlds().forEach { world ->
-                world.getEntitiesByClass(TextDisplay::class.java)
-                    .filter { it.scoreboardTags.contains("burb.game.capture_point.text_display") }
-                    .forEach { it.remove() }
-            }
+        Bukkit.getWorlds().forEach { world ->
+            world.getEntitiesByClass(TextDisplay::class.java)
+                .filter { it.scoreboardTags.contains("burb.game.capture_point.text_display") }
+                .forEach { it.remove() }
         }
         capturePoints.remove(capturePoint)
     }
@@ -352,10 +348,10 @@ object CapturePointManager {
             var textDisplay: TextDisplay? = null
 
             override fun run() {
-                if (GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
+                if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
 
                 val location = capturePoint.location
-                if (textDisplay == null || textDisplay!!.isDead) {
+                if(textDisplay == null || textDisplay!!.isDead) {
                     textDisplay = location.world.spawn(location.clone().add(0.0, 7.0, 0.0), TextDisplay::class.java).apply {
                         scoreboardTags.add("burb.game.capture_point.text_display")
                         alignment = TextDisplay.TextAlignment.CENTER
@@ -376,8 +372,9 @@ object CapturePointManager {
                     else -> Teams.NULL
                 }
 
-                if (!contested) {
-                    when (dominatingTeam) {
+                // Uncontested progress adding
+                if(!contested) {
+                    when(dominatingTeam) {
                         Teams.PLANTS -> {
                             if (zombieProgress > 0) zombieProgress--
                             else if (plantProgress < REQUIRED_CAPTURE_SCORE) {
@@ -396,43 +393,61 @@ object CapturePointManager {
                     }
                 }
 
+                // Bump capture progress back up if uncontested but team had last captured it
+                if(lastCapturedTeam == dominatingTeam && plantProgress >= 1 && plantProgress > REQUIRED_CAPTURE_SCORE && !contested && plants == 0 && zombies == 0) {
+                    plantProgress++
+                }
+                // Bump capture progress back up if uncontested but team had last captured it
+                if(lastCapturedTeam == dominatingTeam && zombieProgress >= 1 && zombieProgress > REQUIRED_CAPTURE_SCORE  && !contested && plants == 0 && zombies == 0) {
+                    zombieProgress++
+                }
+
+                // Uncapture point
                 if(plantProgress == 0 && zombieProgress == 0) {
                     capturedPoints.remove(capturePoint)
                 }
 
-                textDisplay!!.text(Formatting.allTags.deserialize("<yellow><bold>CAPTURE POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><reset>Dominating Team: ${dominatingTeam.teamColourTag}${dominatingTeam.teamName}<newline><reset>Capture Status: <burbcolour>${
+                // Point text display information
+                textDisplay!!.text(Formatting.allTags.deserialize("<yellow><bold>POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><reset>Status: <burbcolour>${
                     when {
                         plantProgress == REQUIRED_CAPTURE_SCORE -> "Plants own point"
                         zombieProgress == REQUIRED_CAPTURE_SCORE -> "Zombies own point"
                         dominatingTeam == Teams.PLANTS -> "Plants taking over"
                         dominatingTeam == Teams.ZOMBIES -> "Zombies taking over"
                         contested -> "<reset><red><b>CONTESTED"
-                        else -> "<reset><red><b>UNCONTESTED"
+                        else -> "<reset><b>UNCONTESTED"
                     }
-                }<reset><newline><b>P</b>${plantProgress} | <b>Z</b>${zombieProgress}<newline>"))
+                }<reset><newline><newline>DEBUG CAPTURE PROGRESS<newline><b><plantscolour>P</b>${plantProgress} | <b><zombiescolour>Z</b>${zombieProgress}<newline>"))
 
-                spawnCaptureParticles(location, dominatingTeam)
+                // Coloured particle ring to show point status
+                spawnCaptureParticles(location, dominatingTeam, plantProgress, zombieProgress, contested)
 
-                if ((plantProgress == REQUIRED_CAPTURE_SCORE || zombieProgress == REQUIRED_CAPTURE_SCORE) && lastCapturedTeam != dominatingTeam) {
+                // On capture point
+                if((plantProgress == REQUIRED_CAPTURE_SCORE || zombieProgress == REQUIRED_CAPTURE_SCORE) && lastCapturedTeam != dominatingTeam) {
                     if(dominatingTeam !in listOf(Teams.NULL, Teams.SPECTATOR)) {
-                        if (plantProgress >= REQUIRED_CAPTURE_SCORE) ScoreManager.addPlantsScore(1000)
-                        if (zombieProgress >= REQUIRED_CAPTURE_SCORE) ScoreManager.addZombiesScore(1000)
+                        if(plantProgress >= REQUIRED_CAPTURE_SCORE) ScoreManager.addPlantsScore(1000)
+                        if(zombieProgress >= REQUIRED_CAPTURE_SCORE) ScoreManager.addZombiesScore(1000)
                         capturedPoints[capturePoint] = dominatingTeam
                         lastCapturedTeam = dominatingTeam
                         Bukkit.getOnlinePlayers().forEach {
-                            it.sendMessage(Formatting.allTags.deserialize("CAPTURE POINT $capturePoint captured by $dominatingTeam"))
+                            it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>Point $capturePoint<reset> is now controlled by the ${dominatingTeam.teamColourTag}${dominatingTeam.teamName}<reset>."))
+                            it.playSound(if(it.burbPlayer().playerTeam == lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
                         }
                     }
                 }
-                if (plantProgress != REQUIRED_CAPTURE_SCORE || zombieProgress != REQUIRED_CAPTURE_SCORE) {
+                // Increment score if not captured
+                if(plantProgress != REQUIRED_CAPTURE_SCORE || zombieProgress != REQUIRED_CAPTURE_SCORE) {
                     if (capturedPoints.containsKey(capturePoint) && suburbinatingTeam != capturedPoints[capturePoint]) {
-                        ScoreManager.addScore(capturedPoints[capturePoint]!!, 1)
+                        capturedPoints[capturePoint]?.let { ScoreManager.addScore(it, 1) }
                     }
                 }
 
-                if (capturedPoints.containsKey(capturePoint)) {
-                    ScoreManager.addScore(capturedPoints[capturePoint]!!, 2)
+                // Increment score if captured
+                if(capturedPoints.containsKey(capturePoint)) {
+                    capturedPoints[capturePoint]?.let { ScoreManager.addScore(it, 2) }
                 }
+
+                // Check for suburbination
                 updateSuburbination()
             }
         }
@@ -440,7 +455,7 @@ object CapturePointManager {
         capturePointTasks[capturePoint] = task
     }
 
-    private fun spawnCaptureParticles(location: Location, dominatingTeam: Teams) {
+    private fun spawnCaptureParticles(location: Location, dominatingTeam: Teams, plantProgress: Int, zombieProgress: Int, contested: Boolean) {
         object : BukkitRunnable() {
             override fun run() {
                 repeat(32) { i ->
@@ -451,7 +466,16 @@ object CapturePointManager {
                         Particle.DUST,
                         location.x + x, location.y + 0.25, location.z + z,
                         1, 0.0, 0.0, 0.0, 0.0,
-                        Particle.DustOptions(if (dominatingTeam == Teams.PLANTS) Color.LIME else if (dominatingTeam == Teams.ZOMBIES) Color.PURPLE else Color.GRAY, 0.75f),
+                        Particle.DustOptions(
+                            when {
+                                plantProgress == REQUIRED_CAPTURE_SCORE -> Color.LIME
+                                zombieProgress == REQUIRED_CAPTURE_SCORE -> Color.PURPLE
+                                dominatingTeam == Teams.PLANTS -> Color.LIME
+                                dominatingTeam == Teams.ZOMBIES -> Color.PURPLE
+                                contested -> Color.RED
+                                else -> Color.WHITE
+                            }, 0.75f
+                        ),
                         true
                     )
                 }
@@ -531,9 +555,7 @@ object ScoreManager {
             }
             Teams.ZOMBIES -> {
                 (this.zombiesScore / 100000) * 100
-            } else ->  {
-                0
-            }
+            } else -> 0
         }
     }
 

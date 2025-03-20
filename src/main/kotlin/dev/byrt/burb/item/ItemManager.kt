@@ -62,6 +62,8 @@ object ItemManager {
                 Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>${burbPlayerCharacter.characterMainWeapon.weaponLore}").decoration(TextDecoration.ITALIC, false)
             ))
+            //TODO: SETTING MELEE WEAPON DAMAGE
+            //mainWeaponMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, AttributeModifier(NamespacedKey.minecraft("generic.attack_damage"), burbPlayerCharacter.characterMainWeapon.weaponDamage, AttributeModifier.Operation.ADD_NUMBER))
         } else {
             mainWeaponMeta.lore(listOf(
                 Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
@@ -146,13 +148,13 @@ object ItemManager {
  */
 enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: String, val weaponType: BurbMainWeaponType, val weaponDamage: Double, val fireRate: Int, val reloadSpeed: Int, val maxAmmo: Int, val projectileVelocity: Double, val weaponMaterial: Material, val useSound: String, val customModelData: Int) {
     NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", 0),
-    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.25, 8, 40, 12, 2.0, Material.POPPED_CHORUS_FRUIT, "null",7),
-    PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",3),
-    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,1.0, 2, 55, 30, 3.0, Material.POPPED_CHORUS_FRUIT, "null",0),
-    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 14, 45, 16, 4.0, Material.POPPED_CHORUS_FRUIT, "null",8),
+    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.25, 8, 40, 12, 2.0, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire",7),
+    PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "burb.weapon.chomper.fire",3),
+    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,1.0, 2, 55, 30, 3.0, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire",0),
+    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 14, 45, 16, 4.0, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire",8),
     ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 4, 50, 30, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
     ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",1),
-    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,2.0, 16, 65, 16, 1.5, Material.POPPED_CHORUS_FRUIT, "null",4),
+    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,2.0, 16, 65, 16, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire",4),
     ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 18, 60, 12, 4.25, Material.POPPED_CHORUS_FRUIT, "null",6)
 }
 
@@ -184,14 +186,14 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
 
     ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "", "burb.character.zombies_scout.ability.1", Material.POTATO),
     ZOMBIES_SCOUT_ABILITY_2("ZPG", "", "burb.character.zombies_scout.ability.2", Material.POTATO),
-    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "", "burb.character.zombies_scout.ability.3", Material.POTATO),
+    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "", "burb.character.zombies_scout.ability.3", Material.DISC_FRAGMENT_5),
 
     ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", Material.POTATO),
     ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", Material.POTATO),
     ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "", "burb.character.zombies_heavy.ability.3", Material.POTATO),
 
     ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", Material.POTATO),
-    ZOMBIES_HEALER_ABILITY_2("Warp", "", "burb.character.zombies_healer.ability.2", Material.POTATO),
+    ZOMBIES_HEALER_ABILITY_2("Warp", "", "burb.character.zombies_healer.ability.2", Material.DISC_FRAGMENT_5),
     ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", Material.POTATO),
 
     ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", Material.POTATO),

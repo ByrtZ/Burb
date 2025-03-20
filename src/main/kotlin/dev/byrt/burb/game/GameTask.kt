@@ -78,7 +78,7 @@ object GameTask {
                     if(Timer.getTimer() in 4..10) {
                         if(Timer.getTimer() == 10) {
                             for(player in Bukkit.getOnlinePlayers()) {
-                                player.playSound(player.location, Sounds.Music.GAME_STARTING_MUSIC, 1f, 1f)
+                                player.playSound(Sounds.Alert.ALARM)
                             }
                         }
                         for(player in Bukkit.getOnlinePlayers()) {
