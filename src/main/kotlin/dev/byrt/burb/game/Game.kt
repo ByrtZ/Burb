@@ -48,10 +48,12 @@ object Game {
         ScoreManager.setPlantsScore(0)
         ScoreManager.setZombiesScore(0)
         CapturePointManager.clearCapturePoints()
+        Jukebox.resetMusicStress()
         for(player in Bukkit.getOnlinePlayers()) {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.disableTeamGlowing(player)
             }
+            Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
         }
     }

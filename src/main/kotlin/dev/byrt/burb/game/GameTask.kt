@@ -5,6 +5,7 @@ import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
@@ -153,6 +154,15 @@ object GameTask {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
+                    }
+                    if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 240)..GameManager.GameTime.IN_GAME_TIME) {
+                        Jukebox.setMusicStress(MusicStress.LOW)
+                    }
+                    if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
+                        Jukebox.setMusicStress(MusicStress.MEDIUM)
+                    }
+                    if(Timer.getTimer() in 90..(GameManager.GameTime.IN_GAME_TIME - 660)) {
+                        Jukebox.setMusicStress(MusicStress.HIGH)
                     }
                     if(Timer.getTimer() in 0..10) {
                         for(player in Bukkit.getOnlinePlayers()) {

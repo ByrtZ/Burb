@@ -26,7 +26,7 @@ class InteractEvent: Listener {
                 if(e.player.inventory.itemInMainHand.type == Material.WOODEN_SWORD && e.action.isLeftClick && !e.player.hasCooldown(Material.WOODEN_SWORD)) {
                     ItemUsage.useMeleeWeapon(e.player, e.player.inventory.itemInMainHand)
                 }
-                if(e.player.inventory.itemInMainHand.type == Material.DISC_FRAGMENT_5 && e.action.isRightClick && !e.player.hasCooldown(Material.DISC_FRAGMENT_5)) {
+                if(e.player.inventory.itemInMainHand.type in listOf(Material.YELLOW_DYE, Material.ORANGE_DYE, Material.RED_DYE) && e.action.isRightClick && !e.player.hasCooldown(e.player.inventory.itemInMainHand.type)) {
                     ItemUsage.useAbility(e.player, e.player.inventory.itemInMainHand)
                 }
             }

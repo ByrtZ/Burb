@@ -104,6 +104,7 @@ object ItemManager {
             val abilityItemMeta = abilityItem.itemMeta
             abilityItemMeta.setJukeboxPlayable(null)
             abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
+            abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
             abilityItemMeta.displayName(Formatting.allTags.deserialize("<${ItemRarity.COMMON.rarityColour}>${if(ability.abilityName == "") ability.abilityId + ".name" else ability.abilityName}").decoration(TextDecoration.ITALIC, false))
             abilityItemMeta.lore(listOf(
                     Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.UTILITY.typeGlyph}").decoration(TextDecoration.ITALIC, false),
@@ -120,7 +121,9 @@ object ItemManager {
         player.inventory.setItemInMainHand(null)
         player.inventory.setItemInOffHand(null)
         player.inventory.remove(Material.POTATO)
-        player.inventory.remove(Material.DISC_FRAGMENT_5)
+        player.inventory.remove(Material.RED_DYE)
+        player.inventory.remove(Material.ORANGE_DYE)
+        player.inventory.remove(Material.YELLOW_DYE)
         player.inventory.remove(Material.POPPED_CHORUS_FRUIT)
         player.inventory.remove(Material.WOODEN_SWORD)
     }
@@ -134,6 +137,12 @@ object ItemManager {
                 && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.projectile_velocity"))
                 && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.sound"))
         )
+    }
+
+    fun verifyAbility(item: ItemStack): Boolean {
+        return (item.persistentDataContainer.has(NamespacedKey(plugin, "burb.ability.id"))
+                && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.ability.cooldown"))
+                )
     }
 }
 
@@ -165,40 +174,64 @@ enum class BurbMainWeaponType(val weaponTypeName: String) {
     MELEE("Melee")
 }
 
-enum class BurbAbility(val abilityName: String, val abilityLore: String, val abilityId: String, val abilityMaterial: Material) {
-    NULL("null", "null", "null", Material.AIR),
+enum class BurbAbility(val abilityName: String, val abilityLore: String, val abilityId: String, val abilityMaterial: Material, val abilityCooldown: Int) {
+    NULL("null", "null", "null", Material.AIR, 0),
 
-    PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", Material.DISC_FRAGMENT_5),
-    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "", "burb.character.plants_scout.ability.2", Material.POTATO),
-    PLANTS_SCOUT_ABILITY_3("Hyper", "Zoomies!", "burb.character.plants_scout.ability.3", Material.DISC_FRAGMENT_5),
+    /** Chilli Bean Bomb **/
+    PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", Material.RED_DYE, 500),
+    /** Pea Gatling **/
+    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "", "burb.character.plants_scout.ability.2", Material.ORANGE_DYE, 600),
+    /** Hyper **/
+    PLANTS_SCOUT_ABILITY_3("Hyper", "Zoomies!", "burb.character.plants_scout.ability.3", Material.YELLOW_DYE, 400),
 
-    PLANTS_HEAVY_ABILITY_1("Goop", "", "burb.character.plants_heavy.ability.1", Material.POTATO),
-    PLANTS_HEAVY_ABILITY_2("Burrow", "", "burb.character.plants_heavy.ability.2", Material.POTATO),
-    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", Material.POTATO),
+    /** Goop **/
+    PLANTS_HEAVY_ABILITY_1("Goop", "", "burb.character.plants_heavy.ability.1", Material.RED_DYE, 450),
+    /** Burrow **/
+    PLANTS_HEAVY_ABILITY_2("Burrow", "", "burb.character.plants_heavy.ability.2", Material.ORANGE_DYE, 650),
+    /** Spikeweed **/
+    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", Material.YELLOW_DYE, 250),
 
-    PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", Material.POTATO),
-    PLANTS_HEALER_ABILITY_2("Sunbeam", "", "burb.character.plants_healer.ability.2", Material.POTATO),
-    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", Material.POTATO),
+    /** Heal Beam **/
+    PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", Material.RED_DYE, 40),
+    /** Sunbeam **/
+    PLANTS_HEALER_ABILITY_2("Sunbeam", "", "burb.character.plants_healer.ability.2", Material.ORANGE_DYE, 550),
+    /** Heal Flower **/
+    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", Material.YELLOW_DYE, 400),
 
-    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", Material.POTATO),
-    PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", Material.POTATO),
-    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", Material.POTATO),
+    /** Potato Mine **/
+    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", Material.RED_DYE, 200),
+    /** Garlic Drone **/
+    PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", Material.ORANGE_DYE, 475),
+    /** Tallnut Battlement **/
+    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", Material.YELLOW_DYE, 300),
 
-    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "", "burb.character.zombies_scout.ability.1", Material.POTATO),
-    ZOMBIES_SCOUT_ABILITY_2("ZPG", "", "burb.character.zombies_scout.ability.2", Material.POTATO),
-    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "", "burb.character.zombies_scout.ability.3", Material.DISC_FRAGMENT_5),
+    /** Zombie Stink Cloud **/
+    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "", "burb.character.zombies_scout.ability.1", Material.RED_DYE, 350),
+    /** ZPG **/
+    ZOMBIES_SCOUT_ABILITY_2("ZPG", "", "burb.character.zombies_scout.ability.2", Material.ORANGE_DYE, 675),
+    /** Rocket Jump **/
+    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "I have the high ground.", "burb.character.zombies_scout.ability.3", Material.YELLOW_DYE, 450),
 
-    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", Material.POTATO),
-    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", Material.POTATO),
-    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "", "burb.character.zombies_heavy.ability.3", Material.POTATO),
+    /** Super Ultra Ball **/
+    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", Material.RED_DYE, 450),
+    /** Turbo Twister **/
+    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", Material.ORANGE_DYE, 700),
+    /** Heroic Kick **/
+    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", Material.YELLOW_DYE, 250),
 
-    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", Material.POTATO),
-    ZOMBIES_HEALER_ABILITY_2("Warp", "", "burb.character.zombies_healer.ability.2", Material.DISC_FRAGMENT_5),
-    ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", Material.POTATO),
+    /** Heal Beam of Science **/
+    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", Material.RED_DYE, 40),
+    /** Warp **/
+    ZOMBIES_HEALER_ABILITY_2("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.2", Material.ORANGE_DYE, 175),
+    /** Sticky Explody Ball **/
+    ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", Material.YELLOW_DYE, 275),
 
-    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", Material.POTATO),
-    ZOMBIES_RANGED_ABILITY_2("Parrot Pal", "", "burb.character.zombies_ranged.ability.2", Material.POTATO),
-    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "", "burb.character.zombies_ranged.ability.3", Material.POTATO)
+    /** Barrel Blast **/
+    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", Material.RED_DYE, 750),
+    /** Parrot Pal **/
+    ZOMBIES_RANGED_ABILITY_2("Parrot Pal", "", "burb.character.zombies_ranged.ability.2", Material.ORANGE_DYE, 575),
+    /** Cannon Rodeo **/
+    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "", "burb.character.zombies_ranged.ability.3", Material.YELLOW_DYE, 625)
 }
 
 enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set<BurbAbility>) {

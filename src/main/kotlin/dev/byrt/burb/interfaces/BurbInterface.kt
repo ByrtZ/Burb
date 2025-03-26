@@ -50,10 +50,11 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
             if(player.burbPlayer().playerTeam == Teams.PLANTS) {
                 val plantsTeamItem = ItemStack(Material.BARRIER)
                 val plantsTeamItemMeta = plantsTeamItem.itemMeta
-                plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>You are already on this team!").decoration(TextDecoration.ITALIC, false))
+                plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
                 plantsTeamItem.itemMeta = plantsTeamItemMeta
                 pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT_FAIL)
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
                 }
             } else {
                 val plantsTeamItem = ItemStack(Material.LIME_DYE)
@@ -70,10 +71,11 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
             if(player.burbPlayer().playerTeam == Teams.ZOMBIES) {
                 val zombiesTeamItem = ItemStack(Material.BARRIER)
                 val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
-                zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>You are already on this team!").decoration(TextDecoration.ITALIC, false))
+                zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
                 zombiesTeamItem.itemMeta = zombiesTeamItemMeta
                 pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT_FAIL)
+                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
                 }
             } else {
                 val zombiesTeamItem = ItemStack(Material.PURPLE_DYE)

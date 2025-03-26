@@ -11,8 +11,11 @@ object Sounds {
         val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.4f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
         val GAME_INTRO_JINGLE = Sound.sound(Key.key("burb.game.intro_jingle"), Sound.Source.VOICE, 1f, 1f)
-        val SUBURBINATION_PLANTS = Sound.sound(Key.key("burb.game.suburbination.plants"), Sound.Source.VOICE, 0.5f, 1f)
-        val SUBURBINATION_ZOMBIES = Sound.sound(Key.key("burb.game.suburbination.zombies"), Sound.Source.VOICE, 0.5f, 1f)
+        val SUBURBINATION_PLANTS = Sound.sound(Key.key("burb.game.suburbination.plants"), Sound.Source.VOICE, 0.75f, 1f)
+        val SUBURBINATION_ZOMBIES = Sound.sound(Key.key("burb.game.suburbination.zombies"), Sound.Source.VOICE, 0.75f, 1f)
+        val RANDOM_LOW = Sound.sound(Key.key("burb.music.low.random"), Sound.Source.VOICE, 0.4f, 1f)
+        val RANDOM_MEDIUM = Sound.sound(Key.key("burb.music.medium.random"), Sound.Source.VOICE, 0.4f, 1f)
+        val RANDOM_HIGH = Sound.sound(Key.key("burb.music.high.random"), Sound.Source.VOICE, 0.4f, 1f)
         val DOWNTIME_LOOP = Sound.sound(Key.key("event.downtime.loop"), Sound.Source.VOICE, 1f, 1f)
         val DOWNTIME_SUSPENSE = Sound.sound(Key.key("event.downtime.suspense"), Sound.Source.VOICE, 1f, 1f)
         val NULL = Sound.sound(Key.key(""), Sound.Source.VOICE, 0f, 0f)
@@ -20,7 +23,7 @@ object Sounds {
     object Timer {
         val STARTING_123 = Sound.sound(Key.key("burb.generic.tick"), Sound.Source.VOICE, 1.25f, 1f)
         val STARTING_GO = Sound.sound(Key.key("block.end_portal.spawn"), Sound.Source.VOICE, 0.75f, 1f)
-        val TICK = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1f)
+        val TICK = Sound.sound(Key.key("burb.generic.tick"), Sound.Source.VOICE, 1.25f, 1f)
         val CLOCK_TICK = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1f)
         val CLOCK_TICK_HIGH = Sound.sound(Key.key("burb.generic.clock_tick"), Sound.Source.VOICE, 1.25f, 1.25f)
     }

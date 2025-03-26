@@ -11,6 +11,7 @@ import dev.byrt.burb.logger
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
@@ -235,7 +236,7 @@ object Timer {
     fun setTimer(newTime: Int, sender: CommandSender?) {
         if (newTime == timer) return
         this.timer = newTime
-        this.displayTime = String.format("%02d:%02d", (this.timer + 1) / 60, (this.timer + 1 ) % 60)
+        this.displayTime = String.format("%02d:%02d", (this.timer + 1) / 60, (this.timer + 1) % 60)
         InfoBoardManager.updateTimer()
         if (sender != null) {
             ChatUtility.broadcastDev("<dark_gray>Timer Updated: <yellow>${newTime}s<green> remaining<dark_gray> [${sender.name}].", true)
@@ -327,11 +328,11 @@ object CapturePointManager {
             }
             Bukkit.getOnlinePlayers().forEach { player ->
                 player.sendMessage(Formatting.allTags.deserialize(message))
-                if (Timer.getTimer() > 50) {
+                if (Timer.getTimer() > 90) {
                     val music = when (newSuburbinationTeam) {
                         Teams.PLANTS -> Music.SUBURBINATION_PLANTS
                         Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
-                        else -> Music.NULL
+                        else -> if(Jukebox.getMusicStress() == MusicStress.LOW) Music.RANDOM_LOW else if(Jukebox.getMusicStress() == MusicStress.MEDIUM) Music.RANDOM_MEDIUM else if(Jukebox.getMusicStress() == MusicStress.HIGH) Music.RANDOM_HIGH else Music.NULL
                     }
                     Jukebox.startMusicLoop(player, plugin, music)
                 }
@@ -481,6 +482,14 @@ object CapturePointManager {
                 }
             }
         }.runTask(plugin)
+    }
+
+    fun getSuburbinatingTeam(): Teams {
+        return suburbinatingTeam
+    }
+
+    fun isSuburbinating(): Boolean {
+        return suburbinatingTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)
     }
 }
 
