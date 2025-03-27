@@ -271,13 +271,13 @@ object CapturePointManager {
     private val capturePointTasks = mutableMapOf<CapturePoint, BukkitRunnable>()
     private val capturedPoints = mutableMapOf<CapturePoint, Teams>()
     private var suburbinatingTeam = Teams.NULL
-    const val REQUIRED_CAPTURE_SCORE = 200
+    const val REQUIRED_CAPTURE_SCORE = 100
 
     fun initializeCapturePoints() {
         listOf(
-            CapturePoint.A to Location(Bukkit.getWorlds()[0], -25.5, 4.0, 0.5),
-            CapturePoint.B to Location(Bukkit.getWorlds()[0], 11.5, 0.0, -44.5),
-            CapturePoint.C to Location(Bukkit.getWorlds()[0], 7.5, 0.0, 49.5)
+            CapturePoint.A to Location(Bukkit.getWorlds()[0], 80.5, 2.0, 104.5),
+            CapturePoint.B to Location(Bukkit.getWorlds()[0], 17.5, 3.0, 153.5),
+            CapturePoint.C to Location(Bukkit.getWorlds()[0], -43.5, 1.0, 108.5)
         ).forEach { (point, location) -> addCapturePoint(point, location) }
     }
 
@@ -469,11 +469,11 @@ object CapturePointManager {
                         1, 0.0, 0.0, 0.0, 0.0,
                         Particle.DustOptions(
                             when {
+                                contested -> Color.RED
                                 plantProgress == REQUIRED_CAPTURE_SCORE -> Color.LIME
                                 zombieProgress == REQUIRED_CAPTURE_SCORE -> Color.PURPLE
                                 dominatingTeam == Teams.PLANTS -> Color.LIME
                                 dominatingTeam == Teams.ZOMBIES -> Color.PURPLE
-                                contested -> Color.RED
                                 else -> Color.WHITE
                             }, 0.75f
                         ),

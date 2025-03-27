@@ -40,6 +40,12 @@ class DamageEvent: Listener {
 
     @EventHandler
     private fun onDamageByEntity(e: EntityDamageByEntityEvent) {
+        if(e.damager is Player && e.entity is Player) {
+            if(e.damager.vehicle != null) {
+                e.isCancelled = true
+                return
+            }
+        }
         e.isCancelled = false
     }
 }

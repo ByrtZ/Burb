@@ -56,7 +56,7 @@ object ItemUsage {
                 val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
                 snowball.velocity = snowballVelocity
                 // Offset projectile direction
-                snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.025, 0.025), Random.nextDouble(-0.025, 0.025), Random.nextDouble(-0.025, 0.025)))
+                snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125)))
                 // Projectile damage
                 usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)?.let { snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, it) }
                 // Projectile trail
@@ -158,6 +158,8 @@ object ItemUsage {
                                     val zpgEntity = player.world.spawn(player.eyeLocation, ItemDisplay::class.java).apply {
                                         setItemStack(ItemStack(Material.TNT))
                                         setGravity(false)
+                                        displayWidth = 1.5f
+                                        displayHeight = 1.5f
                                     }
                                     val eyeLocation = player.eyeLocation
                                     val direction = eyeLocation.direction.normalize()

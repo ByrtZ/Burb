@@ -8,8 +8,10 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -49,11 +51,9 @@ object ResourcePacker {
 
     private suspend fun fetch(url: String): ByteArray {
         val client = HttpClient(CIO)
-        return try {
-            val response: HttpResponse = client.get(url)
+        return client.use { clt ->
+            val response: HttpResponse = clt.get(url)
             response.readBytes()
-        } finally {
-            client.close()
         }
     }
 

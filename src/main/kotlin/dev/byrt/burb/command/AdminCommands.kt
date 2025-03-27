@@ -9,6 +9,7 @@ import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.util.CommitGrabber
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -123,6 +124,16 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             player.sendMessage(Formatting.allTags.deserialize("$team: DIS: ${ScoreManager.getDisplayScore(team)}"))
+        }
+    }
+
+    @Command("latestupdate")
+    @CommandDescription("Grabs latest commit")
+    @Permission("burb.cmd.updates")
+    fun latestCommit(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            ChatUtility.broadcastDev("<dark_gray>Fetching latest commit.", false)
+            CommitGrabber.grabLatestCommit()
         }
     }
 }

@@ -4,7 +4,9 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.item.ItemUsage
 
+import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.block.data.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerInteractEvent
@@ -28,6 +30,19 @@ class InteractEvent: Listener {
                 }
                 if(e.player.inventory.itemInMainHand.type in listOf(Material.YELLOW_DYE, Material.ORANGE_DYE, Material.RED_DYE) && e.action.isRightClick && !e.player.hasCooldown(e.player.inventory.itemInMainHand.type)) {
                     ItemUsage.useAbility(e.player, e.player.inventory.itemInMainHand)
+                }
+            }
+            if(e.player.gameMode != GameMode.CREATIVE) {
+                if(e.action.isRightClick
+                    && e.clickedBlock?.blockData is Openable
+                    || e.clickedBlock?.blockData is Directional
+                    || e.clickedBlock?.blockData is Orientable
+                    || e.clickedBlock?.blockData is Rotatable
+                    || e.clickedBlock?.blockData is Powerable
+                    || e.clickedBlock?.type == Material.FLOWER_POT
+                    || e.clickedBlock?.type == Material.BEACON
+                    || e.clickedBlock?.type?.name?.startsWith("POTTED_") == true) {
+                    e.isCancelled = true
                 }
             }
         }

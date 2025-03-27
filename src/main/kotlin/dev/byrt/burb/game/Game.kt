@@ -9,6 +9,7 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.util.CommitGrabber
 
 import org.bukkit.Bukkit
 
@@ -32,6 +33,7 @@ object Game {
     fun setup() {
         InfoBoardManager.buildScoreboard()
         TeamManager.buildDisplayTeams()
+        CommitGrabber.grabLatestCommit()
     }
 
     fun cleanup() {
