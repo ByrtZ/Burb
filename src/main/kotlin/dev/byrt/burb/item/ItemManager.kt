@@ -160,9 +160,9 @@ enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: Strin
     NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", 0),
     PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.25, 12, 50, 12, 1.85, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire",7),
     PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "burb.weapon.chomper.fire",3),
-    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,0.75, 3, 65, 30, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire",0),
+    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,0.5, 2, 65, 35, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire",0),
     PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 18, 60, 12, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire",8),
-    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 5, 50, 30, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
+    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 3, 50, 25, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
     ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,3.5, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",1),
     ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,0.5, 18, 65, 5, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire",4),
     ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 25, 75, 8, 4.0, Material.POPPED_CHORUS_FRUIT, "null",6)
