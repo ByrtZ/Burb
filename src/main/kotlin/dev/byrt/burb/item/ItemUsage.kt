@@ -50,12 +50,12 @@ object ItemUsage {
                 player.setCooldown(Material.POPPED_CHORUS_FRUIT, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.fire_rate"), PersistentDataType.INTEGER)!!)
             }
             for(bullets in 0..if(player.burbPlayer().playerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.SHOTGUN) 6 else 0) {
-                val snowball = player.world.spawn(player.eyeLocation.clone().add(Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125)), Snowball::class.java)
+                val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java) //.add(Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125))
                 snowball.shooter = player
                 // Projectile velocity
                 val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
                 snowball.velocity = snowballVelocity
-                // Offset projectile direction
+                // Projectile bloom
                 snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.095, 0.095), Random.nextDouble(-0.075, 0.075), Random.nextDouble(-0.095, 0.095)))
                 // Projectile damage
                 usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)?.let { snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, it) }
@@ -134,7 +134,7 @@ object ItemUsage {
                                         player.world.playSound(tnt.location, "burb.ability.peashooter.explosive.explode", SoundCategory.VOICE, 3f, 1f)
                                     }
                                 }.runTaskLater(plugin, 90L)
-                                this.cancel()
+                                cancel()
                             }
                         }
                     }.runTaskTimer(plugin, 0L, 1L)
@@ -145,6 +145,57 @@ object ItemUsage {
                         PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 12, 6, false, true),
                         PotionEffect(PotionEffectType.SPEED, 20 * 12, 6, false, true)
                     ))
+                }
+                BurbAbility.ZOMBIES_SCOUT_ABILITY_1.abilityId -> {
+                    val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
+                    val snowballVelocity = player.location.direction.multiply(0.75)
+                    snowball.velocity = snowballVelocity
+                    snowball.shooter = player
+                    object : BukkitRunnable() {
+                        override fun run() {
+                            if(snowball.isDead || !player.isOnline) {
+                                val smokeGrenadeLocation = snowball.location.clone().add(0.5, 1.0, 0.5)
+                                smokeGrenadeLocation.world.playSound(smokeGrenadeLocation, "block.lava.extinguish", SoundCategory.VOICE, 1f, 1f)
+                                object : BukkitRunnable() {
+                                    var smokeTimer = 0
+                                    override fun run() {
+                                        if(smokeTimer >= 48) {
+                                            cancel()
+                                        }
+                                        smokeGrenadeLocation.clone().world.spawnParticle(
+                                            Particle.DUST,
+                                            smokeGrenadeLocation,
+                                            150, 1.75, 1.5, 1.75, 0.0,
+                                            Particle.DustOptions(Color.PURPLE, 3.5f)
+                                        )
+                                        smokeGrenadeLocation.world.playSound(smokeGrenadeLocation, "block.lava.extinguish", SoundCategory.VOICE, 1f, 1f)
+                                        for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
+                                            if(nearbyPlayer.burbPlayer().playerTeam == Teams.PLANTS) {
+                                                if(nearbyPlayer.vehicle == null) {
+                                                    nearbyPlayer.damage(0.001, player)
+                                                    if(nearbyPlayer.health >= 1.0) {
+                                                        nearbyPlayer.health -= 1.0
+                                                    } else {
+                                                        nearbyPlayer.health = 0.0
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        smokeTimer++
+                                    }
+                                }.runTaskTimer(plugin, 0L, 5L)
+                                cancel()
+                            } else {
+                                snowball.location.world.spawnParticle(
+                                    Particle.DUST,
+                                    snowball.location,
+                                    1, 0.0, 0.0, 0.0, 0.0,
+                                    Particle.DustOptions(Color.PURPLE, 1.25f),
+                                    true
+                                )
+                            }
+                        }
+                    }.runTaskTimer(plugin, 0L, 2L)
                 }
                 BurbAbility.ZOMBIES_SCOUT_ABILITY_2.abilityId -> {
                     player.world.playSound(player.location, "burb.ability.foot_soldier.zpg.trigger", SoundCategory.VOICE, 0.5f, 1f)
