@@ -283,6 +283,7 @@ object CapturePointManager {
 
     fun clearCapturePoints() {
         for(point in capturePoints) removeCapturePoint(point.key)
+        capturePoints.clear()
         suburbinatingTeam = Teams.NULL
     }
 
@@ -305,7 +306,6 @@ object CapturePointManager {
                 .filter { it.scoreboardTags.contains("burb.game.capture_point.text_display") }
                 .forEach { it.remove() }
         }
-        capturePoints.remove(capturePoint)
     }
 
     fun updateSuburbination() {
@@ -349,6 +349,13 @@ object CapturePointManager {
             var textDisplay: TextDisplay? = null
 
             override fun run() {
+                if(GameManager.getGameState() == GameState.GAME_END) {
+                    plantProgress = 0
+                    zombieProgress = 0
+                    dominatingTeam = Teams.NULL
+                    lastCapturedTeam = Teams.NULL
+                    textDisplay?.remove()
+                }
                 if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
 
                 val location = capturePoint.location

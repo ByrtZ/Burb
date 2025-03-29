@@ -4,8 +4,8 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
-import org.bukkit.NamespacedKey
 
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -24,18 +24,20 @@ class ProjectileEvent: Listener {
                     if(player.burbPlayer().playerTeam == Teams.SPECTATOR) return
                     if(shooter.burbPlayer().playerTeam == Teams.SPECTATOR) return
                     if(player.burbPlayer().playerTeam != shooter.burbPlayer().playerTeam) {
-                        player.damage(0.001, shooter)
-                        val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
-                        if(player.health >= damageDealt) {
-                            player.health -= damageDealt
-                        } else {
-                            player.health = 0.0
+                        if(e.entity.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))) {
+                            player.damage(0.001, shooter)
+                            val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
+                            if(player.health >= damageDealt) {
+                                player.health -= damageDealt
+                            } else {
+                                player.health = 0.0
+                            }
+                            player.world.playSound(player.location, "entity.player.hurt", 0.5f, 1f)
+                            shooter.playSound(shooter.location, "entity.arrow.hit_player", 0.25f, 0f)
+                            PlayerVisuals.damageIndicator(player, damageDealt)
+                            e.entity.remove()
+                            e.isCancelled = true
                         }
-                        player.world.playSound(player.location, "entity.player.hurt", 0.5f, 1f)
-                        shooter.playSound(shooter.location, "entity.arrow.hit_player", 0.25f, 0f)
-                        PlayerVisuals.damageIndicator(player, damageDealt)
-                        e.entity.remove()
-                        e.isCancelled = true
                     }
                 }
             }
