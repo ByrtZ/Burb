@@ -12,13 +12,18 @@ import io.ktor.client.statement.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+import net.kyori.adventure.resource.ResourcePackInfo
+import net.kyori.adventure.resource.ResourcePackRequest
+
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 
+import java.net.URI
 import java.security.MessageDigest
+import java.util.*
 
 object ResourcePacker {
     private const val PACK_URL = "https://github.com/ByrtZ/BurbResourcePack/releases/latest/download/Burb.zip"
@@ -29,7 +34,7 @@ object ResourcePacker {
         }
         launch {
             val latestPack = getLatestPack()
-            player.setResourcePack(latestPack.first, latestPack.second, false)
+            player.sendResourcePacks(ResourcePackRequest.resourcePackRequest().packs({ ResourcePackInfo.resourcePackInfo(UUID.randomUUID(), URI(latestPack.first), latestPack.second)}))
         }
     }
 
