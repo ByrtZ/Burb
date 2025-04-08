@@ -34,12 +34,13 @@ object LobbyBall {
         val ballDisplayEntity = lobbyBallSpawnLocation.world.spawnEntity(lobbyBallSpawnLocation, EntityType.ITEM_DISPLAY) as ItemDisplay
         val nerdBallItem = ItemStack(Material.ECHO_SHARD, 1)
         val nerdBallItemMeta = nerdBallItem.itemMeta
-        nerdBallItemMeta.setCustomModelData(1)
+        nerdBallItemMeta.itemModel = NamespacedKey("minecraft", "nerd_emoji")
         nerdBallItem.itemMeta = nerdBallItemMeta
         ballDisplayEntity.setItemStack(nerdBallItem)
         ballDisplayEntity.setGravity(false)
         ballDisplayEntity.transformation = Transformation(Vector3f(0.0f, 0.8f, 0.0f), ballDisplayEntity.transformation.leftRotation, Vector3f(1f, 1f, 1f), ballDisplayEntity.transformation.rightRotation)
         ballDisplayEntity.brightness = Display.Brightness(15, 15)
+        ballDisplayEntity.teleportDuration = 1
         val ballPhysics = LobbyBallPhysics(ballDisplayEntity)
         ballMap[ballDisplayEntity.entityId] = ballPhysics
         ballPhysics.start()
@@ -75,8 +76,6 @@ object LobbyBall {
 
 class LobbyBallPhysics(val ball: ItemDisplay) {
     private var velocity = Vector(0, 0, 0)
-    private var rotation = Vector(0, 0, 0)
-    private var rotationDampening = 0.95
     private var friction = 0.98
     fun start() {
         object : BukkitRunnable() {
@@ -132,7 +131,7 @@ class LobbyBallPhysics(val ball: ItemDisplay) {
                     f.ticksToDetonate = 1
                     velocity.zero()
                     ball.teleport(LobbyBall.lobbyBallSpawnLocation)
-                    ball.location.world.playSound(Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.VOICE, 1.0f, 1.0f))
+                    ball.location.world.playSound(ball.location, "entity.enderman.teleport", SoundCategory.VOICE, 1.0f, 1.0f)
                 }
                 if(LobbyBall.isInZombiesNet(ball)) {
                     val f: Firework = ball.world.spawn(Location(ball.location.world, ball.location.x, ball.location.y + 1.0, ball.location.z), Firework::class.java)

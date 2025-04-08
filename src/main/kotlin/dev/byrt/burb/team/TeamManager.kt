@@ -196,5 +196,5 @@ enum class Teams(val teamName: String, val teamHexColour: TextColor, val teamCol
     SPECTATOR("Spectator", TextColor.fromHexString("#aaaaaa")!!, Color.GRAY, "<speccolour>"),
     PLANTS("Plants", TextColor.color(21, 237, 50), Color.LIME, "<plantscolour>"),
     ZOMBIES("Zombies", TextColor.color(136, 21, 237), Color.PURPLE, "<zombiescolour>"),
-    NULL("null", TextColor.color(0, 0, 0), Color.BLACK,"")
+    NULL("null", TextColor.color(0, 0, 0), Color.BLACK,"<#000000>")
 }

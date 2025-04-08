@@ -78,7 +78,7 @@ object ItemUsage {
                 }.runTaskTimer(plugin, 0L, 2L)
             }
             // Use sound
-            player.world.playSound(player.location, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING).toString(), 0.75f, 1f)
+            usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING)?.let { player.world.playSound(player.location, it, 0.75f, 1f) }
         }
     }
 
@@ -110,7 +110,7 @@ object ItemUsage {
 
     fun useMeleeWeapon(player: Player, usedItem: ItemStack) {
         // Use sound
-        player.world.playSound(player.location, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING).toString(), 1f, 1f)
+        usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING)?.let { player.world.playSound(player.location, it, 1f, 1f) }
     }
 
     fun useAbility(player: Player, usedItem: ItemStack) {
@@ -211,6 +211,7 @@ object ItemUsage {
                                         setGravity(false)
                                         displayWidth = 1.5f
                                         displayHeight = 1.5f
+                                        teleportDuration = 1
                                     }
                                     val eyeLocation = player.eyeLocation
                                     val direction = eyeLocation.direction.normalize()

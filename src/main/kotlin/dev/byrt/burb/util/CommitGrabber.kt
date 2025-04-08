@@ -21,6 +21,10 @@ import java.util.stream.Collectors
 
 @Suppress("unstableApiUsage")
 object CommitGrabber {
+    private val latestDefaultBranchCommitURL = URL("https://api.github.com/repos/ByrtZ/Burb/commits?per_page=1")
+    private val branchesURL = URL("https://api.github.com/repos/ByrtZ/Burb/branches")
+    private val singleCommitURLSuffix = "?per_page=1"
+    //TODO: Add ability to view commits on each branch
     fun grabLatestCommit() = runBlocking {
         for(world in Bukkit.getWorlds()) {
             for(textDisplay in world.getEntitiesByClass(TextDisplay::class.java)) {
@@ -40,11 +44,10 @@ object CommitGrabber {
     }
 
     private suspend fun requestCommitData(): Pair<String, String>? {
-        val url = URL("https://api.github.com/repos/ByrtZ/Burb/commits?per_page=1")
         var connection: HttpURLConnection? = null
         return try {
             connection = withContext(Dispatchers.IO) {
-                url.openConnection()
+                latestDefaultBranchCommitURL.openConnection()
             } as HttpURLConnection
             connection.requestMethod = "GET"
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
