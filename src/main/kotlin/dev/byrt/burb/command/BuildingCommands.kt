@@ -23,7 +23,7 @@ class BuildingCommands {
     fun echo(css: CommandSourceStack, name: String) {
         if(css.sender is Player) {
             val sender = css.sender as Player
-            val modelDisplay = sender.location.world.spawn(Location(sender.location.world, sender.x, sender.y, sender.z, 0.0f, 0.0f), ItemDisplay::class.java)
+            val modelDisplay = sender.location.world.spawn(Location(sender.location.world, sender.x, sender.eyeLocation.y, sender.z, 0.0f, 0.0f), ItemDisplay::class.java)
             val modelItem = ItemStack(Material.ECHO_SHARD, 1)
             val modelItemMeta = modelItem.itemMeta
             modelItemMeta.itemModel = NamespacedKey("minecraft", name)
