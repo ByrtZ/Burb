@@ -211,6 +211,7 @@ object ItemUsage {
                                         setGravity(false)
                                         displayWidth = 1.5f
                                         displayHeight = 1.5f
+                                        teleportDuration = 1
                                     }
                                     val eyeLocation = player.eyeLocation
                                     val direction = eyeLocation.direction.normalize()

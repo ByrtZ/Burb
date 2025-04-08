@@ -95,6 +95,7 @@ enum class Music(val track: Sound, val trackLengthSecs: Int) {
     RANDOM_MEDIUM(Sounds.Music.RANDOM_MEDIUM, 60),
     RANDOM_HIGH(Sounds.Music.RANDOM_HIGH, 60),
     OVERTIME(Sounds.Music.OVERTIME_MUSIC, 60),
+    POST_GAME(Sounds.Music.POST_GAME_MUSIC, 80),
     DOWNTIME_LOOP(Sounds.Music.DOWNTIME_LOOP, 191),
     DOWNTIME_SUSPENSE(Sounds.Music.DOWNTIME_SUSPENSE, 219),
     NULL(Sounds.Music.NULL, Int.MAX_VALUE)

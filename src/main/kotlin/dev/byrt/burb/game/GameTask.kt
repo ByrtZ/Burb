@@ -222,7 +222,7 @@ object GameTask {
                     }
                     if(Timer.getTimer() == 80) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.playSound(Sounds.Music.POST_GAME_MUSIC)
+                            Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
                         }
                     }
                     if(Timer.getTimer() <= 0) {

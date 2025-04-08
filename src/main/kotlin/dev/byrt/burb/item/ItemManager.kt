@@ -88,15 +88,13 @@ object ItemManager {
             mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE, burbPlayerCharacter.characterMainWeapon.projectileVelocity)
         }
 
-        mainWeaponMeta.setCustomModelData(burbPlayerCharacter.characterMainWeapon.customModelData)
+        mainWeaponMeta.itemModel = NamespacedKey("minecraft", burbPlayerCharacter.characterMainWeapon.itemModel)
 
         mainWeapon.itemMeta = mainWeaponMeta
         burbPlayer.getBukkitPlayer().inventory.addItem(mainWeapon)
 
-        // If melee main weapon, add opposing hand display weapon. Ensure model data is incremented by one in pack.
+        // If melee main weapon, add opposing hand display weapon.
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
-            mainWeaponMeta.setCustomModelData(burbPlayerCharacter.characterMainWeapon.customModelData + 1)
-            mainWeapon.itemMeta = mainWeaponMeta
             burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
         }
 
@@ -155,16 +153,16 @@ object ItemManager {
  * @param maxAmmo: Max amount of ammunition held by the weapon
  * @param weaponMaterial: Item material
  */
-enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: String, val weaponType: BurbMainWeaponType, val weaponDamage: Double, val fireRate: Int, val reloadSpeed: Int, val maxAmmo: Int, val projectileVelocity: Double, val weaponMaterial: Material, val useSound: String, val customModelData: Int) {
-    NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", 0),
-    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.85, 12, 50, 12, 1.85, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire",7),
-    PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "burb.weapon.chomper.fire",3),
-    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,0.65, 3, 65, 35, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire",0),
-    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 18, 60, 12, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire",8),
-    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 3, 55, 25, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire",1),
-    ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null",1),
-    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,0.85, 18, 65, 6, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire",4),
-    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 25, 75, 8, 4.0, Material.POPPED_CHORUS_FRUIT, "null",6)
+enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: String, val weaponType: BurbMainWeaponType, val weaponDamage: Double, val fireRate: Int, val reloadSpeed: Int, val maxAmmo: Int, val projectileVelocity: Double, val weaponMaterial: Material, val useSound: String, val itemModel: String) {
+    NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", "null"),
+    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,2.85, 12, 50, 12, 1.85, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire","pea_cannon"),
+    PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "burb.weapon.chomper.fire","chomper_fangs"),
+    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,0.65, 3, 65, 35, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire",""),
+    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 18, 60, 12, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire","spike_shot"),
+    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 3, 55, 25, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire","blaster"),
+    ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null","melee_gloves_l"),
+    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,0.85, 18, 65, 6, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire","goo_blaster"),
+    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 25, 75, 8, 4.0, Material.POPPED_CHORUS_FRUIT, "null","")
 }
 
 enum class BurbMainWeaponType(val weaponTypeName: String) {

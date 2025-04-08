@@ -21,7 +21,7 @@ class ResourcePackEvent: Listener {
                     override fun run() {
                         LobbyManager.playerJoinTitleScreen(e.player)
                     }
-                }.runTaskLater(plugin, 5L)
+                }.runTaskLater(plugin, 30L)
             }
         }
         if(e.status in listOf(PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD, PlayerResourcePackStatusEvent.Status.FAILED_RELOAD, PlayerResourcePackStatusEvent.Status.DISCARDED, PlayerResourcePackStatusEvent.Status.INVALID_URL)) {
