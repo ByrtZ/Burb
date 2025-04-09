@@ -163,7 +163,6 @@ object ItemUsage {
                             override fun run() {
                                 if(player.vehicle == gatlingVehicle) {
                                     player.sendActionBar(Formatting.allTags.deserialize(Translation.Weapon.GATLING_CONTROLS.replace("%s", bulletsRemaining.toString())))
-                                    gatlingVehicle.setRotation(player.yaw, player.pitch)
                                 }
                                 if(player.isSneaking && player.inventory.itemInMainHand.type == Material.BREEZE_ROD) {
                                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
@@ -179,7 +178,7 @@ object ItemUsage {
                                     gatlingVehicle.eject()
                                     gatlingVehicle.remove()
                                     player.inventory.remove(Material.BREEZE_ROD)
-                                    player.velocity = player.velocity.add(Vector(0.0, 0.75, 0.0))
+                                    player.velocity = player.velocity.add(Vector(0.0, 0.5, 0.0))
                                     ItemManager.giveCharacterItems(player)
                                     player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                     if(bulletsRemaining == 100) player.setCooldown(BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityMaterial, 0)

@@ -2,6 +2,8 @@ package dev.byrt.burb.library
 
 import dev.byrt.burb.chat.ChatUtility.BURB_FONT_TAG
 
+import org.bukkit.Bukkit
+
 object Translation {
     object Generic {
         const val ARROW_PREFIX = "[<yellow>▶<reset>] "
@@ -20,12 +22,12 @@ object Translation {
         const val OVERTIME_REASON = "burb.game.state.overtime.prefix"
     }
     object Weapon {
-        const val GATLING_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<white>100<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}GATLING CANNON<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
+        const val GATLING_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>100<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}GATLING  CANNON<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
     }
     object TabList {
         const val SERVER_LIST_PADDING = "<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■"
         const val SERVER_LIST_TITLE = " <gold><bold>Byrt's Server<reset> "
-        const val SERVER_LIST_VERSION = "<dark_gray>v1.0.0<reset>"
+        val SERVER_LIST_VERSION = "<dark_gray>${Bukkit.getMinecraftVersion()}<reset>"
         const val SERVER_LIST_GAME = "<white> ● <burbcolour><bold>???<reset>"
         const val SERVER_LIST_EXTRA = "<white> ● <yellow>Coming soon...<reset>"
     }
