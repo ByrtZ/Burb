@@ -50,8 +50,9 @@ object LobbyManager {
             var i = 0
             override fun run() {
                 if(player.vehicle == titleVehicle) {
-                    player.sendActionBar(Formatting.allTags.deserialize(if(i % 10 == 0) Translation.Generic.TITLE_SCREEN_ACTIONBAR.replace("<reset>", "<reset><yellow>") else Translation.Generic.TITLE_SCREEN_ACTIONBAR))
+                    player.sendActionBar(Formatting.allTags.deserialize(if(i <= 10) Translation.Generic.TITLE_SCREEN_ACTIONBAR.replace("<reset>", "<reset><yellow>") else Translation.Generic.TITLE_SCREEN_ACTIONBAR))
                     i++
+                    if(i >= 20) i = 0
                 } else {
                     player.sendActionBar(Formatting.allTags.deserialize(""))
                     cancel()

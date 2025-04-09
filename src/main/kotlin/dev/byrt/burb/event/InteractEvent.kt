@@ -16,7 +16,9 @@ class InteractEvent: Listener {
     @EventHandler
     private fun onInteract(e: PlayerInteractEvent) {
         if(e.player.vehicle != null) {
-            e.isCancelled = true
+            if(e.player.vehicle?.scoreboardTags?.contains("${e.player.uniqueId}-death-vehicle") == true) {
+                e.isCancelled = true
+            }
         } else {
             if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                 if(e.player.inventory.itemInMainHand.type == Material.POPPED_CHORUS_FRUIT && e.action.isRightClick && !e.player.hasCooldown(Material.POPPED_CHORUS_FRUIT)) {

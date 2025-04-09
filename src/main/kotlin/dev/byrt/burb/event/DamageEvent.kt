@@ -44,8 +44,10 @@ class DamageEvent: Listener {
             val damager = e.damager as Player
             val damaged = e.entity as Player
             if(damager.vehicle != null) {
-                e.isCancelled = true
-                return
+                if(damager.vehicle?.scoreboardTags?.contains("${damager.uniqueId}-death-vehicle") == true) {
+                    e.isCancelled = true
+                    return
+                }
             }
         }
         e.isCancelled = false
