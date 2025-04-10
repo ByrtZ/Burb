@@ -200,23 +200,35 @@ object GameTask {
                 if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
                     if(Timer.getTimer() == 85) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            player.sendMessage(Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
-                            player.showTitle(
-                                Title.title(
-                                    Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}"),
-                                    Formatting.allTags.deserialize("won the game!")
+                            if(ScoreManager.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
+                                if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
+                                if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                player.sendMessage(Formatting.allTags.deserialize("Nobody won, what a disappointment!"))
+                                player.showTitle(
+                                    Title.title(
+                                        Formatting.allTags.deserialize("<yellow><b>DRAW"),
+                                        Formatting.allTags.deserialize("It was a tie, do better next time.")
+                                    )
                                 )
-                            )
-                            when(ScoreManager.getWinningTeam()) {
-                                Teams.PLANTS -> {
-                                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_WIN)
-                                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                            } else {
+                                player.sendMessage(Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
+                                player.showTitle(
+                                    Title.title(
+                                        Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}"),
+                                        Formatting.allTags.deserialize("won the game!")
+                                    )
+                                )
+                                when(ScoreManager.getWinningTeam()) {
+                                    Teams.PLANTS -> {
+                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_WIN)
+                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                    }
+                                    Teams.ZOMBIES -> {
+                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
+                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_WIN)
+                                    }
+                                    else -> {}
                                 }
-                                Teams.ZOMBIES -> {
-                                    if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
-                                    if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_WIN)
-                                }
-                                else -> {}
                             }
                         }
                     }

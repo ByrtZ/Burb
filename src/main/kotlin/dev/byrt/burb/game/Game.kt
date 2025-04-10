@@ -2,6 +2,7 @@ package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -40,6 +41,7 @@ object Game {
         TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
         CapturePointManager.clearCapturePoints()
+        ItemManager.destroyBullets()
         LobbyBall.cleanup()
     }
 

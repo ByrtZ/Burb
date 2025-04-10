@@ -22,6 +22,7 @@ import org.bukkit.entity.Display
 import org.bukkit.entity.Player
 import org.bukkit.entity.TextDisplay
 import org.bukkit.inventory.ItemStack
+import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -33,11 +34,12 @@ import kotlin.random.Random
 
 object PlayerVisuals {
     fun damageIndicator(player: Player, damage: Double) {
-        val damageTaken = BigDecimal(damage).setScale(1, RoundingMode.HALF_EVEN)
+        val damageTaken = BigDecimal(damage).setScale(2, RoundingMode.HALF_EVEN)
         val damageIndicatorEntity = player.location.world.spawn(player.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
             alignment = TextDisplay.TextAlignment.CENTER
             billboard = Display.Billboard.VERTICAL
             isCustomNameVisible = true
+            scoreboardTags.add("burb.damage_indicator")
             customName(Formatting.allTags.deserialize("${if(damageTaken.toInt() <= 3) "<yellow>" else if(damageTaken.toInt() in 4..6) "<gold>" else if(damageTaken.toInt() >= 7) "<red>" else "<#000000>"}${damageTaken}"))
         }
         object : BukkitRunnable() {
@@ -52,6 +54,7 @@ object PlayerVisuals {
         parseDeathMessage(player, plainDeathMessage)
 
         player.clearActivePotionEffects()
+        player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
         ItemManager.clearItems(player)
         val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN)
         deathOverlayItem.addEnchantment(Enchantment.BINDING_CURSE, 1)

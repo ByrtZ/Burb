@@ -120,16 +120,19 @@ object GameManager {
 
     private fun starting() {
         InfoBoardManager.updateRound()
-        if (RoundManager.getRound() == Round.ONE) {
+        TeamManager.hideTeamNametags()
+        CapturePointManager.initializeCapturePoints()
+        if(RoundManager.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
                 player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
-                Jukebox.stopMusicLoop(player, Music.LOBBY_WAITING)
-                if (player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-                    TeamManager.enableTeamGlowing(player)
-                }
             }
-            CapturePointManager.initializeCapturePoints()
+        }
+        for(player in Bukkit.getOnlinePlayers()) {
+            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
+                TeamManager.enableTeamGlowing(player)
+            }
+            Jukebox.disconnect(player)
         }
     }
 
@@ -154,6 +157,7 @@ object GameManager {
                 )
             )
         }
+        TeamManager.showTeamNametags()
     }
 
     private fun roundEnd() {
@@ -172,6 +176,7 @@ object GameManager {
                 )
             )
         }
+        TeamManager.showTeamNametags()
         RoundManager.nextRound()
     }
 

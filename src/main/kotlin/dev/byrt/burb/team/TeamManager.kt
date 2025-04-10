@@ -2,6 +2,8 @@ package dev.byrt.burb.team
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
@@ -21,6 +23,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.scoreboard.Team
 
 import java.time.Duration
 
@@ -37,6 +40,7 @@ object TeamManager {
     private val GlowingEntities = GlowingEntities(plugin)
 
     fun setTeam(player: BurbPlayer, team: Teams) {
+        cancelAllGlowing(player.getBukkitPlayer())
         if(spectators.contains(player)) {
             spectators.remove(player)
             spectatorDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
@@ -83,6 +87,9 @@ object TeamManager {
                 Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
             )
         )
+        if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+            refreshGlowing()
+        }
         player.characterSelect()
     }
 
@@ -143,6 +150,13 @@ object TeamManager {
         return teamMates
     }
 
+    fun refreshGlowing() {
+        for(player in Bukkit.getOnlinePlayers()) {
+            cancelAllGlowing(player)
+            enableTeamGlowing(player)
+        }
+    }
+
     fun enableTeamGlowing(player: Player) {
         val teamMates = player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())
         if(player.burbPlayer().playerTeam.getTeammates(player.burbPlayer()).isNotEmpty()) {
@@ -158,17 +172,33 @@ object TeamManager {
         }
     }
 
+    fun cancelAllGlowing(player: Player) {
+        for(otherPlayer in Bukkit.getOnlinePlayers()) {
+            GlowingEntities.unsetGlowing(otherPlayer, player)
+        }
+    }
+
+    fun showTeamNametags() {
+        plantsDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS)
+        zombiesDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS)
+    }
+
+    fun hideTeamNametags() {
+        plantsDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS)
+        zombiesDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS)
+    }
+
     fun buildDisplayTeams() {
         plantsDisplayTeam.color(NamedTextColor.GREEN)
         plantsDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
         plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        plantsDisplayTeam.displayName(Component.text("Plants").color(NamedTextColor.GREEN))
+        plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
         plantsDisplayTeam.setAllowFriendlyFire(false)
 
         zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
         zombiesDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        zombiesDisplayTeam.displayName(Component.text("Zombies").color(NamedTextColor.DARK_PURPLE))
+        zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
         zombiesDisplayTeam.setAllowFriendlyFire(false)
 
         adminDisplayTeam.color(NamedTextColor.DARK_RED)
@@ -180,7 +210,7 @@ object TeamManager {
         spectatorDisplayTeam.color(NamedTextColor.GRAY)
         spectatorDisplayTeam.prefix(Component.text("\uD003 ").color(NamedTextColor.WHITE))
         spectatorDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        spectatorDisplayTeam.displayName(Component.text("Spectator").color(NamedTextColor.GRAY))
+        spectatorDisplayTeam.displayName(Component.text("Spectator").color(Teams.SPECTATOR.teamHexColour))
         spectatorDisplayTeam.setAllowFriendlyFire(false)
     }
 

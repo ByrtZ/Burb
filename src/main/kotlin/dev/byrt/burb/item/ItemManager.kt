@@ -7,12 +7,14 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.entity.Snowball
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
@@ -142,6 +144,14 @@ object ItemManager {
                 && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.ability.cooldown"))
                 )
     }
+
+    fun destroyBullets() {
+        for(world in Bukkit.getWorlds()) {
+            for(snowball in world.getEntitiesByClass(Snowball::class.java)) {
+                snowball.remove()
+            }
+        }
+    }
 }
 
 /**
@@ -158,11 +168,11 @@ enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: Strin
     PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,3.25, 12, 50, 12, 1.95, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire","pea_cannon"),
     PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "burb.weapon.chomper.fire","chomper_fangs"),
     PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,0.65, 3, 65, 35, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire","null"),
-    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 18, 60, 12, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire","spike_shot"),
-    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 3, 55, 25, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire","blaster"),
+    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,5.0, 18, 60, 10, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire","spike_shot"),
+    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.0, 3, 55, 25, 2.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire","blaster"),
     ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_SWORD, "null","melee_gloves_l"),
-    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,0.85, 20, 65, 6, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire","goo_blaster"),
-    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 25, 75, 8, 4.0, Material.POPPED_CHORUS_FRUIT, "null","null")
+    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,0.85, 20, 65, 5, 1.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire","goo_blaster"),
+    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,6.0, 25, 75, 6, 4.0, Material.POPPED_CHORUS_FRUIT, "null","spyglass_shot")
 }
 
 enum class BurbMainWeaponType(val weaponTypeName: String) {
@@ -178,16 +188,16 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     /** Chilli Bean Bomb **/
     PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", Material.RED_DYE, 500),
     /** Pea Gatling **/
-    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "", "burb.character.plants_scout.ability.2", Material.ORANGE_DYE, 600),
+    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "Line 'em up and knock 'em down.", "burb.character.plants_scout.ability.2", Material.ORANGE_DYE, 700),
     /** Hyper **/
-    PLANTS_SCOUT_ABILITY_3("Hyper", "Zoomies!", "burb.character.plants_scout.ability.3", Material.YELLOW_DYE, 400),
+    PLANTS_SCOUT_ABILITY_3("Hyper", "ZOOMIES!", "burb.character.plants_scout.ability.3", Material.YELLOW_DYE, 400),
 
     /** Goop **/
-    PLANTS_HEAVY_ABILITY_1("Goop", "", "burb.character.plants_heavy.ability.1", Material.RED_DYE, 450),
+    PLANTS_HEAVY_ABILITY_1("Goop", "Sticky goop that slows enemies.", "burb.character.plants_heavy.ability.1", Material.RED_DYE, 160),
     /** Burrow **/
-    PLANTS_HEAVY_ABILITY_2("Burrow", "", "burb.character.plants_heavy.ability.2", Material.ORANGE_DYE, 650),
+    PLANTS_HEAVY_ABILITY_2("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.2", Material.ORANGE_DYE, 200),
     /** Spikeweed **/
-    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", Material.YELLOW_DYE, 250),
+    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", Material.YELLOW_DYE, 120),
 
     /** Heal Beam **/
     PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", Material.RED_DYE, 40),
@@ -204,9 +214,9 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", Material.YELLOW_DYE, 300),
 
     /** Zombie Stink Cloud **/
-    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "", "burb.character.zombies_scout.ability.1", Material.RED_DYE, 350),
+    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "Whoever smelt it, dealt it.", "burb.character.zombies_scout.ability.1", Material.RED_DYE, 350),
     /** ZPG **/
-    ZOMBIES_SCOUT_ABILITY_2("ZPG", "", "burb.character.zombies_scout.ability.2", Material.ORANGE_DYE, 675),
+    ZOMBIES_SCOUT_ABILITY_2("ZPG", "Who gave this zombie a rocket?", "burb.character.zombies_scout.ability.2", Material.ORANGE_DYE, 675),
     /** Rocket Jump **/
     ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "I have the high ground.", "burb.character.zombies_scout.ability.3", Material.YELLOW_DYE, 450),
 

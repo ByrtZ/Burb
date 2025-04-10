@@ -1,17 +1,28 @@
 package dev.byrt.burb.event
 
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
+import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
+import dev.byrt.burb.plugin
 
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 
+
 @Suppress("unused", "unstableApiUsage")
 class DamageEvent: Listener {
     @EventHandler
     private fun onDamage(e: EntityDamageEvent) {
+        if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+            e.isCancelled = true
+            return
+        }
         if(e.cause == EntityDamageEvent.DamageCause.HOT_FLOOR
             || e.cause == EntityDamageEvent.DamageCause.DROWNING
             || e.cause == EntityDamageEvent.DamageCause.CRAMMING
@@ -31,7 +42,14 @@ class DamageEvent: Listener {
         } else {
             if(e.entity is Player) {
                 val player = e.entity as Player
+                if(player.vehicle != null) {
+                    if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+                        e.isCancelled = true
+                        return
+                    }
+                }
                 if(e.damage.toInt() > 0) {
+                    Bukkit.getScheduler().runTaskLater(plugin, Runnable { player.velocity = player.velocity.clone() }, 1L)
                     PlayerVisuals.damageIndicator(player, e.damage)
                 }
             }
@@ -43,10 +61,20 @@ class DamageEvent: Listener {
         if(e.damager is Player && e.entity is Player) {
             val damager = e.damager as Player
             val damaged = e.entity as Player
+            Bukkit.getScheduler().runTaskLater(plugin, Runnable { damaged.velocity = damaged.velocity.clone() }, 1L)
             if(damager.vehicle != null) {
                 if(damager.vehicle?.scoreboardTags?.contains("${damager.uniqueId}-death-vehicle") == true) {
                     e.isCancelled = true
                     return
+                }
+            }
+            // Double backstab damage for melee classes
+            if(damager.burbPlayer().playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+                val damagedYaw = if (damaged.location.yaw >= 0) damaged.location.yaw else 180 + -damaged.location.yaw
+                val damagerYaw = if (damager.location.yaw >= 0) damager.location.yaw else 180 + -damager.location.yaw
+                val angle = if (damagedYaw - damagerYaw >= 0) damagedYaw - damagerYaw else damagerYaw - damagedYaw
+                if(angle <= 45) {
+                    e.damage *= 2
                 }
             }
         }

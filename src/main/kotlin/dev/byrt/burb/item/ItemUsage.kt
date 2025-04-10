@@ -2,6 +2,8 @@ package dev.byrt.burb.item
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
@@ -11,6 +13,7 @@ import dev.byrt.burb.team.Teams
 import net.kyori.adventure.text.format.TextDecoration
 
 import org.bukkit.*
+import org.bukkit.attribute.Attribute
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.ItemDisplay
@@ -54,6 +57,7 @@ object ItemUsage {
             for(bullets in 0..if(player.burbPlayer().playerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.SHOTGUN) 6 else 0) {
                 val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java) //.add(Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125))
                 snowball.shooter = player
+                snowball.location.direction = player.location.direction
                 // Projectile velocity
                 val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
                 snowball.velocity = snowballVelocity
@@ -66,6 +70,7 @@ object ItemUsage {
                     val shooter = player
                     override fun run() {
                         if(snowball.isDead || !player.isOnline) {
+                            snowball.remove()
                             this.cancel()
                         } else {
                             snowball.location.world.spawnParticle(
@@ -143,15 +148,15 @@ object ItemUsage {
                     }.runTaskTimer(plugin, 0L, 1L)
                 }
                 BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityId -> {
-                    if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR) {
-                        player.world.playSound(player.location, "entity.experience_orb.pickup", SoundCategory.VOICE, 1f, 1f)
+                    if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR && player.location.block.getRelative(BlockFace.DOWN).isSolid) {
+                        player.world.playSound(player.location, "burb.ability.peashooter.gatling.root", SoundCategory.VOICE, 1f, 1f)
                         ItemManager.clearItems(player)
                         player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
                         player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
                         player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
                         object : BukkitRunnable() {
                             var bulletsRemaining = 100
-                            val gatlingVehicle = player.location.world.spawn(player.location, AreaEffectCloud::class.java).apply {
+                            val gatlingVehicle = player.location.world.spawn(player.location.clone().subtract(0.0, 0.5, 0.0), AreaEffectCloud::class.java).apply {
                                 duration = Int.MAX_VALUE
                                 radius = 0F
                                 waitTime = 0
@@ -163,17 +168,32 @@ object ItemUsage {
                             override fun run() {
                                 if(player.vehicle == gatlingVehicle) {
                                     player.sendActionBar(Formatting.allTags.deserialize(Translation.Weapon.GATLING_CONTROLS.replace("%s", bulletsRemaining.toString())))
+                                    gatlingVehicle.setRotation(player.yaw, player.pitch)
                                 }
                                 if(player.isSneaking && player.inventory.itemInMainHand.type == Material.BREEZE_ROD) {
                                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
                                     snowball.shooter = player
-                                    val snowballVelocity = player.location.direction.multiply(6.0)
+                                    snowball.location.direction = player.location.direction
+                                    val snowballVelocity = player.location.direction.multiply(5.0)
                                     snowball.velocity = snowballVelocity
-                                    snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 0.75)
-                                    player.world.playSound(player.location, "burb.weapon.peashooter.fire", SoundCategory.VOICE, 2f, 1f)
+                                    snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 0.5)
+                                    object : BukkitRunnable() {
+                                        override fun run() {
+                                            if(snowball.isDead || !player.isOnline) {
+                                                this.cancel()
+                                            } else {
+                                                snowball.location.world.spawnParticle(
+                                                    Particle.HAPPY_VILLAGER,
+                                                    snowball.location,
+                                                    1, 0.0, 0.0, 0.0
+                                                )
+                                            }
+                                        }
+                                    }.runTaskTimer(plugin, 1L, 1L)
+                                    player.world.playSound(player.location, "burb.ability.peashooter.gatling.fire", SoundCategory.VOICE, 1f, 1f)
                                     bulletsRemaining--
                                 }
-                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.vehicle != gatlingVehicle || bulletsRemaining <= 0) {
+                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.vehicle != gatlingVehicle || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                     player.sendActionBar(Formatting.allTags.deserialize(""))
                                     gatlingVehicle.eject()
                                     gatlingVehicle.remove()
@@ -182,13 +202,14 @@ object ItemUsage {
                                     ItemManager.giveCharacterItems(player)
                                     player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                     if(bulletsRemaining == 100) player.setCooldown(BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityMaterial, 0)
+                                    player.world.playSound(player.location, "burb.ability.peashooter.gatling.unroot", SoundCategory.VOICE, 1f, 1f)
                                     cancel()
                                 }
                             }
-                        }.runTaskTimer(plugin, 0L, 2L)
+                        }.runTaskTimer(plugin, 0L, 1L)
                     } else {
                         player.setCooldown(BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityMaterial, 0)
-                        player.sendMessage(Formatting.allTags.deserialize("<red>You cannot use this ability while in the air."))
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>You cannot use this ability while in the air."))
                     }
                 }
                 BurbAbility.PLANTS_SCOUT_ABILITY_3.abilityId -> {
@@ -197,6 +218,88 @@ object ItemUsage {
                         PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 12, 6, false, true),
                         PotionEffect(PotionEffectType.SPEED, 20 * 12, 6, false, true)
                     ))
+                }
+                BurbAbility.PLANTS_HEAVY_ABILITY_1.abilityId -> {
+                    player.world.playSound(player.location, "block.slime_block.place", SoundCategory.VOICE, 1f, 1f)
+                    for(bullets in 0..7) {
+                        val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
+                        snowball.shooter = player
+                        snowball.location.direction = player.location.direction
+                        // Projectile velocity
+                        val snowballVelocity = player.location.direction.multiply(1.75)
+                        snowball.velocity = snowballVelocity
+                        // Projectile bloom
+                        snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.095, 0.095), Random.nextDouble(-0.075, 0.075), Random.nextDouble(-0.095, 0.095)))
+                        // Projectile damage
+                        snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 1.0)
+                        // Projectile trail
+                        object : BukkitRunnable() {
+                            override fun run() {
+                                if(snowball.isDead || !player.isOnline) {
+                                    this.cancel()
+                                } else {
+                                    for(nearbyPlayer in snowball.location.getNearbyPlayers(0.1)) {
+                                        if(nearbyPlayer.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                                            nearbyPlayer.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 3, false, false))
+                                            nearbyPlayer.world.playSound(player.location, "item.glow_ink_sac.use", SoundCategory.VOICE, 1f, 1f)
+                                        }
+                                    }
+                                    snowball.location.world.spawnParticle(
+                                        Particle.DUST,
+                                        snowball.location,
+                                        1, 0.0, 0.0, 0.0, 0.0,
+                                        Particle.DustOptions(Color.FUCHSIA, 0.75f),
+                                        true
+                                    )
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 1L)
+                    }
+                }
+                BurbAbility.PLANTS_HEAVY_ABILITY_2.abilityId -> {
+                    player.world.playSound(player.location, "block.grass.break", SoundCategory.VOICE, 1f, 1f)
+                    player.getAttribute(Attribute.SCALE)?.baseValue = 0.25
+                    player.addPotionEffects(
+                        listOf(
+                            PotionEffect(PotionEffectType.SPEED, 20 * 6, 4, false, false),
+                            PotionEffect(PotionEffectType.INVISIBILITY, 20 * 6, 0, false, false)
+                        )
+                    )
+                    ItemManager.clearItems(player)
+                    player.inventory.boots = null
+                    player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
+                    player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
+                    player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
+                    object : BukkitRunnable() {
+                        var ticks = 0
+                        override fun run() {
+                            if(ticks <= 120) {
+                                if(ticks % 5 == 0) {
+                                    player.world.playSound(player.location, "block.grass.break", SoundCategory.VOICE, 1f, 1f)
+                                }
+                                player.world.spawnParticle(
+                                    Particle.DUST,
+                                    player.location,
+                                    5, 0.05, 0.15, 0.05, 0.0,
+                                    Particle.DustOptions(Color.fromRGB(20, 18, 11), 0.5f)
+                                )
+                            }
+                            if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || ticks >= 120 || player.vehicle != null || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                player.sendActionBar(Formatting.allTags.deserialize(""))
+                                player.inventory.remove(Material.BREEZE_ROD)
+                                player.velocity = player.velocity.add(Vector(0.0, 0.75, 0.0))
+                                player.removePotionEffect(PotionEffectType.SPEED)
+                                player.removePotionEffect(PotionEffectType.INVISIBILITY)
+                                player.getAttribute(Attribute.SCALE)?.baseValue = 1.0
+                                ItemManager.giveCharacterItems(player)
+                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                player.world.playSound(player.location, "block.grass.place", SoundCategory.VOICE, 1f, 1f)
+                                cancel()
+                            }
+                            ticks++
+                        }
+                    }.runTaskTimer(plugin, 0L, 1L)
                 }
                 BurbAbility.ZOMBIES_SCOUT_ABILITY_1.abilityId -> {
                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
@@ -211,7 +314,7 @@ object ItemUsage {
                                 object : BukkitRunnable() {
                                     var smokeTimer = 0
                                     override fun run() {
-                                        if(smokeTimer >= 48) {
+                                        if(smokeTimer >= 48 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                             cancel()
                                         }
                                         smokeGrenadeLocation.clone().world.spawnParticle(

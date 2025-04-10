@@ -156,53 +156,39 @@ object InfoBoardManager {
                         if(!player.activeBossBars().contains(timerBossBar)) timerBossBar.addViewer(player)
                     }
                 }
-                when(GameManager.getGameState()) {
-                    GameState.IDLE -> {
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            timerBossBar.removeViewer(player)
+                when(Timer.getTimerState()) {
+                    TimerState.ACTIVE -> {
+                        when(GameManager.getGameState()) {
+                            GameState.IDLE -> {
+                                for(player in Bukkit.getOnlinePlayers()) {
+                                    timerBossBar.removeViewer(player)
+                                }
+                                this.cancel()
+                            }
+                            GameState.STARTING -> {
+                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-122>${ChatUtility.BURB_FONT_TAG}GAME  STARTING  IN:  ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
+                            }
+                            GameState.IN_GAME -> {
+                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-104>${ChatUtility.BURB_FONT_TAG}TIME  LEFT:  ${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
+                            }
+                            GameState.ROUND_END -> {
+                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-115>${ChatUtility.BURB_FONT_TAG}NEXT  ROUND  IN:  <#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                            }
+                            GameState.GAME_END -> {
+                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}BACK  TO  HUB:  <#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                            }
+                            GameState.OVERTIME -> {
+                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-95>${ChatUtility.BURB_FONT_TAG}<red>OVERTIME<reset>"))
+                            }
                         }
-                        this.cancel()
                     }
-                    GameState.STARTING -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-127>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}STARTING<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
+                    TimerState.INACTIVE -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-85>${ChatUtility.BURB_FONT_TAG}<red>TIMER  UNAVAILABLE<reset>"))
                     }
-                    GameState.IN_GAME -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}TIME<reset> ${ChatUtility.BURB_FONT_TAG}LEFT:<reset> ${ChatUtility.BURB_FONT_TAG}${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
-                    }
-                    GameState.ROUND_END -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-119>${ChatUtility.BURB_FONT_TAG}NEXT<reset> ${ChatUtility.BURB_FONT_TAG}ROUND<reset> ${ChatUtility.BURB_FONT_TAG}IN:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
-                    }
-                    GameState.GAME_END -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-112>${ChatUtility.BURB_FONT_TAG}BACK<reset> ${ChatUtility.BURB_FONT_TAG}TO<reset> ${ChatUtility.BURB_FONT_TAG}HUB:<reset> ${ChatUtility.BURB_FONT_TAG}<#ffff00>${Timer.getDisplayTimer()}<reset>"))
-                    }
-                    GameState.OVERTIME -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-94>${ChatUtility.BURB_FONT_TAG}<red>OVERTIME<reset>"))
+                    TimerState.PAUSED -> {
+                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-100>${ChatUtility.BURB_FONT_TAG}TIMER  PAUSED<reset>"))
                     }
                 }
-                /*when(GameManager.getGameState()) {
-                    GameState.IDLE -> {
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            timerBossBar.removeViewer(player)
-                        }
-                        this.cancel()
-                    }
-                    GameState.STARTING -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}<translate:offset.55:\uD011>${ChatUtility.NO_SHADOW_TAG.replace("#", "/#")}${ChatUtility.BURB_FONT_TAG}GAME  STARTING  IN:  ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}"))
-                        //timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-127:'GAME STARTING IN: ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}'>"))
-                    }
-                    GameState.IN_GAME -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-107:'TIME LEFT: ${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}'>"))
-                    }
-                    GameState.ROUND_END -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-119:'NEXT ROUND IN: <#ffff00>${Timer.getDisplayTimer()}'>"))
-                    }
-                    GameState.GAME_END -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-112:'BACK TO HUB: <#ffff00>${Timer.getDisplayTimer()}'>"))
-                    }
-                    GameState.OVERTIME -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset>${ChatUtility.BURB_FONT_TAG}<translate:offset.-94:'<red>OVERTIME'>"))
-                    }
-                }*/
             }
         }.runTaskTimer(plugin, 0L, 1L)
     }
