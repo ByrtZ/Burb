@@ -15,7 +15,6 @@ import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.BlockFace
-import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
@@ -57,9 +56,9 @@ object ItemUsage {
             for(bullets in 0..if(player.burbPlayer().playerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.SHOTGUN) 6 else 0) {
                 val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java) //.add(Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125), Random.nextDouble(-0.125, 0.125))
                 snowball.shooter = player
-                snowball.location.direction = player.location.direction
+                snowball.location.direction = player.location.direction.normalize()
                 // Projectile velocity
-                val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
+                val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!).normalize()
                 snowball.velocity = snowballVelocity
                 // Projectile bloom
                 snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.095, 0.095), Random.nextDouble(-0.075, 0.075), Random.nextDouble(-0.095, 0.095)))
@@ -129,7 +128,7 @@ object ItemUsage {
                     player.world.playSound(player.location, "burb.ability.peashooter.explosive.fire", SoundCategory.VOICE, 1f, 1f)
                     val tnt = player.world.spawn(player.eyeLocation, TNTPrimed::class.java)
                     tnt.source = player
-                    val tntVelocity = player.location.direction.multiply(1.15)
+                    val tntVelocity = player.location.direction.multiply(1.15).normalize()
                     tnt.velocity = tntVelocity
                     tnt.fuseTicks = Int.MAX_VALUE
                     object : BukkitRunnable() {
@@ -156,11 +155,7 @@ object ItemUsage {
                         player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
                         object : BukkitRunnable() {
                             var bulletsRemaining = 100
-                            val gatlingVehicle = player.location.world.spawn(player.location.clone().subtract(0.0, 0.5, 0.0), AreaEffectCloud::class.java).apply {
-                                duration = Int.MAX_VALUE
-                                radius = 0F
-                                waitTime = 0
-                                color = Color.BLACK
+                            val gatlingVehicle = player.location.world.spawn(player.location.clone().subtract(0.0, 0.25, 0.0), ItemDisplay::class.java).apply {
                                 addScoreboardTag("${player.uniqueId}-pea-gatling-vehicle")
                                 player.teleport(this)
                                 addPassenger(player)
@@ -173,8 +168,8 @@ object ItemUsage {
                                 if(player.isSneaking && player.inventory.itemInMainHand.type == Material.BREEZE_ROD) {
                                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
                                     snowball.shooter = player
-                                    snowball.location.direction = player.location.direction
-                                    val snowballVelocity = player.location.direction.multiply(5.0)
+                                    snowball.location.direction = player.location.direction.normalize()
+                                    val snowballVelocity = player.location.direction.multiply(5.0).normalize()
                                     snowball.velocity = snowballVelocity
                                     snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 0.5)
                                     object : BukkitRunnable() {
@@ -224,9 +219,9 @@ object ItemUsage {
                     for(bullets in 0..7) {
                         val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
                         snowball.shooter = player
-                        snowball.location.direction = player.location.direction
+                        snowball.location.direction = player.location.direction.normalize()
                         // Projectile velocity
-                        val snowballVelocity = player.location.direction.multiply(1.75)
+                        val snowballVelocity = player.location.direction.multiply(1.75).normalize()
                         snowball.velocity = snowballVelocity
                         // Projectile bloom
                         snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.095, 0.095), Random.nextDouble(-0.075, 0.075), Random.nextDouble(-0.095, 0.095)))
@@ -238,7 +233,7 @@ object ItemUsage {
                                 if(snowball.isDead || !player.isOnline) {
                                     this.cancel()
                                 } else {
-                                    for(nearbyPlayer in snowball.location.getNearbyPlayers(0.1)) {
+                                    for(nearbyPlayer in snowball.location.getNearbyPlayers(0.25)) {
                                         if(nearbyPlayer.burbPlayer().playerTeam == Teams.ZOMBIES) {
                                             nearbyPlayer.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 3, false, false))
                                             nearbyPlayer.world.playSound(player.location, "item.glow_ink_sac.use", SoundCategory.VOICE, 1f, 1f)
@@ -303,7 +298,7 @@ object ItemUsage {
                 }
                 BurbAbility.ZOMBIES_SCOUT_ABILITY_1.abilityId -> {
                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
-                    val snowballVelocity = player.location.direction.multiply(0.75)
+                    val snowballVelocity = player.location.direction.multiply(0.75).normalize()
                     snowball.velocity = snowballVelocity
                     snowball.shooter = player
                     object : BukkitRunnable() {
@@ -430,7 +425,7 @@ object ItemUsage {
                 }
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_3.abilityId -> {
                     player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)
-                    player.velocity = player.velocity.add(Vector(player.location.direction.x * 2.25, 0.25, player.location.direction.z * 2.25))
+                    player.velocity = player.velocity.add(Vector(player.location.direction.normalize().x * 2.25, 0.25, player.location.direction.normalize().z * 2.25))
                 }
             }
         }

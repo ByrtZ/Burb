@@ -18,7 +18,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Material
-import org.bukkit.entity.AreaEffectCloud
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
@@ -99,9 +99,9 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
-                        if(player.vehicle is AreaEffectCloud) {
-                            val aec = player.vehicle as AreaEffectCloud
-                            if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 LobbyManager.playerJoinHub(player)
                             }
                         }
@@ -118,9 +118,9 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
-                        if(player.vehicle is AreaEffectCloud) {
-                            val aec = player.vehicle as AreaEffectCloud
-                            if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 LobbyManager.playerJoinHub(player)
                             }
                         }
@@ -161,9 +161,9 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                                 )
 
                                 if(player.vehicle != null) {
-                                    if(player.vehicle is AreaEffectCloud) {
-                                        val aec = player.vehicle as AreaEffectCloud
-                                        if(aec.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                    if(player.vehicle is ItemDisplay) {
+                                        val veh = player.vehicle as ItemDisplay
+                                        if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                             LobbyManager.playerJoinHub(player)
                                         }
                                     }

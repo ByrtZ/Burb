@@ -7,18 +7,19 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 
+import io.papermc.paper.entity.TeleportFlag
+
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
-import org.bukkit.Color
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.AreaEffectCloud
 import org.bukkit.entity.Display
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.TextDisplay
 import org.bukkit.inventory.ItemStack
@@ -49,7 +50,7 @@ object PlayerVisuals {
         }.runTaskLater(plugin, 30L)
     }
 
-    fun death(player: Player, deathMessage: Component) {
+    fun death(player: Player, killer: Player?, deathMessage: Component) {
         val plainDeathMessage = if(player.hasPotionEffect(PotionEffectType.INVISIBILITY)) { PlainTextComponentSerializer.plainText().serialize(deathMessage).replace(player.name, "<obfuscated>*<reset>".repeat(Random.nextInt(4, 16))) } else { PlainTextComponentSerializer.plainText().serialize(deathMessage) }
         parseDeathMessage(player, plainDeathMessage)
 
@@ -60,16 +61,34 @@ object PlayerVisuals {
         deathOverlayItem.addEnchantment(Enchantment.BINDING_CURSE, 1)
         player.inventory.helmet = deathOverlayItem
 
-        val deathVehicle = player.world.spawn(player.location, AreaEffectCloud::class.java)
-        deathVehicle.duration = Int.MAX_VALUE
-        deathVehicle.radius = 0F
-        deathVehicle.waitTime = 0
-        deathVehicle.color = Color.BLACK
-        deathVehicle.addScoreboardTag("${player.uniqueId}-death-vehicle")
-        deathVehicle.addPassenger(player)
+        val deathVehicle = player.world.spawn(player.location, ItemDisplay::class.java).apply {
+            teleportDuration = 1
+            addScoreboardTag("${player.uniqueId}-death-vehicle")
+            addPassenger(player)
+        }
 
         hidePlayer(player)
         deathEffects(player)
+
+        /** Move death vehicle ahead of the killer as a faux spectator mode. **/
+        if(killer != null) {
+            object : BukkitRunnable() {
+                override fun run() {
+                    player.playSound(Sounds.Score.DEATH_STATS)
+                    object : BukkitRunnable() {
+                        override fun run() {
+                            if(killer.vehicle?.scoreboardTags?.contains("${killer.uniqueId}-death-vehicle") == true || deathVehicle.isDead || !player.isOnline) {
+                                this.cancel()
+                            }
+                            val killerDirection = killer.location.add(killer.location.direction.multiply(3).normalize())
+                            killerDirection.y = killer.location.y + 0.25
+                            deathVehicle.teleport(killerDirection, TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                            player.setRotation(killer.yaw - 180.0f, 5.0f)
+                        }
+                    }.runTaskTimer(plugin, 0L, 1L)
+                }
+            }.runTaskLater(plugin, 50L)
+        }
 
         /** Scheduled Respawn and Post Respawn **/
         object : BukkitRunnable() {
@@ -81,7 +100,7 @@ object PlayerVisuals {
                     }
                 }.runTaskLater(plugin, 20L)
             }
-        }.runTaskLater(plugin, 160L)
+        }.runTaskLater(plugin, 180L)
         player.showTitle(
             Title.title(
                 Formatting.allTags.deserialize("<red>You died!"),
@@ -131,16 +150,16 @@ object PlayerVisuals {
         player.playSound(Sounds.Score.RESPAWN)
     }
 
-    fun postRespawn(player: Player, vehicle: AreaEffectCloud) {
+    fun postRespawn(player: Player, vehicle: ItemDisplay) {
         player.eject()
         vehicle.remove()
         player.fireTicks = 0
         player.health = 20.0
         player.inventory.helmet = null
-        showPlayer(player)
+        player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
-        player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
+        showPlayer(player)
     }
 
     fun reloadWeapon(player: Player, reloadTime: Int) {
@@ -180,7 +199,7 @@ object PlayerVisuals {
     }
 
     fun disconnectInterrupt(player: Player) {
-        if(player.vehicle is AreaEffectCloud) {
+        if(player.vehicle is ItemDisplay) {
             player.vehicle?.remove()
             showPlayer(player)
             player.teleport(Bukkit.getWorlds()[0].spawnLocation)

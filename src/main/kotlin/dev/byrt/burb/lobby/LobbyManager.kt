@@ -10,10 +10,9 @@ import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 
-import org.bukkit.Color
 import org.bukkit.GameMode
 import org.bukkit.Location
-import org.bukkit.entity.AreaEffectCloud
+import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -26,11 +25,7 @@ object LobbyManager {
         player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 0, false, false))
         PlayerVisuals.hidePlayer(player)
 
-        val titleVehicle = player.world.spawn(Location(player.world, 983.5, 6.0, 992.5, -63f, 10f), AreaEffectCloud::class.java)
-        titleVehicle.duration = Int.MAX_VALUE
-        titleVehicle.radius = 0F
-        titleVehicle.waitTime = 0
-        titleVehicle.color = Color.BLACK
+        val titleVehicle = player.world.spawn(Location(player.world, 983.5, 6.0, 992.5, -63f, 10f), ItemDisplay::class.java)
         titleVehicle.addScoreboardTag("${player.uniqueId}-title-vehicle")
         player.teleport(titleVehicle)
         titleVehicle.addPassenger(player)
@@ -69,7 +64,7 @@ object LobbyManager {
                 PlayerVisuals.respawn(player)
                 object : BukkitRunnable() {
                     override fun run() {
-                        PlayerVisuals.postRespawn(player, player.vehicle as AreaEffectCloud)
+                        PlayerVisuals.postRespawn(player, player.vehicle as ItemDisplay)
                         player.removePotionEffect(PotionEffectType.INVISIBILITY)
                         Jukebox.disconnect(player)
 

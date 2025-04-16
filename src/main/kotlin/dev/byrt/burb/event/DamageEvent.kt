@@ -1,13 +1,15 @@
 package dev.byrt.burb.event
 
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent
+
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
-import dev.byrt.burb.plugin
 
-import org.bukkit.Bukkit
+import io.papermc.paper.event.entity.EntityKnockbackEvent
+
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -49,7 +51,6 @@ class DamageEvent: Listener {
                     }
                 }
                 if(e.damage.toInt() > 0) {
-                    Bukkit.getScheduler().runTaskLater(plugin, Runnable { player.velocity = player.velocity.clone() }, 1L)
                     PlayerVisuals.damageIndicator(player, e.damage)
                 }
             }
@@ -61,7 +62,6 @@ class DamageEvent: Listener {
         if(e.damager is Player && e.entity is Player) {
             val damager = e.damager as Player
             val damaged = e.entity as Player
-            Bukkit.getScheduler().runTaskLater(plugin, Runnable { damaged.velocity = damaged.velocity.clone() }, 1L)
             if(damager.vehicle != null) {
                 if(damager.vehicle?.scoreboardTags?.contains("${damager.uniqueId}-death-vehicle") == true) {
                     e.isCancelled = true
@@ -79,5 +79,15 @@ class DamageEvent: Listener {
             }
         }
         e.isCancelled = false
+    }
+
+    @EventHandler
+    private fun onKnockback(e: EntityKnockbackEvent) {
+        e.isCancelled = true
+    }
+
+    @EventHandler
+    private fun onKnockbackByEntity(e: EntityKnockbackByEntityEvent) {
+        e.isCancelled = true
     }
 }

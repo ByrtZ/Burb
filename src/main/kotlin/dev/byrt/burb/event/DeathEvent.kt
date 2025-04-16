@@ -14,17 +14,15 @@ import org.bukkit.event.entity.PlayerDeathEvent
 class DeathEvent: Listener {
     @EventHandler
     private fun onDeath(e: PlayerDeathEvent) {
-        PlayerVisuals.death(e.player,
-            if(e.deathMessage() == null)
-                Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name} died.")
-            else
-                e.deathMessage()!!
-        )
         if(e.player.killer != null) {
             if(e.player.killer is Player) {
                 e.player.killer!!.playSound(Sounds.Score.ELIMINATION)
             }
         }
+        PlayerVisuals.death(e.player,
+            if(e.player.killer != null && e.player.killer is Player) e.player.killer else null,
+            if(e.deathMessage() == null) Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name} died.") else e.deathMessage()!!
+        )
         e.isCancelled = true
     }
 }
