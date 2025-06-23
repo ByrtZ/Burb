@@ -187,32 +187,32 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     NULL("null", "null", "null", "null", Material.AIR, 0),
 
     /** Chilli Bean Bomb **/
-    PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", "",  Material.RED_DYE, 500),
+    PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", "null",  Material.RED_DYE, 500),
     /** Pea Gatling **/
-    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "Line 'em up and knock 'em down.", "burb.character.plants_scout.ability.2", "",  Material.ORANGE_DYE, 700),
+    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "Line 'em up and knock 'em down.", "burb.character.plants_scout.ability.2", "null",  Material.ORANGE_DYE, 700),
     /** Hyper **/
-    PLANTS_SCOUT_ABILITY_3("Hyper", "ZOOMIES!", "burb.character.plants_scout.ability.3", "",  Material.YELLOW_DYE, 400),
+    PLANTS_SCOUT_ABILITY_3("Hyper", "ZOOMIES!", "burb.character.plants_scout.ability.3", "null",  Material.YELLOW_DYE, 400),
 
     /** Goop **/
-    PLANTS_HEAVY_ABILITY_1("Goop", "Sticky goop that slows enemies.", "burb.character.plants_heavy.ability.1", "",  Material.RED_DYE, 160),
+    PLANTS_HEAVY_ABILITY_1("Goop", "Sticky goop that slows enemies.", "burb.character.plants_heavy.ability.1", "null",  Material.RED_DYE, 160),
     /** Burrow **/
-    PLANTS_HEAVY_ABILITY_2("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.2", "",  Material.ORANGE_DYE, 200),
+    PLANTS_HEAVY_ABILITY_2("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.2", "null",  Material.ORANGE_DYE, 200),
     /** Spikeweed **/
-    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", "",  Material.YELLOW_DYE, 120),
+    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", "null",  Material.YELLOW_DYE, 120),
 
     /** Heal Beam **/
-    PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", "",  Material.RED_DYE, 40),
+    PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", "null",  Material.RED_DYE, 40),
     /** Sunbeam **/
-    PLANTS_HEALER_ABILITY_2("Sunbeam", "", "burb.character.plants_healer.ability.2", "",  Material.ORANGE_DYE, 550),
+    PLANTS_HEALER_ABILITY_2("Sunbeam", "", "burb.character.plants_healer.ability.2", "null",  Material.ORANGE_DYE, 550),
     /** Heal Flower **/
-    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", "",  Material.YELLOW_DYE, 400),
+    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", "null",  Material.YELLOW_DYE, 400),
 
     /** Potato Mine **/
-    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", "",  Material.RED_DYE, 200),
+    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", "null",  Material.RED_DYE, 200),
     /** Garlic Drone **/
-    PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", "",  Material.ORANGE_DYE, 475),
+    PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", "null",  Material.ORANGE_DYE, 475),
     /** Tallnut Battlement **/
-    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", "",  Material.YELLOW_DYE, 300),
+    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", "null",  Material.YELLOW_DYE, 300),
 
     /** Zombie Stink Cloud **/
     ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "Whoever smelt it, dealt it.", "burb.character.zombies_scout.ability.1", "footsoldier_ability_stink_cloud",  Material.RED_DYE, 350),
@@ -222,25 +222,25 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "I have the high ground.", "burb.character.zombies_scout.ability.3", "footsoldier_ability_rocket_jump",  Material.YELLOW_DYE, 450),
 
     /** Super Ultra Ball **/
-    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", "",  Material.RED_DYE, 450),
+    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "", "burb.character.zombies_heavy.ability.1", "null",  Material.RED_DYE, 450),
     /** Turbo Twister **/
-    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", "",  Material.ORANGE_DYE, 700),
+    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", "null",  Material.ORANGE_DYE, 700),
     /** Heroic Kick **/
-    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", "",  Material.YELLOW_DYE, 250),
+    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", "null",  Material.YELLOW_DYE, 250),
 
     /** Heal Beam of Science **/
-    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", "",  Material.RED_DYE, 40),
+    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", "null",  Material.RED_DYE, 40),
     /** Warp **/
-    ZOMBIES_HEALER_ABILITY_2("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.2", "",  Material.ORANGE_DYE, 175),
+    ZOMBIES_HEALER_ABILITY_2("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.2", "null",  Material.ORANGE_DYE, 175),
     /** Sticky Explody Ball **/
-    ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", "",  Material.YELLOW_DYE, 275),
+    ZOMBIES_HEALER_ABILITY_3("Sticky Explody Ball", "", "burb.character.zombies_healer.ability.3", "null",  Material.YELLOW_DYE, 275),
 
     /** Barrel Blast **/
-    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", "",  Material.RED_DYE, 750),
+    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", "null",  Material.RED_DYE, 750),
     /** Parrot Pal **/
-    ZOMBIES_RANGED_ABILITY_2("Parrot Pal", "", "burb.character.zombies_ranged.ability.2", "",  Material.ORANGE_DYE, 575),
+    ZOMBIES_RANGED_ABILITY_2("Parrot Pal", "", "burb.character.zombies_ranged.ability.2", "null",  Material.ORANGE_DYE, 575),
     /** Cannon Rodeo **/
-    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "", "burb.character.zombies_ranged.ability.3", "",  Material.YELLOW_DYE, 625)
+    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "", "burb.character.zombies_ranged.ability.3", "null",  Material.YELLOW_DYE, 625)
 }
 
 enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set<BurbAbility>) {
