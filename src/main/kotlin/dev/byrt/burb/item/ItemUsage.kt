@@ -155,7 +155,7 @@ object ItemUsage {
                         player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
                         object : BukkitRunnable() {
                             var bulletsRemaining = 100
-                            val gatlingVehicle = player.location.world.spawn(player.location.clone().subtract(0.0, 0.25, 0.0), ItemDisplay::class.java).apply {
+                            val gatlingVehicle = player.location.world.spawn(player.location.clone(), ItemDisplay::class.java).apply {
                                 addScoreboardTag("${player.uniqueId}-pea-gatling-vehicle")
                                 player.teleport(this)
                                 addPassenger(player)
@@ -295,6 +295,9 @@ object ItemUsage {
                             ticks++
                         }
                     }.runTaskTimer(plugin, 0L, 1L)
+                }
+                BurbAbility.PLANTS_HEAVY_ABILITY_3.abilityId -> {
+
                 }
                 BurbAbility.ZOMBIES_SCOUT_ABILITY_1.abilityId -> {
                     val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
