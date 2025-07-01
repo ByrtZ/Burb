@@ -190,13 +190,13 @@ object TeamManager {
 
     fun buildDisplayTeams() {
         plantsDisplayTeam.color(NamedTextColor.GREEN)
-        plantsDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
+        plantsDisplayTeam.prefix(Component.text("\uD83E\uDEB4 ").color(NamedTextColor.WHITE))
         plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
         plantsDisplayTeam.setAllowFriendlyFire(false)
 
         zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
-        zombiesDisplayTeam.prefix(Component.text("TODO ").color(NamedTextColor.WHITE))
+        zombiesDisplayTeam.prefix(Component.text("\uD83E\uDDDF ").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
         zombiesDisplayTeam.setAllowFriendlyFire(false)

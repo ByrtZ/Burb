@@ -2,6 +2,7 @@ package dev.byrt.burb.player
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -156,7 +157,7 @@ object PlayerVisuals {
         player.fireTicks = 0
         player.health = 20.0
         player.inventory.helmet = null
-        player.teleport(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5, 0.0f, 0.0f))
+        SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
         showPlayer(player)
