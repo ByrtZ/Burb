@@ -3,7 +3,10 @@ package dev.byrt.burb.event
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.lobby.LobbyBall
+import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.team.Teams
 
+import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
@@ -22,6 +25,15 @@ class PlayerMove: Listener {
                     direction.y += 0.35
                     ballPhysics.applyForce(direction)
                 }
+            }
+        }
+        if(GameManager.getGameState() == GameState.STARTING) {
+            for(player in Bukkit.getOnlinePlayers().filter { online -> online.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES) }) {
+                val to = e.from
+                to.pitch = e.to.pitch
+                to.yaw = e.to.yaw
+                e.to = to
+                e.isCancelled = true
             }
         }
     }

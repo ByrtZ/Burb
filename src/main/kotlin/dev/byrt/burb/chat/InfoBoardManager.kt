@@ -20,7 +20,7 @@ import java.util.*
 @Suppress("DEPRECATION")
 object InfoBoardManager {
     private var scoreboard = Bukkit.getScoreboardManager().mainScoreboard
-    private var objective = scoreboard.registerNewObjective("${plugin.name.lowercase()}-info-${UUID.randomUUID()}", Criteria.DUMMY, Formatting.allTags.deserialize("<burbcolour><bold>${ChatUtility.BURB_FONT_TAG}SUBURBINATION<reset>"))
+    private var objective = scoreboard.registerNewObjective("${plugin.name.lowercase()}-info-${UUID.randomUUID()}", Criteria.DUMMY, Formatting.allTags.deserialize("<burbcolour><bold>${ChatUtility.BURB_FONT_TAG}SUBURBIA<reset>"))
 
     private var currentGameLine = scoreboard.registerNewTeam("currentGameLine")
     private val currentGameLineKey = ChatColor.STRIKETHROUGH.toString()
@@ -203,9 +203,9 @@ object InfoBoardManager {
             val placementKeys = ScoreManager.getPlacementMap().keys.toTypedArray()
             val placementValues = ScoreManager.getPlacementMap().values.toTypedArray()
             firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}1.<reset> "))
-            firstPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
+            firstPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[0]) "<b>" else ""}${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[0]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}2.<reset> "))
-            secondPlaceLine.suffix(Formatting.allTags.deserialize("${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
+            secondPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[1]) "<b>" else ""}${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[1]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
         }
     }
 

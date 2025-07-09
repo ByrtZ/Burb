@@ -5,6 +5,7 @@ import dev.byrt.burb.chat.Formatting
 import dev.byrt.burb.chat.InfoBoardManager
 import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
+import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.logger
@@ -131,6 +132,7 @@ object GameManager {
         for(player in Bukkit.getOnlinePlayers()) {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.enableTeamGlowing(player)
+                SpawnPoints.respawnLocation(player)
             }
             Jukebox.disconnect(player)
         }

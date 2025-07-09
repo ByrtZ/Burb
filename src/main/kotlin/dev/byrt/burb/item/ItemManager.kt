@@ -198,7 +198,7 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     /** Burrow **/
     PLANTS_HEAVY_ABILITY_2("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.2", "orange_dye",  Material.ORANGE_DYE, 200),
     /** Spikeweed **/
-    PLANTS_HEAVY_ABILITY_3("Spikeweed", "", "burb.character.plants_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 120),
+    PLANTS_HEAVY_ABILITY_3("Spikeweed", "Snare the zombies.", "burb.character.plants_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 120),
 
     /** Heal Beam **/
     PLANTS_HEALER_ABILITY_1("Heal Beam", "", "burb.character.plants_healer.ability.1", "red_dye",  Material.RED_DYE, 40),
@@ -208,11 +208,11 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 400),
 
     /** Potato Mine **/
-    PLANTS_RANGED_ABILITY_1("Potato Mine", "", "burb.character.plants_ranged.ability.1", "red_dye",  Material.RED_DYE, 200),
+    PLANTS_RANGED_ABILITY_1("Potato Mine", "So cute, yet so deadly.", "burb.character.plants_ranged.ability.1", "red_dye",  Material.RED_DYE, 200),
     /** Garlic Drone **/
     PLANTS_RANGED_ABILITY_2("Garlic Drone", "", "burb.character.plants_ranged.ability.2", "orange_dye",  Material.ORANGE_DYE, 475),
     /** Tallnut Battlement **/
-    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "", "burb.character.plants_ranged.ability.3", "yellow_dye",  Material.YELLOW_DYE, 300),
+    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "Create your own cover.", "burb.character.plants_ranged.ability.3", "yellow_dye",  Material.YELLOW_DYE, 300),
 
     /** Zombie Stink Cloud **/
     ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "Whoever smelt it, dealt it.", "burb.character.zombies_scout.ability.1", "footsoldier_ability_stink_cloud",  Material.RED_DYE, 350),

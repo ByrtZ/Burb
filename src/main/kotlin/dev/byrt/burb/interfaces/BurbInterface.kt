@@ -11,6 +11,7 @@ import dev.byrt.burb.lobby.LobbyManager
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.StaticElement
 import com.noxcrew.interfaces.interfaces.buildChestInterface
+import dev.byrt.burb.item.ServerItem
 
 import kotlinx.coroutines.runBlocking
 
@@ -138,10 +139,7 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
             for(character in BurbCharacter.entries) {
                 if(character != BurbCharacter.NULL) {
                     if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
-                        val characterItem = ItemStack(if(character.name.startsWith("PLANTS")) Material.LIME_DYE else if(character.name.startsWith("ZOMBIES")) Material.PURPLE_DYE else Material.POTATO)
-                        val characterItemMeta = characterItem.itemMeta
-                        characterItemMeta.displayName(Formatting.allTags.deserialize("${if(character.name.startsWith("PLANTS")) "<plantscolour>" else if(character.name.startsWith("ZOMBIES")) "<zombiescolour>" else "<#000000>"}${character.characterName}").decoration(TextDecoration.ITALIC, false))
-                        characterItem.itemMeta = characterItemMeta
+                        val characterItem = ServerItem.getCharacterBreakdownItem(character)
 
                         if(i == 0) i++
                         if(i == 1) i++

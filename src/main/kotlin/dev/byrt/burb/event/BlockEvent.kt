@@ -1,5 +1,6 @@
 package dev.byrt.burb.event
 
+import com.destroystokyo.paper.event.block.BlockDestroyEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -43,6 +44,11 @@ class BlockEvent: Listener {
 
     @EventHandler
     private fun onBlockPhysics(e: BlockPhysicsEvent) {
+        e.isCancelled = true
+    }
+
+    @EventHandler
+    private fun onBlockShatter(e: BlockDestroyEvent) {
         e.isCancelled = true
     }
 }

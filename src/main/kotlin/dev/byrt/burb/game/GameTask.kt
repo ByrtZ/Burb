@@ -6,7 +6,9 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
+import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.PlayerType
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -94,12 +96,13 @@ object GameTask {
                                 )
                             )
                             player.playSound(Sounds.Timer.CLOCK_TICK)
+                            player.playSound(Sounds.Timer.TICK)
                         }
                     }
                     if(Timer.getTimer() in 1..3) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
-                            player.playSound(Sounds.Timer.STARTING_123)
+                            player.playSound(Sounds.Timer.TICK)
                             if(Timer.getTimer() == 3) {
                                 player.showTitle(Title.title(
                                     Component.text("Starting in").color(NamedTextColor.AQUA),
@@ -198,7 +201,7 @@ object GameTask {
 
                 /** GAME END **/
                 if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 85) {
+                    if(Timer.getTimer() == 90) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             if(ScoreManager.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
                                 if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
@@ -232,7 +235,7 @@ object GameTask {
                             }
                         }
                     }
-                    if(Timer.getTimer() == 80) {
+                    if(Timer.getTimer() == 85) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
                         }

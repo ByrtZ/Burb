@@ -68,12 +68,14 @@ object LobbyManager {
                         player.removePotionEffect(PotionEffectType.INVISIBILITY)
                         Jukebox.disconnect(player)
 
-                        player.playSound(Sounds.Music.LOBBY_INTRO)
-                        object : BukkitRunnable() {
-                            override fun run() {
-                                if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
-                            }
-                        }.runTaskLater(plugin, 1240L)
+                        if(GameManager.getGameState() == GameState.IDLE) {
+                            player.playSound(Sounds.Music.LOBBY_INTRO)
+                            object : BukkitRunnable() {
+                                override fun run() {
+                                    if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+                                }
+                            }.runTaskLater(plugin, 1240L)
+                        }
                     }
                 }.runTaskLater(plugin, 20L)
             }

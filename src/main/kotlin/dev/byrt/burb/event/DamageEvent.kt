@@ -16,7 +16,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 
-
 @Suppress("unused", "unstableApiUsage")
 class DamageEvent: Listener {
     @EventHandler
@@ -51,7 +50,9 @@ class DamageEvent: Listener {
                     }
                 }
                 if(e.damage.toInt() > 0) {
-                    PlayerVisuals.damageIndicator(player, e.damage)
+                    if(!e.isCancelled) { //TODO: FIX DAMAGE INDICATORS APPEARING FROM SPECTATORS OR DEAD PLAYERS
+                        PlayerVisuals.damageIndicator(player, e.damage)
+                    }
                 }
             }
         }

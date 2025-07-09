@@ -81,7 +81,8 @@ object PlayerVisuals {
                             if(killer.vehicle?.scoreboardTags?.contains("${killer.uniqueId}-death-vehicle") == true || deathVehicle.isDead || !player.isOnline) {
                                 this.cancel()
                             }
-                            val killerDirection = killer.location.add(killer.location.direction.multiply(3).normalize())
+                            if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
+                            val killerDirection = killer.location.add(killer.location.direction.multiply(4).normalize())
                             killerDirection.y = killer.location.y + 0.25
                             deathVehicle.teleport(killerDirection, TeleportFlag.EntityState.RETAIN_PASSENGERS)
                             player.setRotation(killer.yaw - 180.0f, 5.0f)

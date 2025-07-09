@@ -2,6 +2,7 @@ package dev.byrt.burb.game
 
 import dev.byrt.burb.chat.ChatUtility
 import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
@@ -57,6 +58,7 @@ object Game {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.disableTeamGlowing(player)
             }
+            SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
         }
