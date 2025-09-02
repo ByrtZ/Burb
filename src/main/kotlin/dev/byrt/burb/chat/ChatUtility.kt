@@ -68,12 +68,12 @@ object GlobalRenderer : ChatRenderer {
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience): Component {
         val playerHead = Noxesium.buildSkullComponent(source.uniqueId, false, 0, 0, 1.0f)
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
-        return if(source.hasPermission("burb.group.admin")) {
+        return if(source.hasPermission("burb.group.admin") && source.burbPlayer().playerTeam == Teams.SPECTATOR) {
             playerHead
                 .append(allTags.deserialize("<prefix:admin> <dark_red>${source.name}<reset>: $plainMessage"))
         } else {
             playerHead
-                .append(allTags.deserialize("${if (source.burbPlayer().playerTeam == Teams.SPECTATOR) "<prefix:spectator> <white>" else if (source.burbPlayer().playerTeam == Teams.PLANTS) "TODO <plantscolour>"  else if (source.burbPlayer().playerTeam == Teams.ZOMBIES) "TODO <zombiescolour>" else ""}${source.name}<reset>: $plainMessage"))
+                .append(allTags.deserialize("${if (source.burbPlayer().playerTeam == Teams.SPECTATOR) "<prefix:spectator> <white>" else if (source.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>"  else if (source.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else ""}${source.name}<reset>: $plainMessage"))
         }
     }
 }

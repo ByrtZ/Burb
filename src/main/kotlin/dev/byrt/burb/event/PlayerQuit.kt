@@ -16,7 +16,7 @@ class PlayerQuit: Listener {
     fun onQuit(e: PlayerQuitEvent) {
         Noxesium.removeNoxesiumUser(e.player)
         PlayerManager.unregisterPlayer(e.player.burbPlayer())
-        e.quitMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<white>"}${e.player.name}<reset> left the game."))
+        e.quitMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<speccolour>"}${e.player.name}<reset> left the game."))
         Jukebox.disconnect(e.player)
         PlayerVisuals.disconnectInterrupt(e.player)
     }

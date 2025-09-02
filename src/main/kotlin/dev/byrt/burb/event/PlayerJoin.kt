@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 class PlayerJoin: Listener {
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
-        e.joinMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<white>"}${e.player.name}<reset> joined the game."))
+        e.joinMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<speccolour>"}${e.player.name}<reset> joined the game."))
         PlayerManager.registerPlayer(e.player)
     }
 }

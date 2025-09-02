@@ -19,9 +19,10 @@ class DeathEvent: Listener {
                 e.player.killer!!.playSound(Sounds.Score.ELIMINATION)
             }
         }
-        PlayerVisuals.death(e.player,
+        PlayerVisuals.death(
+            e.player,
             if(e.player.killer != null && e.player.killer is Player) e.player.killer else null,
-            if(e.deathMessage() == null) Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name} died.") else e.deathMessage()!!
+            if(e.player.killer is Player && e.player.killer != null) Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name} was eliminated by ${e.player.killer!!.burbPlayer().playerTeam.teamColourTag}${e.player.killer!!.name}.") else Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name} was eliminated.")
         )
         e.isCancelled = true
     }

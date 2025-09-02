@@ -30,7 +30,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    compileOnly("io.papermc.paper:paper-api:1.21.5-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-core:2.0.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
     implementation("org.incendo:cloud-annotations:2.0.0")
@@ -63,7 +63,7 @@ tasks {
         relocationPrefix = "dev.byrt.burb.shade"
     }
     runServer {
-        minecraftVersion("1.21.5")
+        minecraftVersion("1.21.8")
     }
     processResources {
         val props = mapOf("version" to version)
