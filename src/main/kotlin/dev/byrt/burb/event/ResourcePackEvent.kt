@@ -1,8 +1,6 @@
 package dev.byrt.burb.event
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.game.GameManager
-import dev.byrt.burb.game.GameState
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.plugin

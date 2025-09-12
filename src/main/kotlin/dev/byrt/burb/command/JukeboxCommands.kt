@@ -1,6 +1,6 @@
 package dev.byrt.burb.command
 
-import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.plugin

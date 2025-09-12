@@ -41,12 +41,14 @@ class TimerCommands {
         if(Timer.getTimerState() != TimerState.INACTIVE) {
             if(seconds != null) {
                 if(seconds > 0) {
-                    Timer.setTimer(seconds, css.sender)
+                    Timer.setTimer(Timer.getTimer() - seconds, css.sender)
+                    Timer.setTimerState(TimerState.ACTIVE, css.sender)
                 } else {
                     return
                 }
             } else {
                 Timer.setTimer(1, css.sender)
+                Timer.setTimerState(TimerState.ACTIVE, css.sender)
             }
         } else {
             return

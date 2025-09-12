@@ -1,6 +1,6 @@
 package dev.byrt.burb.event
 
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.plugin

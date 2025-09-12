@@ -1,14 +1,12 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.chat.Formatting
-import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
-import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.PlayerType
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 

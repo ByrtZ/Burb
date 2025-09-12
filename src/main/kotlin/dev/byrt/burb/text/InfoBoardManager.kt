@@ -1,4 +1,4 @@
-package dev.byrt.burb.chat
+package dev.byrt.burb.text
 
 import dev.byrt.burb.game.*
 import dev.byrt.burb.game.Timer
@@ -166,31 +166,31 @@ object InfoBoardManager {
                                 this.cancel()
                             }
                             GameState.STARTING -> {
-                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-122>${ChatUtility.BURB_FONT_TAG}GAME  STARTING  IN:  ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
+                                timerBossBar.name(TextAlignment.centreBossBarText("GAME STARTING IN: ${if(Timer.getTimer() <= 9) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}"))
                             }
                             GameState.IN_GAME -> {
-                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-104>${ChatUtility.BURB_FONT_TAG}TIME  LEFT:  ${if(Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}<reset>"))
+                                timerBossBar.name(TextAlignment.centreBossBarText("TIME LEFT: ${if (Timer.getTimer() <= 89) "<red>" else "<#ffff00>"}${Timer.getDisplayTimer()}"))
                             }
                             GameState.ROUND_END -> {
-                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-115>${ChatUtility.BURB_FONT_TAG}NEXT  ROUND  IN:  <#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                                timerBossBar.name(TextAlignment.centreBossBarText("NEXT ROUND IN: <#ffff00>${Timer.getDisplayTimer()}"))
                             }
                             GameState.GAME_END -> {
-                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-107>${ChatUtility.BURB_FONT_TAG}BACK  TO  HUB:  <#ffff00>${Timer.getDisplayTimer()}<reset>"))
+                                timerBossBar.name(TextAlignment.centreBossBarText("BACK TO HUB: <#ffff00>${Timer.getDisplayTimer()}"))
                             }
                             GameState.OVERTIME -> {
-                                timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-95>${ChatUtility.BURB_FONT_TAG}<red>OVERTIME<reset>"))
+                                timerBossBar.name(TextAlignment.centreBossBarText("<red>OVERTIME"))
                             }
                         }
                     }
                     TimerState.INACTIVE -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-85>${ChatUtility.BURB_FONT_TAG}<red>TIMER  UNAVAILABLE<reset>"))
+                        timerBossBar.name(TextAlignment.centreBossBarText("<red>TIMER UNAVAILABLE"))
                     }
                     TimerState.PAUSED -> {
-                        timerBossBar.name(Formatting.allTags.deserialize("${ChatUtility.NO_SHADOW_TAG}\uD011<reset><translate:space.-100>${ChatUtility.BURB_FONT_TAG}TIMER  PAUSED<reset>"))
+                        timerBossBar.name(TextAlignment.centreBossBarText("TIMER PAUSED"))
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 1L)
+        }.runTaskTimer(plugin, 0L, 2L)
     }
 
     fun updateScore() {

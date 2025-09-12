@@ -1,6 +1,6 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.BurbCharacter
 
 import org.bukkit.Material

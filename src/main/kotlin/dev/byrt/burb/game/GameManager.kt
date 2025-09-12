@@ -1,8 +1,8 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.Formatting
-import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.game.location.SpawnPoints

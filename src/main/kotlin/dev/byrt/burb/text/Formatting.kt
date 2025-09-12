@@ -1,4 +1,4 @@
-package dev.byrt.burb.chat
+package dev.byrt.burb.text
 
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.Noxesium

@@ -1,7 +1,7 @@
 package dev.byrt.burb.util
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.plugin
 
 import kotlinx.coroutines.Dispatchers

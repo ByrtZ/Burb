@@ -1,6 +1,6 @@
 package dev.byrt.burb.event
 
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.PlayerManager
 import dev.byrt.burb.player.PlayerManager.burbPlayer

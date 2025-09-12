@@ -1,6 +1,6 @@
 package dev.byrt.burb.command
 
-import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState

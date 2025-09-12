@@ -1,7 +1,7 @@
-package dev.byrt.burb.chat
+package dev.byrt.burb.text
 
-import dev.byrt.burb.chat.Formatting.allTags
-import dev.byrt.burb.chat.Formatting.restrictedTags
+import dev.byrt.burb.text.Formatting.allTags
+import dev.byrt.burb.text.Formatting.restrictedTags
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.Teams
@@ -19,7 +19,6 @@ import org.bukkit.entity.Player
 
 object ChatUtility {
     const val BURB_FONT_TAG = "<font:burb:font>"
-    const val NO_SHADOW_TAG = "<#4E5C24>"
     const val HEART_UNICODE = "❤"
     /** Sends a message to the specified audience. **/
     fun messageAudience(recipient: Audience, message: String, restricted: Boolean, vararg placeholders: TagResolver) {

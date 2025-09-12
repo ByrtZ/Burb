@@ -1,6 +1,6 @@
 package dev.byrt.burb.interfaces
 
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.getCharacter

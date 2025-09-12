@@ -2,7 +2,7 @@ package dev.byrt.burb.event
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent
 
-import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.library.Translation
 import org.bukkit.Bukkit
 

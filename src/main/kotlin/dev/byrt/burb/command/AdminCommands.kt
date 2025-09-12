@@ -1,7 +1,7 @@
 package dev.byrt.burb.command
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.ScoreManager
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType

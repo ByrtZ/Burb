@@ -1,6 +1,6 @@
 package dev.byrt.burb.library
 
-import dev.byrt.burb.chat.ChatUtility.BURB_FONT_TAG
+import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 
 import org.bukkit.Bukkit
 
@@ -8,6 +8,7 @@ object Translation {
     object Generic {
         const val ARROW_PREFIX = "[<yellow>▶<reset>] "
         const val TITLE_SCREEN_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}JOIN<reset> ${BURB_FONT_TAG}THE<reset> ${BURB_FONT_TAG}FIGHT<reset>"
+        const val CHARACTER_SELECTION_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}CHANGE<reset> ${BURB_FONT_TAG}CHARACTER<reset>"
     }
     object Tutorial {
         const val BLANK_LINE = "<newline>"

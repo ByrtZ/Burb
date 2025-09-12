@@ -1,7 +1,7 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.InfoBoardManager
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.lobby.LobbyBall

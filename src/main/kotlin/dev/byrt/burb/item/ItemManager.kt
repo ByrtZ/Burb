@@ -1,7 +1,7 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams

@@ -1,6 +1,6 @@
 package dev.byrt.burb.event
 
-import dev.byrt.burb.chat.GlobalRenderer
+import dev.byrt.burb.text.GlobalRenderer
 
 import io.papermc.paper.event.player.AsyncChatEvent
 

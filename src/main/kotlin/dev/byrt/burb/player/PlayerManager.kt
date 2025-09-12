@@ -1,6 +1,6 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.exception.PlayerManagerException
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.team.Teams

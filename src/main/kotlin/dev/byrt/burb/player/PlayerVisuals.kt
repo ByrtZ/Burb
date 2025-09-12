@@ -1,12 +1,16 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.chat.ChatUtility
-import dev.byrt.burb.chat.Formatting
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.location.SpawnPoints
+import dev.byrt.burb.interfaces.BurbInterface
+import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.entity.TeleportFlag
 
@@ -16,7 +20,6 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
@@ -53,7 +56,7 @@ object PlayerVisuals {
 
     fun death(player: Player, killer: Player?, deathMessage: Component) {
         val plainDeathMessage = if(player.hasPotionEffect(PotionEffectType.INVISIBILITY)) { PlainTextComponentSerializer.plainText().serialize(deathMessage).replace(player.name, "<obfuscated>*<reset>".repeat(Random.nextInt(4, 16))) } else { PlainTextComponentSerializer.plainText().serialize(deathMessage) }
-        parseDeathMessage(player, plainDeathMessage)
+        parseDeathMessage(player, killer, plainDeathMessage)
 
         player.clearActivePotionEffects()
         player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
@@ -80,29 +83,69 @@ object PlayerVisuals {
                         override fun run() {
                             if(killer.vehicle?.scoreboardTags?.contains("${killer.uniqueId}-death-vehicle") == true || deathVehicle.isDead || !player.isOnline) {
                                 this.cancel()
+                            } else {
+                                if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
+                                val killerDirection = killer.location.add(killer.location.direction.multiply(5).normalize())
+                                killerDirection.y = killer.location.y + 0.25
+                                deathVehicle.teleport(killerDirection, TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                player.setRotation(killer.yaw - 180.0f, 5.0f)
                             }
-                            if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
-                            val killerDirection = killer.location.add(killer.location.direction.multiply(4).normalize())
-                            killerDirection.y = killer.location.y + 0.25
-                            deathVehicle.teleport(killerDirection, TeleportFlag.EntityState.RETAIN_PASSENGERS)
-                            player.setRotation(killer.yaw - 180.0f, 5.0f)
+
                         }
                     }.runTaskTimer(plugin, 0L, 1L)
                 }
             }.runTaskLater(plugin, 50L)
         }
 
-        /** Scheduled Respawn and Post Respawn **/
+        /** Respawn, includes ability to change characters, and Post Respawn **/
         object : BukkitRunnable() {
+            val RESPAWN_TIME = 15
+            var timer = RESPAWN_TIME
+            var ticks = 0
             override fun run() {
-                respawn(player)
-                object : BukkitRunnable() {
-                    override fun run() {
-                        postRespawn(player, deathVehicle)
+                if(player.vehicle == deathVehicle) {
+                    if(timer < RESPAWN_TIME - 5) {
+                        player.showTitle(
+                            Title.title(
+                                Formatting.allTags.deserialize("<yellow>Respawning in"),
+                                Formatting.allTags.deserialize("<b>►${timer}◄"),
+                                Title.Times.times(
+                                    Duration.ofMillis(0),
+                                    Duration.ofSeconds(2),
+                                    Duration.ofMillis(750)
+                                )
+                            )
+                        )
+                        player.sendActionBar(Formatting.allTags.deserialize(Translation.Generic.CHARACTER_SELECTION_ACTIONBAR))
+                        if(player.isSneaking) {
+                            BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
+                        }
                     }
-                }.runTaskLater(plugin, 20L)
+                    if(timer <= 0) {
+                        object : BukkitRunnable() {
+                            override fun run() {
+                                respawn(player)
+                                object : BukkitRunnable() {
+                                    override fun run() {
+                                        postRespawn(player, deathVehicle)
+                                    }
+                                }.runTaskLater(plugin, 20L)
+                            }
+                        }.runTask(plugin)
+                        cancel()
+                    } else {
+                        if(ticks >= 20) {
+                            ticks = 0
+                            timer--
+                        }
+                        ticks++
+                    }
+                } else {
+                    cancel()
+                }
+
             }
-        }.runTaskLater(plugin, 180L)
+        }.runTaskTimer(plugin, 0L, 1L)
         player.showTitle(
             Title.title(
                 Formatting.allTags.deserialize("<red>You died!"),
@@ -116,9 +159,10 @@ object PlayerVisuals {
         )
     }
 
-    private fun parseDeathMessage(player: Player, plainDeathMessage: String) {
-        val parsedDeathMessage = plainDeathMessage.replace(player.name, "${if(player.isOp) "<dark_red>" else "<white>"}${player.name}<reset>")
-        ChatUtility.messageAudience(Audience.audience(Bukkit.getOnlinePlayers()), "<red><prefix:skull><reset> $parsedDeathMessage.", false)
+    private fun parseDeathMessage(player: Player, killer: Player?, plainDeathMessage: String) {
+        var parsedDeathMessage = plainDeathMessage.replace(player.name, "${if(player.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>" else if(player.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else "<gray>"}${player.name}<reset>")
+        if(killer != null) parsedDeathMessage = parsedDeathMessage.replace(killer.name, "${if(killer.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>" else if(killer.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else "<gray>"}${killer.name}<reset>")
+        ChatUtility.messageAudience(Audience.audience(Bukkit.getOnlinePlayers()), "<gray>[<red><prefix:skull><gray>]<reset> $parsedDeathMessage", false)
     }
 
     fun hidePlayer(player: Player) {

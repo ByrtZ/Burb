@@ -1,6 +1,6 @@
 package dev.byrt.burb.util
 
-import dev.byrt.burb.chat.ChatUtility
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.logger
 
 import net.kyori.adventure.text.Component
