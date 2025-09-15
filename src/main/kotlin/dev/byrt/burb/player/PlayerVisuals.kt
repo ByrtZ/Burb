@@ -1,6 +1,7 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
@@ -8,13 +9,12 @@ import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
+import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.entity.TeleportFlag
 
-import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
@@ -55,9 +55,7 @@ object PlayerVisuals {
     }
 
     fun death(player: Player, killer: Player?, deathMessage: Component) {
-        val plainDeathMessage = if(player.hasPotionEffect(PotionEffectType.INVISIBILITY)) { PlainTextComponentSerializer.plainText().serialize(deathMessage).replace(player.name, "<obfuscated>*<reset>".repeat(Random.nextInt(4, 16))) } else { PlainTextComponentSerializer.plainText().serialize(deathMessage) }
-        parseDeathMessage(player, killer, plainDeathMessage)
-
+        for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
         player.clearActivePotionEffects()
         player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
         ItemManager.clearItems(player)
@@ -104,21 +102,28 @@ object PlayerVisuals {
             var ticks = 0
             override fun run() {
                 if(player.vehicle == deathVehicle) {
-                    if(timer < RESPAWN_TIME - 5) {
-                        player.showTitle(
-                            Title.title(
-                                Formatting.allTags.deserialize("<yellow>Respawning in"),
-                                Formatting.allTags.deserialize("<b>►${timer}◄"),
-                                Title.Times.times(
-                                    Duration.ofMillis(0),
-                                    Duration.ofSeconds(2),
-                                    Duration.ofMillis(750)
+                    if(timer < RESPAWN_TIME - 6) {
+                        if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                            if(ticks == 1) {
+                                player.showTitle(
+                                    Title.title(
+                                        Formatting.allTags.deserialize("<yellow>Respawning in"),
+                                        Formatting.allTags.deserialize("<b>►${timer}◄"),
+                                        Title.Times.times(
+                                            Duration.ofMillis(0),
+                                            Duration.ofSeconds(2),
+                                            Duration.ofMillis(750)
+                                        )
+                                    )
                                 )
-                            )
-                        )
-                        player.sendActionBar(Formatting.allTags.deserialize(Translation.Generic.CHARACTER_SELECTION_ACTIONBAR))
-                        if(player.isSneaking) {
-                            BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
+                                player.playSound(Sounds.Timer.TICK)
+                                player.sendActionBar(Formatting.allTags.deserialize(Translation.Generic.CHARACTER_SELECTION_ACTIONBAR))
+                            }
+                            if(player.isSneaking) {
+                                BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
+                            }
+                        } else {
+                            timer = 0
                         }
                     }
                     if(timer <= 0) {
@@ -143,13 +148,12 @@ object PlayerVisuals {
                 } else {
                     cancel()
                 }
-
             }
         }.runTaskTimer(plugin, 0L, 1L)
         player.showTitle(
             Title.title(
                 Formatting.allTags.deserialize("<red>You died!"),
-                Formatting.allTags.deserialize("<gray>${plainDeathMessage}"),
+                Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
                 Title.Times.times(
                     Duration.ofMillis(250),
                     Duration.ofSeconds(8),
@@ -157,12 +161,6 @@ object PlayerVisuals {
                 )
             )
         )
-    }
-
-    private fun parseDeathMessage(player: Player, killer: Player?, plainDeathMessage: String) {
-        var parsedDeathMessage = plainDeathMessage.replace(player.name, "${if(player.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>" else if(player.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else "<gray>"}${player.name}<reset>")
-        if(killer != null) parsedDeathMessage = parsedDeathMessage.replace(killer.name, "${if(killer.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>" else if(killer.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else "<gray>"}${killer.name}<reset>")
-        ChatUtility.messageAudience(Audience.audience(Bukkit.getOnlinePlayers()), "<gray>[<red><prefix:skull><gray>]<reset> $parsedDeathMessage", false)
     }
 
     fun hidePlayer(player: Player) {
@@ -205,6 +203,7 @@ object PlayerVisuals {
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
+        if(!Jukebox.getJukeboxMap().containsKey(player.uniqueId)) Jukebox.playCurrentMusicStress(player)
         showPlayer(player)
     }
 
@@ -215,6 +214,11 @@ object PlayerVisuals {
         object : BukkitRunnable() {
             override fun run() {
                 if(!player.isOnline) cancel()
+                if(player.vehicle != null) {
+                    if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+                        cancel()
+                    }
+                }
                 if(timer < reloadTime) {
                     if(timer % 2 == 0) {
                         player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.5f, pitch)

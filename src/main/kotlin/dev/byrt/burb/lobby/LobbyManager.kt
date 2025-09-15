@@ -7,8 +7,10 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.Teams
 
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -32,13 +34,11 @@ object LobbyManager {
         player.playSound(Sounds.Misc.TITLE_SCREEN_ENTER)
 
         if(!Jukebox.getJukeboxMap().containsKey(player.uniqueId)) {
-            if(GameManager.getGameState() == GameState.IDLE) {
-                object : BukkitRunnable() {
-                    override fun run() {
-                        Jukebox.startMusicLoop(player, plugin, Music.LOBBY_TITLE_SCREEN)
-                    }
-                }.runTaskLater(plugin, 20L)
-            }
+            object : BukkitRunnable() {
+                override fun run() {
+                    Jukebox.startMusicLoop(player, plugin, Music.LOBBY_TITLE_SCREEN)
+                }
+            }.runTaskLater(plugin, 20L)
         }
 
         object : BukkitRunnable() {
@@ -54,7 +54,6 @@ object LobbyManager {
                 }
             }
         }.runTaskTimer(plugin, 0L, 5L)
-
         player.removePotionEffect(PotionEffectType.BLINDNESS)
     }
 
@@ -75,6 +74,10 @@ object LobbyManager {
                                     if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
                                 }
                             }.runTaskLater(plugin, 1240L)
+                        } else {
+                            if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                                player.gameMode = GameMode.SPECTATOR
+                            }
                         }
                     }
                 }.runTaskLater(plugin, 20L)

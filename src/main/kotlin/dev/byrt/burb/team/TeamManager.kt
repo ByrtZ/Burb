@@ -88,7 +88,9 @@ object TeamManager {
             )
         )
         if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-            refreshGlowing()
+            if(player.playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                refreshGlowing()
+            }
         }
         player.characterSelect()
     }

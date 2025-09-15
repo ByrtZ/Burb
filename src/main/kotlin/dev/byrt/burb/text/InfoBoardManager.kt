@@ -3,6 +3,7 @@ package dev.byrt.burb.text
 import dev.byrt.burb.game.*
 import dev.byrt.burb.game.Timer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat
 
@@ -190,7 +191,51 @@ object InfoBoardManager {
                     }
                 }
             }
-        }.runTaskTimer(plugin, 0L, 2L)
+        }.runTaskTimer(plugin, 0L, 1L)
+    }
+
+    fun capturePointBossBar() {
+        object : BukkitRunnable() {
+            val capturePointBossBar = BossBar.bossBar(Formatting.allTags.deserialize(""), 0f, Color.RED, BossBar.Overlay.PROGRESS)
+            var ticks = 0
+            override fun run() {
+                if(GameManager.getGameState() != GameState.IDLE) {
+                    for(player in Bukkit.getOnlinePlayers()) {
+                        if(!player.activeBossBars().contains(capturePointBossBar)) capturePointBossBar.addViewer(player)
+                    }
+                }
+                when(GameManager.getGameState()) {
+                    GameState.IDLE -> {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            capturePointBossBar.removeViewer(player)
+                        }
+                        this.cancel()
+                    }
+                    GameState.GAME_END -> {
+                        if(Timer.getTimer() > 89) {
+                            capturePointBossBar.name(TextAlignment.centreBossBarText("WINNERS: <gray><obf>???"))
+                        }
+                        if(Timer.getTimer() <= 89 && ticks == 0) {
+                            capturePointBossBar.name(TextAlignment.centreBossBarText("WINNERS: ${ScoreManager.getWinningTeam().teamColourTag}${ScoreManager.getWinningTeam()}"))
+                        }
+                    }
+                    else -> {
+                        if(CapturePointManager.isSuburbinating()) {
+                            capturePointBossBar.name(TextAlignment.centreBossBarText("<u>${CapturePointManager.getSuburbinatingTeam().teamColourTag}SUBURBINATION"))
+                        } else {
+                            val pointA = CapturePointManager.getCapturePointData(CapturePoint.A)
+                            val pointB = CapturePointManager.getCapturePointData(CapturePoint.B)
+                            val pointC = CapturePointManager.getCapturePointData(CapturePoint.C)
+                            capturePointBossBar.name(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%"))
+                        }
+                    }
+                }
+                ticks++
+                if(ticks >= 9) {
+                    ticks = 0
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L)
     }
 
     fun updateScore() {

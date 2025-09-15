@@ -80,6 +80,7 @@ object GameManager {
                     Timer.setTimer(GameTime.GAME_STARTING_TIME, null)
                     GameTask.startGameLoop()
                     InfoBoardManager.timerBossBar()
+                    InfoBoardManager.capturePointBossBar()
                     LobbyBall.cleanup()
                     starting()
                 } else {
@@ -278,6 +279,7 @@ object CapturePointManager {
     private val capturePointTasks = mutableMapOf<CapturePoint, BukkitRunnable>()
     private val capturedPoints = mutableMapOf<CapturePoint, Teams>()
     private var suburbinatingTeam = Teams.NULL
+    var capturePointScores = mutableMapOf<CapturePoint, Pair<Int, Teams>>()
     const val REQUIRED_CAPTURE_SCORE = 100
 
     fun initializeCapturePoints() {
@@ -312,6 +314,14 @@ object CapturePointManager {
             world.getEntitiesByClass(TextDisplay::class.java)
                 .filter { it.scoreboardTags.contains("burb.game.capture_point.text_display") }
                 .forEach { it.remove() }
+        }
+    }
+
+    fun getCapturePointData(capturePoint: CapturePoint): Pair<Int, Teams> {
+        return if(capturePointScores[capturePoint] != null) {
+            capturePointScores[capturePoint]!!
+        } else {
+            Pair(0, Teams.NULL)
         }
     }
 
@@ -364,6 +374,8 @@ object CapturePointManager {
                     textDisplay?.remove()
                 }
                 if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
+
+                capturePointScores[capturePoint] = if(plantProgress > zombieProgress) Pair(plantProgress, Teams.PLANTS) else if(zombieProgress > plantProgress) Pair(zombieProgress, Teams.ZOMBIES) else Pair(0, Teams.NULL)
 
                 val location = capturePoint.location
                 if(textDisplay == null || textDisplay!!.isDead) {
@@ -432,7 +444,7 @@ object CapturePointManager {
                         contested -> "<reset><red><b>CONTESTED"
                         else -> "<reset><b>UNCONTESTED"
                     }
-                }<reset><newline><newline>DEBUG CAPTURE PROGRESS<newline><b><plantscolour>P</b>${plantProgress} | <b><zombiescolour>Z</b>${zombieProgress}<newline>"))
+                }<reset><newline><newline><b><plantscolour>P</b>${plantProgress} | <b><zombiescolour>Z</b>${zombieProgress}<newline>"))
 
                 // Coloured particle ring to show point status
                 spawnCaptureParticles(location, dominatingTeam, plantProgress, zombieProgress, contested)

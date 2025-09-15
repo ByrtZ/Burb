@@ -11,13 +11,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerQuitEvent
 
+@Suppress("unused")
 class PlayerQuit: Listener {
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
-        Noxesium.removeNoxesiumUser(e.player)
         PlayerManager.unregisterPlayer(e.player.burbPlayer())
-        e.quitMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<speccolour>"}${e.player.name}<reset> left the game."))
+        Noxesium.removeNoxesiumUser(e.player)
         Jukebox.disconnect(e.player)
         PlayerVisuals.disconnectInterrupt(e.player)
+        e.quitMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<speccolour>"}${e.player.name}<reset> left the game."))
     }
 }

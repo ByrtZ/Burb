@@ -12,11 +12,11 @@ object TextAlignment {
 
     fun centreBossBarText(text: String): Component {
         val plainText = PlainTextComponentSerializer.plainText().serialize(Formatting.allTags.deserialize(text))
-        val textWidth = plainText.sumOf { ch -> if (ch in listOf(' ')) SPACE_WIDTH else if (ch in listOf(':')) SPACE_WIDTH + LETTER_SPACING else FONT_WIDTH + LETTER_SPACING } - 1
+        val textWidth = plainText.sumOf { ch -> if (ch in listOf(' ')) SPACE_WIDTH else if (ch in listOf(':', '|', '.', ',')) SPACE_WIDTH + LETTER_SPACING else FONT_WIDTH + LETTER_SPACING } - 1
         val shift = (BACKGROUND_WIDTH + textWidth) / 2
         val textSpaceTag = "<translate:space.-${shift}>"
         val backgroundSpaceTag = "<translate:space.-${(BACKGROUND_WIDTH - textWidth) / 2}>"
-        val component = Formatting.allTags.deserialize("<!shadow>$backgroundSpaceTag$BACKGROUND_GLYPH$textSpaceTag${ChatUtility.BURB_FONT_TAG}$text")
+        val component = Formatting.allTags.deserialize("<!shadow>$backgroundSpaceTag$BACKGROUND_GLYPH$textSpaceTag</!shadow>${ChatUtility.BURB_FONT_TAG}$text")
         return component
     }
 }

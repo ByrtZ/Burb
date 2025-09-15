@@ -8,19 +8,26 @@ import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.logger
+import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.TextAlignment
 import dev.byrt.burb.util.CommitGrabber
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.bossbar.BossBar
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
+import org.bukkit.Bukkit
 
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.scheduler.BukkitRunnable
 
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
@@ -118,7 +125,7 @@ class AdminCommands {
     }
 
     @Command("debug displayscore <team>")
-    @CommandDescription("Debug.")
+    @CommandDescription("Debug display score")
     @Permission("burb.cmd.debug")
     fun debugDisplayScore(css: CommandSourceStack, @Argument("team") team: Teams) {
         if(css.sender is Player) {
@@ -134,6 +141,34 @@ class AdminCommands {
         if(css.sender is Player) {
             ChatUtility.broadcastDev("<dark_gray>Fetching latest commit.", false)
             CommitGrabber.grabLatestCommit()
+        }
+    }
+
+    @Command("debug tasks")
+    @CommandDescription("Lists all running tasks")
+    @Permission("burb.cmd.debug")
+    fun debugTasks(css: CommandSourceStack) {
+        logger.warning("Active Workers:")
+        Bukkit.getScheduler().activeWorkers.forEach { w -> logger.info("ID: ${w.taskId} ||||| Thread: ${w.thread} ||||| Thread name: ${w.thread.name} ||||| Owner: ${w.owner.name}") }
+        logger.warning("Pending Tasks:")
+        Bukkit.getScheduler().pendingTasks.forEach { t -> logger.info("ID: ${t.taskId} ||||| Sync: ${t.isSync} ||||| Owner: ${t.owner.name} ||||| Cancelled: ${t.isCancelled}") }
+    }
+
+    @Command("debug bossbar <text>")
+    @CommandDescription("Shows temporary test bossbar")
+    @Permission("burb.cmd.debug")
+    fun debugBossbar(css: CommandSourceStack, @Argument("text") text: Array<String>) {
+        if(css.sender is Player) {
+            val tempBossBar = BossBar.bossBar(TextAlignment.centreBossBarText(text.joinToString(" ")), 0f, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS).apply {
+                addViewer(Audience.audience(css.sender as Player))
+            }
+            object : BukkitRunnable() {
+                override fun run() {
+                    for(player in Bukkit.getOnlinePlayers()) {
+                        tempBossBar.removeViewer(player)
+                    }
+                }
+            }.runTaskLater(plugin, 200L)
         }
     }
 }

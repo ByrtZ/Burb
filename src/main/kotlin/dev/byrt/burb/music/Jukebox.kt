@@ -73,6 +73,18 @@ object Jukebox {
         }
     }
 
+    fun playCurrentMusicStress(player: Player) {
+        for(music in Music.entries) {
+            stopMusicLoop(player, music)
+        }
+        when(musicStress) {
+            MusicStress.LOW -> startMusicLoop(player, plugin, Music.RANDOM_LOW)
+            MusicStress.MEDIUM -> startMusicLoop(player, plugin, Music.RANDOM_MEDIUM)
+            MusicStress.HIGH -> startMusicLoop(player, plugin, Music.RANDOM_HIGH)
+            else -> {}
+        }
+    }
+
     fun getMusicStress(): MusicStress {
         return this.musicStress
     }

@@ -23,35 +23,37 @@ class DamageEvent: Listener {
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
             e.isCancelled = true
             return
-        }
-        if(e.cause == EntityDamageEvent.DamageCause.HOT_FLOOR
-            || e.cause == EntityDamageEvent.DamageCause.DROWNING
-            || e.cause == EntityDamageEvent.DamageCause.CRAMMING
-            || e.cause == EntityDamageEvent.DamageCause.LAVA
-            || e.cause == EntityDamageEvent.DamageCause.FIRE
-            || e.cause == EntityDamageEvent.DamageCause.FIRE_TICK
-            || e.cause == EntityDamageEvent.DamageCause.CRAMMING
-            || e.cause == EntityDamageEvent.DamageCause.LIGHTNING
-            || e.cause == EntityDamageEvent.DamageCause.WITHER
-            || e.cause == EntityDamageEvent.DamageCause.VOID
-            || e.cause == EntityDamageEvent.DamageCause.DRAGON_BREATH
-            || e.cause == EntityDamageEvent.DamageCause.POISON
-            || e.cause == EntityDamageEvent.DamageCause.FREEZE
-            || e.cause == EntityDamageEvent.DamageCause.SONIC_BOOM
-            || e.cause == EntityDamageEvent.DamageCause.FALL) {
-            e.isCancelled = true
         } else {
-            if(e.entity is Player) {
-                val player = e.entity as Player
-                if(player.vehicle != null) {
-                    if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
-                        e.isCancelled = true
-                        return
+            if(e.cause == EntityDamageEvent.DamageCause.HOT_FLOOR
+                || e.cause == EntityDamageEvent.DamageCause.DROWNING
+                || e.cause == EntityDamageEvent.DamageCause.CRAMMING
+                || e.cause == EntityDamageEvent.DamageCause.LAVA
+                || e.cause == EntityDamageEvent.DamageCause.FIRE
+                || e.cause == EntityDamageEvent.DamageCause.FIRE_TICK
+                || e.cause == EntityDamageEvent.DamageCause.CRAMMING
+                || e.cause == EntityDamageEvent.DamageCause.LIGHTNING
+                || e.cause == EntityDamageEvent.DamageCause.WITHER
+                || e.cause == EntityDamageEvent.DamageCause.VOID
+                || e.cause == EntityDamageEvent.DamageCause.DRAGON_BREATH
+                || e.cause == EntityDamageEvent.DamageCause.POISON
+                || e.cause == EntityDamageEvent.DamageCause.FREEZE
+                || e.cause == EntityDamageEvent.DamageCause.SONIC_BOOM
+                || e.cause == EntityDamageEvent.DamageCause.FALL) {
+                e.isCancelled = true
+                return
+            } else {
+                if(e.entity is Player) {
+                    val player = e.entity as Player
+                    if(player.vehicle != null) {
+                        if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+                            e.isCancelled = true
+                            return
+                        }
                     }
-                }
-                if(e.damage.toInt() > 0) {
-                    if(!e.isCancelled) { //TODO: FIX DAMAGE INDICATORS APPEARING FROM SPECTATORS OR DEAD PLAYERS
-                        PlayerVisuals.damageIndicator(player, e.damage)
+                    if(e.damage.toInt() > 0) {
+                        if(!e.isCancelled || e.entity.vehicle?.scoreboardTags?.contains("${e.entity.uniqueId}-death-vehicle") == false) {
+                            PlayerVisuals.damageIndicator(player, e.damage)
+                        }
                     }
                 }
             }
