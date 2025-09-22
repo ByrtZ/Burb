@@ -1,8 +1,9 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.exception.PlayerManagerException
 import dev.byrt.burb.item.ItemManager
+import dev.byrt.burb.logger
+import dev.byrt.burb.player.progression.BurbProgression
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.ResourcePacker
 
@@ -11,9 +12,10 @@ import org.bukkit.entity.Player
 object PlayerManager {
     private val burbPlayers = mutableSetOf<BurbPlayer>()
     fun registerPlayer(player: Player) {
-        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registering player ${player.name} as BurbPlayer.", true)
+        logger.info("Player Manager: Registering player ${player.name} as BurbPlayer.")
         val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL)
         burbPlayers.add(burbPlayer)
+        BurbProgression.getPlayerData(player)
         ResourcePacker.applyPackPlayer(player)
         ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)

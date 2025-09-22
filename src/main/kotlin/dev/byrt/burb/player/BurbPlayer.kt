@@ -1,7 +1,7 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.item.ItemManager
+import dev.byrt.burb.logger
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
 
@@ -14,20 +14,20 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     init {
         setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
-        ChatUtility.broadcastDev("<dark_gray>Player Manager: Registered player ${this.playerName} as BurbPlayer.", true)
+        logger.info("Player Manager: Registered player ${this.playerName} as BurbPlayer.")
     }
 
     fun setType(newType: PlayerType) {
         if(newType == this.playerType) return
         this.playerType = newType
-        ChatUtility.broadcastDev("<dark_gray>Type: ${this.playerName} now has value ${this.playerType}.", true)
+        logger.info("Type: ${this.playerName} now has value ${this.playerType}.")
     }
 
     fun setTeam(newTeam: Teams) {
         if(newTeam == this.playerTeam) return
         this.playerTeam = newTeam
         TeamManager.setTeam(this, this.playerTeam)
-        ChatUtility.broadcastDev("<dark_gray>Teams: ${this.playerName} now has value ${this.playerTeam}.", true)
+        logger.info("Teams: ${this.playerName} now has value ${this.playerTeam}.")
     }
 
     fun setCharacter(newCharacter: BurbCharacter) {
@@ -38,7 +38,7 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         } else {
             ItemManager.clearItems(this.getBukkitPlayer())
         }
-        ChatUtility.broadcastDev("<dark_gray>Character: ${this.playerName} now has value ${this.playerCharacter}.", true)
+        logger.info("Character: ${this.playerName} now has value ${this.playerCharacter}.")
     }
 
     fun getBukkitPlayer(): Player {

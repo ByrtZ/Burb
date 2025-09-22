@@ -7,6 +7,7 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.progression.BurbProgression
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -149,6 +150,17 @@ object GameTask {
                     if(Timer.getTimer() == 90) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
+                            player.playSound(Sounds.Alert.ALARM)
+                            player.showTitle(Title.title(
+                                    Formatting.allTags.deserialize(""),
+                                    Formatting.allTags.deserialize("<red>90 seconds remain!"),
+                                    Title.Times.times(
+                                        Duration.ofMillis(250),
+                                        Duration.ofSeconds(3),
+                                        Duration.ofMillis(750)
+                                    )
+                                )
+                            )
                         }
                     }
                     if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
@@ -204,6 +216,7 @@ object GameTask {
                             if(ScoreManager.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
                                 if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
                                 if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbProgression.appendExperience(player, 30)
                                 player.sendMessage(Formatting.allTags.deserialize("Nobody won, what a disappointment!"))
                                 player.showTitle(
                                     Title.title(
@@ -221,12 +234,24 @@ object GameTask {
                                 )
                                 when(ScoreManager.getWinningTeam()) {
                                     Teams.PLANTS -> {
-                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_WIN)
-                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) {
+                                            player.playSound(Sounds.Score.PLANTS_WIN)
+                                            BurbProgression.appendExperience(player, 200)
+                                        }
+                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                                            player.playSound(Sounds.Score.ZOMBIES_LOSE)
+                                            BurbProgression.appendExperience(player, 50)
+                                        }
                                     }
                                     Teams.ZOMBIES -> {
-                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
-                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_WIN)
+                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) {
+                                            player.playSound(Sounds.Score.PLANTS_LOSE)
+                                            BurbProgression.appendExperience(player, 50)
+                                        }
+                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                                            player.playSound(Sounds.Score.ZOMBIES_WIN)
+                                            BurbProgression.appendExperience(player, 200)
+                                        }
                                     }
                                     else -> {}
                                 }
@@ -236,6 +261,20 @@ object GameTask {
                     if(Timer.getTimer() == 85) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
+                        }
+                    }
+                    if(Timer.getTimer() == 1) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(Title.title(
+                                    Formatting.allTags.deserialize("\uD000"),
+                                    Formatting.allTags.deserialize(""),
+                                    Title.Times.times(
+                                        Duration.ofMillis(250),
+                                        Duration.ofSeconds(2),
+                                        Duration.ofMillis(750)
+                                    )
+                                )
+                            )
                         }
                     }
                     if(Timer.getTimer() <= 0) {

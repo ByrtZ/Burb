@@ -9,6 +9,7 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
+
 import io.papermc.paper.math.Rotation
 
 import net.kyori.adventure.text.format.TextDecoration
@@ -161,6 +162,10 @@ object ItemUsage {
                                 addPassenger(player)
                             }
                             override fun run() {
+                                if(!player.isOnline) {
+                                    gatlingVehicle.remove()
+                                    cancel()
+                                }
                                 if(player.vehicle == gatlingVehicle) {
                                     player.sendActionBar(Formatting.allTags.deserialize(Translation.Weapon.GATLING_CONTROLS.replace("%s", bulletsRemaining.toString())))
                                     gatlingVehicle.setRotation(player.yaw, player.pitch)

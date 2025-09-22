@@ -14,6 +14,7 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.progression.BurbProgression
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
@@ -338,10 +339,11 @@ object CapturePointManager {
 
         if (newSuburbinationTeam != suburbinatingTeam) {
             suburbinatingTeam = newSuburbinationTeam
+
             val message = when (newSuburbinationTeam) {
-                Teams.PLANTS -> "<plantscolour><bold>SUBURBINATION<reset>: The plants are now suburbinating."
-                Teams.ZOMBIES -> "<zombiescolour><bold>SUBURBINATION<reset>: The zombies are now suburbinating."
-                else -> "<speccolour><bold>SUBURBINATION<reset>: Suburbination is no longer active."
+                Teams.PLANTS -> "<newline><plantscolour><bold>SUBURBINATION<reset>: The plants are now suburbinating.<newline>"
+                Teams.ZOMBIES -> "<newline><zombiescolour><bold>SUBURBINATION<reset>: The zombies are now suburbinating.<newline>"
+                else -> "<newline><speccolour><bold>SUBURBINATION<reset>: Suburbination is no longer active.<newline>"
             }
             Bukkit.getOnlinePlayers().forEach { player ->
                 player.sendMessage(Formatting.allTags.deserialize(message))
@@ -353,6 +355,11 @@ object CapturePointManager {
                     }
                     Jukebox.startMusicLoop(player, plugin, music)
                 }
+            }
+            when(newSuburbinationTeam) {
+                Teams.PLANTS -> for(player in Bukkit.getOnlinePlayers().filter { filter -> filter.burbPlayer().playerTeam == Teams.PLANTS }) { BurbProgression.appendExperience(player, 40) }
+                Teams.ZOMBIES -> for(player in Bukkit.getOnlinePlayers().filter { filter -> filter.burbPlayer().playerTeam == Teams.ZOMBIES }) { BurbProgression.appendExperience(player, 40) }
+                else -> {}
             }
         }
     }
@@ -421,11 +428,11 @@ object CapturePointManager {
                 }
 
                 // Bump capture progress back up if uncontested but team had last captured it
-                if(lastCapturedTeam == dominatingTeam && plantProgress >= 1 && plantProgress > REQUIRED_CAPTURE_SCORE && !contested && plants == 0 && zombies == 0) {
+                if(lastCapturedTeam == Teams.PLANTS && plantProgress >= 1 && plantProgress > REQUIRED_CAPTURE_SCORE && !contested && plants == 0 && zombies == 0) {
                     plantProgress++
                 }
                 // Bump capture progress back up if uncontested but team had last captured it
-                if(lastCapturedTeam == dominatingTeam && zombieProgress >= 1 && zombieProgress > REQUIRED_CAPTURE_SCORE  && !contested && plants == 0 && zombies == 0) {
+                if(lastCapturedTeam == Teams.ZOMBIES && zombieProgress >= 1 && zombieProgress > REQUIRED_CAPTURE_SCORE  && !contested && plants == 0 && zombies == 0) {
                     zombieProgress++
                 }
 
@@ -435,16 +442,16 @@ object CapturePointManager {
                 }
 
                 // Point text display information
-                textDisplay!!.text(Formatting.allTags.deserialize("<yellow><bold>POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><reset>Status: <burbcolour>${
+                textDisplay!!.text(Formatting.allTags.deserialize("<font:burb:font><yellow><bold>POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><burbcolour>${
                     when {
-                        plantProgress == REQUIRED_CAPTURE_SCORE -> "Plants own point"
-                        zombieProgress == REQUIRED_CAPTURE_SCORE -> "Zombies own point"
-                        dominatingTeam == Teams.PLANTS -> "Plants taking over"
-                        dominatingTeam == Teams.ZOMBIES -> "Zombies taking over"
-                        contested -> "<reset><red><b>CONTESTED"
-                        else -> "<reset><b>UNCONTESTED"
+                        plantProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Plants own point"
+                        zombieProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Zombies own point"
+                        dominatingTeam == Teams.PLANTS -> "<font:burb:font>Plants taking over"
+                        dominatingTeam == Teams.ZOMBIES -> "<font:burb:font>Zombies taking over"
+                        contested -> "<reset><font:burb:font><red><b>CONTESTED"
+                        else -> "<reset><font:burb:font><b>UNCONTESTED"
                     }
-                }<reset><newline><newline><b><plantscolour>P</b>${plantProgress} | <b><zombiescolour>Z</b>${zombieProgress}<newline>"))
+                }<reset><font:burb:font><newline><newline><b>${if(plantProgress > zombieProgress) "<plantscolour>${plantProgress}" else if(zombieProgress > plantProgress) "<zombiescolour>${zombieProgress}" else "<speccolour>0"}<newline>"))
 
                 // Coloured particle ring to show point status
                 spawnCaptureParticles(location, dominatingTeam, plantProgress, zombieProgress, contested)
@@ -459,6 +466,7 @@ object CapturePointManager {
                         Bukkit.getOnlinePlayers().forEach {
                             it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>Point $capturePoint<reset> is now controlled by the ${dominatingTeam.teamColourTag}${dominatingTeam.teamName}<reset>."))
                             it.playSound(if(it.burbPlayer().playerTeam == lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
+                            if(it.burbPlayer().playerTeam == dominatingTeam) BurbProgression.appendExperience(it, 10)
                         }
                     }
                 }
@@ -537,7 +545,7 @@ object ScoreManager {
     }
 
     fun getPlacementMap(): Map<Teams, Int> {
-        return mutableMapOf(Pair(Teams.PLANTS, plantsScore), Pair(Teams.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
+        return mutableMapOf(Pair(Teams.PLANTS, getDisplayScore(Teams.PLANTS)), Pair(Teams.ZOMBIES, getDisplayScore(Teams.ZOMBIES))).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
     }
 
     fun addScore(team: Teams, score: Int) {
@@ -586,11 +594,11 @@ object ScoreManager {
     fun getDisplayScore(teams: Teams): Int {
         return when(teams) {
             Teams.PLANTS -> {
-                (this.plantsScore / 100000) * 100
+                this.plantsScore.floorDiv(1000)
             }
             Teams.ZOMBIES -> {
-                (this.zombiesScore / 100000) * 100
-            } else -> 0
+                this.zombiesScore.floorDiv(1000)
+            } else -> -1
         }
     }
 

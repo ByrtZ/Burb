@@ -54,7 +54,8 @@ object Sounds {
         val INTERFACE_INTERACT = Sound.sound(Key.key("ui.button.click"), Sound.Source.MASTER, 0.5f, 1f)
         val INTERFACE_INTERACT_FAIL = Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.MASTER, 0.5f, 0f)
         val TITLE_SCREEN_ENTER = Sound.sound(Key.key("entity.breeze.shoot"), Sound.Source.MASTER, 1f, 0.75f)
-        val ODE_TO_JOY = Sound.sound(Key.key("burb.generic.ode_to_joy"), Sound.Source.VOICE, 1f, 1f)
+        val ODE_TO_JOY = Sound.sound(Key.key("burb.generic.ode_to_joy"), Sound.Source.VOICE, 0.75f, 1f)
+        val SUCCESS = Sound.sound(Key.key("burb.generic.success"), Sound.Source.VOICE, 0.75f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"

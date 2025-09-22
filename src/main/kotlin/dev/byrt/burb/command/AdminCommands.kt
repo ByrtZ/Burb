@@ -124,13 +124,13 @@ class AdminCommands {
         }
     }
 
-    @Command("debug displayscore <team>")
+    @Command("debug score <team>")
     @CommandDescription("Debug display score")
     @Permission("burb.cmd.debug")
     fun debugDisplayScore(css: CommandSourceStack, @Argument("team") team: Teams) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            player.sendMessage(Formatting.allTags.deserialize("$team: DIS: ${ScoreManager.getDisplayScore(team)}"))
+            player.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${ScoreManager.getDisplayScore(team)} (${if(team == Teams.PLANTS) ScoreManager.getPlantsScore() else if(team == Teams.ZOMBIES) ScoreManager.getZombiesScore() else -1})"))
         }
     }
 

@@ -51,8 +51,10 @@ class DamageEvent: Listener {
                         }
                     }
                     if(e.damage.toInt() > 0) {
-                        if(!e.isCancelled || e.entity.vehicle?.scoreboardTags?.contains("${e.entity.uniqueId}-death-vehicle") == false) {
-                            PlayerVisuals.damageIndicator(player, e.damage)
+                        if(e.entity.vehicle?.scoreboardTags?.contains("${e.entity.uniqueId}-death-vehicle") == false) {
+                            if(!e.isCancelled) {
+                                PlayerVisuals.damageIndicator(player, e.damage)
+                            }
                         }
                     }
                 }

@@ -9,7 +9,6 @@ import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
-import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 
@@ -203,7 +202,6 @@ object PlayerVisuals {
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
-        if(!Jukebox.getJukeboxMap().containsKey(player.uniqueId)) Jukebox.playCurrentMusicStress(player)
         showPlayer(player)
     }
 
