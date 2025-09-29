@@ -33,7 +33,6 @@ class PlayerMove: Listener {
                 to.pitch = e.to.pitch
                 to.yaw = e.to.yaw
                 e.to = to
-                e.isCancelled = true
             }
         }
     }

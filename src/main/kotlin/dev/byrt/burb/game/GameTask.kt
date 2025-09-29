@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
 import java.time.Duration
@@ -24,63 +25,71 @@ import java.time.Duration
 object GameTask {
     private var gameRunnables = mutableMapOf<Int, BukkitRunnable>()
     private var currentGameTaskId = 0
-
     fun startGameLoop() {
         val gameRunnable = object : BukkitRunnable() {
             override fun run() {
                 InfoBoardManager.updateTimer()
                 /** STARTING **/
                 if(GameManager.getGameState() == GameState.STARTING && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(RoundManager.getRound() == Round.ONE) {
-                        if(Timer.getTimer() == 80) {
-                            for(player in Bukkit.getOnlinePlayers()) {
-                                player.showTitle(Title.title(
-                                    Component.text("\uD000"),
-                                    Component.text(""),
-                                    Title.Times.times(
-                                        Duration.ofSeconds(0),
-                                        Duration.ofSeconds(3),
-                                        Duration.ofSeconds(1)
-                                        )
+                    if(Timer.getTimer() == 80) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(Title.title(
+                                Component.text("\uD000"),
+                                Component.text(""),
+                                Title.Times.times(
+                                    Duration.ofSeconds(0),
+                                    Duration.ofSeconds(3),
+                                    Duration.ofSeconds(1)
                                     )
                                 )
-                                player.playSound(Sounds.Music.GAME_INTRO_JINGLE)
-                            }
+                            )
+                            player.playSound(Sounds.Music.GAME_INTRO_JINGLE)
                         }
-                        if(Timer.getTimer() == 75) {
-                            for(player in Bukkit.getOnlinePlayers()) {
-                                player.showTitle(Title.title(
-                                    Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
-                                    Component.text(""),
-                                    Title.Times.times(
-                                        Duration.ofSeconds(1),
-                                        Duration.ofSeconds(4),
-                                        Duration.ofSeconds(1)
-                                        )
+                    }
+                    if(Timer.getTimer() == 75) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(Title.title(
+                                Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
+                                Component.text(""),
+                                Title.Times.times(
+                                    Duration.ofSeconds(1),
+                                    Duration.ofSeconds(4),
+                                    Duration.ofSeconds(1)
                                     )
                                 )
-                            }
+                            )
                         }
-                        if(Timer.getTimer() == 25) {
-                            for(player in Bukkit.getOnlinePlayers()) {
-                                player.playSound(player.location, Sounds.Tutorial.TUTORIAL_POP, 1f, 1f)
-                                player.sendMessage(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true)
-                                    .append(Component.text(" Starting soon:\n\n").color(NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.STRIKETHROUGH, false)
-                                        .append(Component.text("      I don't have anything funny to say, this just needs replacing.\n\n").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, true)
-                                            .append(Component.text("\n\n\n")
-                                                .append(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true).decoration(TextDecoration.ITALIC, false)
-                                                )
+                    }
+                    if(Timer.getTimer() == 25) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.playSound(player.location, Sounds.Tutorial.TUTORIAL_POP, 1f, 1f)
+                            player.sendMessage(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true)
+                                .append(Component.text(" Starting soon:\n\n").color(NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.STRIKETHROUGH, false)
+                                    .append(Component.text("      I don't have anything funny to say, this just needs replacing.\n\n").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, true)
+                                        .append(Component.text("\n\n\n")
+                                            .append(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true).decoration(TextDecoration.ITALIC, false)
                                             )
                                         )
                                     )
                                 )
-                            }
+                            )
+                        }
+                    }
+                    if(Timer.getTimer() == 70) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, plugin, Music.LOADING_MELODY)
+                        }
+                    }
+                    if(Timer.getTimer() == 15) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            player.removePotionEffect(PotionEffectType.BLINDNESS)
                         }
                     }
                     if(Timer.getTimer() in 4..10) {
                         if(Timer.getTimer() == 10) {
                             for(player in Bukkit.getOnlinePlayers()) {
                                 player.playSound(Sounds.Alert.ALARM)
+                                Jukebox.stopMusicLoop(player, Music.LOADING_MELODY)
                             }
                         }
                         for(player in Bukkit.getOnlinePlayers()) {

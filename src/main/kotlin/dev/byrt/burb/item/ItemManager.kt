@@ -1,14 +1,13 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
-
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.Formatting
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-
 import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -50,6 +49,10 @@ object ItemManager {
 
     fun giveCharacterItems(player: Player) {
         if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
+        if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+            clearItems(player)
+            return
+        }
         val burbPlayer = player.burbPlayer()
         val burbPlayerCharacter = burbPlayer.playerCharacter
 
@@ -65,8 +68,8 @@ object ItemManager {
                 Formatting.allTags.deserialize("<white>${burbPlayerCharacter.characterMainWeapon.weaponLore}").decoration(TextDecoration.ITALIC, false)
             ))
             mainWeaponMeta.isUnbreakable = true
-            //TODO: SETTING MELEE WEAPON DAMAGE
-            //mainWeaponMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, AttributeModifier(NamespacedKey.minecraft("generic.attack_damage"), burbPlayerCharacter.characterMainWeapon.weaponDamage, AttributeModifier.Operation.ADD_NUMBER))
+            // TODO: Set melee weapon damage
+            // mainWeaponMeta.addAttributeModifier(Attribute.ATTACK_DAMAGE, AttributeModifier(NamespacedKey.minecraft("generic.attack_damage"), burbPlayerCharacter.characterMainWeapon.weaponDamage, AttributeModifier.Operation.ADD_NUMBER))
         } else {
             mainWeaponMeta.lore(listOf(
                 Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
@@ -97,7 +100,14 @@ object ItemManager {
 
         // If melee main weapon, add opposing hand display weapon.
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
-            burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
+            if(burbPlayerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
+                val offhandItemMeta = mainWeapon.itemMeta
+                offhandItemMeta.itemModel = NamespacedKey("minecraft", "melee_gloves_r")
+                mainWeapon.itemMeta = offhandItemMeta
+                burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
+            } else {
+                burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
+            }
         }
 
         for(ability in burbPlayerCharacter.characterAbilities.abilitySet) {

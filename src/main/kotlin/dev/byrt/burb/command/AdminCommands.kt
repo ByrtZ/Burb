@@ -9,6 +9,8 @@ import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.logger
+import dev.byrt.burb.player.progression.BurbLevel
+import dev.byrt.burb.player.progression.BurbProgression
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.TextAlignment
@@ -169,6 +171,26 @@ class AdminCommands {
                     }
                 }
             }.runTaskLater(plugin, 200L)
+        }
+    }
+
+    @Command("progression add_xp <xp>")
+    @CommandDescription("Debug command for XP")
+    @Permission("burb.cmd.debug")
+    fun debugXp(css: CommandSourceStack, @Argument("xp") xp: Int) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbProgression.appendExperience(player, xp)
+        }
+    }
+
+    @Command("progression set_level <level>")
+    @CommandDescription("Debug command for levels")
+    @Permission("burb.cmd.debug")
+    fun debugLevel(css: CommandSourceStack, @Argument("level") level: BurbLevel) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbProgression.setLevel(player, level)
         }
     }
 }

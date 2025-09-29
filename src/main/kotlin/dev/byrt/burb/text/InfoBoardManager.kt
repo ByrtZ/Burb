@@ -194,39 +194,39 @@ object InfoBoardManager {
         }.runTaskTimer(plugin, 0L, 1L)
     }
 
-    fun capturePointBossBar() {
+    fun scoreBossBar() {
         object : BukkitRunnable() {
-            val capturePointBossBar = BossBar.bossBar(Formatting.allTags.deserialize(""), 0f, Color.RED, BossBar.Overlay.PROGRESS)
+            val scoreBossBar = BossBar.bossBar(Formatting.allTags.deserialize(""), 0f, Color.RED, BossBar.Overlay.PROGRESS)
             var ticks = 0
             override fun run() {
                 if(GameManager.getGameState() != GameState.IDLE) {
                     for(player in Bukkit.getOnlinePlayers()) {
-                        if(!player.activeBossBars().contains(capturePointBossBar)) capturePointBossBar.addViewer(player)
+                        if(!player.activeBossBars().contains(scoreBossBar)) scoreBossBar.addViewer(player)
                     }
                 }
                 when(GameManager.getGameState()) {
                     GameState.IDLE -> {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            capturePointBossBar.removeViewer(player)
+                            scoreBossBar.removeViewer(player)
                         }
                         this.cancel()
                     }
                     GameState.GAME_END -> {
                         if(Timer.getTimer() > 89) {
-                            capturePointBossBar.name(TextAlignment.centreBossBarText("WINNERS: <gray><obf>???"))
+                            scoreBossBar.name(TextAlignment.centreBossBarText("WINNERS: <gray><obf>???"))
                         }
                         if(Timer.getTimer() <= 89 && ticks == 0) {
-                            capturePointBossBar.name(TextAlignment.centreBossBarText("WINNERS: ${ScoreManager.getWinningTeam().teamColourTag}${ScoreManager.getWinningTeam()}"))
+                            scoreBossBar.name(TextAlignment.centreBossBarText("WINNERS: ${if(ScoreManager.getWinningTeam() in listOf(Teams.PLANTS, Teams.ZOMBIES)) "${ScoreManager.getWinningTeam().teamColourTag}${ScoreManager.getWinningTeam()}" else "<gray>NONE"}"))
                         }
                     }
                     else -> {
                         if(CapturePointManager.isSuburbinating()) {
-                            capturePointBossBar.name(TextAlignment.centreBossBarText("<u>${CapturePointManager.getSuburbinatingTeam().teamColourTag}SUBURBINATION"))
+                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${ScoreManager.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${ScoreManager.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("<u>${CapturePointManager.getSuburbinatingTeam().teamColourTag}SUBURBINATION")))
                         } else {
                             val pointA = CapturePointManager.getCapturePointData(CapturePoint.A)
                             val pointB = CapturePointManager.getCapturePointData(CapturePoint.B)
                             val pointC = CapturePointManager.getCapturePointData(CapturePoint.C)
-                            capturePointBossBar.name(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%"))
+                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${ScoreManager.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${ScoreManager.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%")))
                         }
                     }
                 }

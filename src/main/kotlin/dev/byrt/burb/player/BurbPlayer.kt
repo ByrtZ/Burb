@@ -7,6 +7,8 @@ import dev.byrt.burb.team.Teams
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
 import java.util.UUID
 
@@ -37,6 +39,10 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
             ItemManager.giveCharacterItems(this.getBukkitPlayer())
         } else {
             ItemManager.clearItems(this.getBukkitPlayer())
+        }
+        this.getBukkitPlayer().activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) this.getBukkitPlayer().removePotionEffect(e.type)}
+        if(this.playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
+            this.getBukkitPlayer().addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
         }
         logger.info("Character: ${this.playerName} now has value ${this.playerCharacter}.")
     }

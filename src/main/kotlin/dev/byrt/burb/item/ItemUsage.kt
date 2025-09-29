@@ -4,6 +4,7 @@ import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.item.ItemManager.clearItems
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
@@ -150,7 +151,7 @@ object ItemUsage {
                 BurbAbility.PLANTS_SCOUT_ABILITY_2.abilityId -> {
                     if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR && player.location.block.getRelative(BlockFace.DOWN).isSolid) {
                         player.world.playSound(player.location, "burb.ability.peashooter.gatling.root", SoundCategory.VOICE, 1f, 1f)
-                        ItemManager.clearItems(player)
+                        clearItems(player)
                         player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
                         player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
                         player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
@@ -266,7 +267,7 @@ object ItemUsage {
                             PotionEffect(PotionEffectType.INVISIBILITY, 20 * 6, 0, false, false)
                         )
                     )
-                    ItemManager.clearItems(player)
+                    clearItems(player)
                     player.inventory.boots = null
                     player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
                     player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
@@ -358,7 +359,72 @@ object ItemUsage {
                     }
                 }
                 //TODO: HEAL BEAM
-                //TODO: SUN BEAM
+                BurbAbility.PLANTS_HEALER_ABILITY_2.abilityId -> {
+                    if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR && player.location.block.getRelative(BlockFace.DOWN).isSolid) {
+                        //player.world.playSound(player.location, "burb.ability.peashooter.gatling.root", SoundCategory.VOICE, 1f, 1f)
+                        clearItems(player)
+                        player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
+                        player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
+                        player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
+                        object : BukkitRunnable() {
+                            var bulletsRemaining = 50
+                            val sunbeamVehicle = player.location.world.spawn(player.location.clone(), ItemDisplay::class.java).apply {
+                                addScoreboardTag("${player.uniqueId}-sunbeam-vehicle")
+                                player.teleport(this)
+                                addPassenger(player)
+                            }
+                            override fun run() {
+                                if(!player.isOnline) {
+                                    sunbeamVehicle.remove()
+                                    cancel()
+                                }
+                                if(player.vehicle == sunbeamVehicle) {
+                                    player.sendActionBar(Formatting.allTags.deserialize(Translation.Weapon.SUNBEAM_CONTROLS.replace("%s", bulletsRemaining.toString())))
+                                    sunbeamVehicle.setRotation(player.yaw, player.pitch)
+                                }
+                                if(player.isSneaking && player.inventory.itemInMainHand.type == Material.BREEZE_ROD) {
+                                    val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
+                                    snowball.shooter = player
+                                    snowball.location.direction = player.location.direction
+                                    val snowballVelocity = player.location.direction.multiply(7.5)
+                                    snowball.velocity = snowballVelocity
+                                    snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 0.8)
+                                    object : BukkitRunnable() {
+                                        override fun run() {
+                                            if(snowball.isDead || !player.isOnline) {
+                                                this.cancel()
+                                            } else {
+                                                snowball.location.world.spawnParticle(
+                                                    Particle.DUST,
+                                                    snowball.location,
+                                                    1, 0.0, 0.0, 0.0,
+                                                    Particle.DustOptions(Color.YELLOW, 2f)
+                                                )
+                                            }
+                                        }
+                                    }.runTaskTimer(plugin, 1L, 1L)
+                                    //player.world.playSound(player.location, "burb.ability.peashooter.gatling.fire", SoundCategory.VOICE, 1f, 1f)
+                                    bulletsRemaining--
+                                }
+                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.vehicle != sunbeamVehicle || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                    player.sendActionBar(Formatting.allTags.deserialize(""))
+                                    sunbeamVehicle.eject()
+                                    sunbeamVehicle.remove()
+                                    player.inventory.remove(Material.BREEZE_ROD)
+                                    player.velocity = player.velocity.add(Vector(0.0, 0.5, 0.0))
+                                    ItemManager.giveCharacterItems(player)
+                                    player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                    if(bulletsRemaining == 50) player.setCooldown(BurbAbility.PLANTS_HEALER_ABILITY_2.abilityMaterial, 0)
+                                    //player.world.playSound(player.location, "burb.ability.peashooter.gatling.unroot", SoundCategory.VOICE, 1f, 1f)
+                                    cancel()
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 1L)
+                    } else {
+                        player.setCooldown(usedItem, 0)
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>You cannot use this ability while in the air."))
+                    }
+                }
                 //TODO: HEAL FLOWER
                 BurbAbility.PLANTS_RANGED_ABILITY_1.abilityId -> {
                     if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR) {
@@ -366,16 +432,20 @@ object ItemUsage {
                         object : BukkitRunnable() {
                             var ticks = 0
                             var seconds = 0
-                            val potatoMineEntity = player.world.spawn(player.location.clone().subtract(0.0, 0.75, 0.0).setRotation(Rotation.rotation(player.yaw, 0f)), BlockDisplay::class.java).apply {
-                                block = Material.SPONGE.createBlockData()
+                            val potatoMineEntity = player.world.spawn(player.location.clone().add(0.0, 0.5, 0.0).setRotation(Rotation.rotation(player.yaw + 180, 0f)), ItemDisplay::class.java).apply {
+                                val potatoMine = ItemStack(Material.ECHO_SHARD)
+                                val potatoMineMeta = potatoMine.itemMeta
+                                potatoMineMeta.itemModel = NamespacedKey("minecraft", "potato_mine")
+                                potatoMine.itemMeta = potatoMineMeta
+                                setItemStack(potatoMine)
                                 brightness = Display.Brightness(15, 15)
-                                transformation = Transformation(Vector3f(-0.5f, 0f, -0.5f), transformation.leftRotation, transformation.scale, transformation.rightRotation)
+                                transformation = Transformation(transformation.translation, transformation.leftRotation, transformation.scale, transformation.rightRotation)
                                 addScoreboardTag("${player.uniqueId}.potato_mine")
                             }
                             override fun run() {
                                 if(!potatoMineEntity.isDead) {
-                                    for(nearbyEnemy in potatoMineEntity.location.getNearbyPlayers(0.85).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }) {
-                                        potatoMineEntity.world.spawn(potatoMineEntity.location.clone().add(0.0, 0.5, 0.0), TNTPrimed::class.java).apply {
+                                    for(nearbyEnemy in potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }) {
+                                        potatoMineEntity.world.spawn(potatoMineEntity.location.clone(), TNTPrimed::class.java).apply {
                                             source = player
                                             fuseTicks = 0
                                         }
@@ -406,8 +476,8 @@ object ItemUsage {
                     }
                 }
                 //TODO: GARLIC DRONE
-                BurbAbility.PLANTS_RANGED_ABILITY_3.abilityId -> { // REDO WALL-NUT
-                    val facingLocation = player.location.direction.toLocation(player.world)
+                BurbAbility.PLANTS_RANGED_ABILITY_3.abilityId -> {
+                    val facingLocation = player.location.add(player.location.setRotation(player.yaw, 0f).direction.multiply(5).normalize()).block.location.toBlockLocation()
                     if(facingLocation.block.getRelative(BlockFace.DOWN).isSolid) {
                         if(facingLocation.block.type == Material.AIR && facingLocation.block.getRelative(BlockFace.UP).type == Material.AIR) {
                             facingLocation.block.type = Material.GOLD_BLOCK
@@ -420,7 +490,8 @@ object ItemUsage {
                                     if(seconds >= 30) {
                                         facingLocation.block.type = Material.AIR
                                         facingLocation.block.getRelative(BlockFace.UP).type = Material.AIR
-                                        player.world.playSound(player.location, "block.anvil.break", SoundCategory.VOICE, 1f, 1f)
+                                        facingLocation.world.playSound(facingLocation, "block.anvil.break", SoundCategory.VOICE, 1f, 1f)
+                                        cancel()
                                     }
                                     ticks++
                                     if(ticks >= 20) {
@@ -551,7 +622,53 @@ object ItemUsage {
                     player.world.playSound(player.location, "burb.ability.foot_soldier.rocket_jump", SoundCategory.VOICE, 1f, 1f)
                     player.velocity = player.velocity.setY(1.35)
                 }
-                //TODO: SUPER ULTRA BALL
+                BurbAbility.ZOMBIES_HEAVY_ABILITY_1.abilityId -> {
+                    player.location.world.playSound(player.location, "entity.wither.shoot", 1f, 0.75f)
+                    object : BukkitRunnable() {
+                        var timer = 0
+                        var ticks = 0
+                        val spawnLocation = player.eyeLocation.set(player.eyeLocation.x, -60.0, player.eyeLocation.z)
+                        val ultraBall = player.eyeLocation.world.spawn(spawnLocation, Fireball::class.java).apply {
+                            direction = Vector(0, 0, 0)
+                            acceleration = Vector(0, 0, 0)
+                        }
+                        val ultraBallVehicle = player.location.world.spawn(player.location, ItemDisplay::class.java).apply {
+                            addPassenger(player)
+                        }
+                        override fun run() {
+                            if(timer == 1 && ticks == 10) {
+                                player.location.world.playSound(player.location, "entity.illusioner.cast_spell", 1f, 1f)
+                                ultraBall.teleport(player.eyeLocation)
+                                ultraBall.shooter = player
+                                ultraBall.setHasBeenShot(true)
+                                ultraBall.direction = player.eyeLocation.direction
+                                ultraBall.acceleration = player.eyeLocation.direction.multiply(1.5)
+                            }
+                            if(timer == 2 && ticks == 0) {
+                                ultraBallVehicle.removePassenger(player)
+                                ultraBallVehicle.remove()
+                            }
+                            if(ultraBall.isDead && player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == false) {
+                                /*ultraBall.location.world.spawn(ultraBall.location.add(0.0, 1.0, 0.0), TNTPrimed::class.java).apply {
+                                    source = player
+                                    fuseTicks = 0
+                                }*/
+                                ultraBall.remove()
+                                ultraBallVehicle.remove()
+                                cancel()
+                            }
+                            ticks++
+                            if(ticks >= 20) {
+                                ticks = 0
+                                timer++
+                            }
+                            if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true || timer >= 8) {
+                                ultraBall.remove()
+                                cancel()
+                            }
+                        }
+                    }.runTaskTimer(plugin, 0L, 1L)
+                }
                 //TODO: TURBO TWISTER
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_3.abilityId -> {
                     player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)

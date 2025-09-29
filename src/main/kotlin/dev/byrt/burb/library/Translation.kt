@@ -25,6 +25,7 @@ object Translation {
     }
     object Weapon {
         const val GATLING_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>100<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}GATLING  CANNON<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
+        const val SUNBEAM_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>50<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}SUNBEAM<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
     }
     object TabList {
         const val SERVER_LIST_PADDING = "<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■"

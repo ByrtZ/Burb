@@ -29,6 +29,8 @@ import org.bukkit.*
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
 import java.time.Duration
@@ -81,7 +83,7 @@ object GameManager {
                     Timer.setTimer(GameTime.GAME_STARTING_TIME, null)
                     GameTask.startGameLoop()
                     InfoBoardManager.timerBossBar()
-                    InfoBoardManager.capturePointBossBar()
+                    InfoBoardManager.scoreBossBar()
                     LobbyBall.cleanup()
                     starting()
                 } else {
@@ -129,6 +131,7 @@ object GameManager {
             for(player in Bukkit.getOnlinePlayers()) {
                 player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
+                player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0, false, false))
             }
         }
         for(player in Bukkit.getOnlinePlayers()) {

@@ -101,6 +101,7 @@ object Jukebox {
 enum class Music(val track: Sound, val trackLengthSecs: Int) {
     LOBBY_TITLE_SCREEN(Sounds.Music.LOBBY_TITLE_SCREEN, 139),
     LOBBY_WAITING(Sounds.Music.LOBBY_WAITING, 59),
+    LOADING_MELODY(Sounds.Music.LOADING_MELODY, 148),
     SUBURBINATION_PLANTS(Sounds.Music.SUBURBINATION_PLANTS, 58),
     SUBURBINATION_ZOMBIES(Sounds.Music.SUBURBINATION_ZOMBIES, 58),
     RANDOM_LOW(Sounds.Music.RANDOM_LOW, 60),

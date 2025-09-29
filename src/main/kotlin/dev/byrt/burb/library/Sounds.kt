@@ -10,6 +10,7 @@ object Sounds {
         val LOBBY_TITLE_SCREEN = Sound.sound(Key.key("burb.lobby.title_screen"), Sound.Source.VOICE, 0.35f, 1f)
         val LOBBY_INTRO = Sound.sound(Key.key("burb.lobby.intro"), Sound.Source.VOICE, 0.4f, 1f)
         val LOBBY_WAITING = Sound.sound(Key.key("burb.lobby.waiting"), Sound.Source.VOICE, 0.75f, 1f)
+        val LOADING_MELODY = Sound.sound(Key.key("burb.game.loading_melody"), Sound.Source.VOICE, 0.75f, 1f)
         val GAME_INTRO_JINGLE = Sound.sound(Key.key("burb.game.intro_jingle"), Sound.Source.VOICE, 1f, 1f)
         val SUBURBINATION_PLANTS = Sound.sound(Key.key("burb.game.suburbination.plants"), Sound.Source.VOICE, 0.75f, 1f)
         val SUBURBINATION_ZOMBIES = Sound.sound(Key.key("burb.game.suburbination.zombies"), Sound.Source.VOICE, 0.75f, 1f)
@@ -56,6 +57,8 @@ object Sounds {
         val TITLE_SCREEN_ENTER = Sound.sound(Key.key("entity.breeze.shoot"), Sound.Source.MASTER, 1f, 0.75f)
         val ODE_TO_JOY = Sound.sound(Key.key("burb.generic.ode_to_joy"), Sound.Source.VOICE, 0.75f, 1f)
         val SUCCESS = Sound.sound(Key.key("burb.generic.success"), Sound.Source.VOICE, 0.75f, 1f)
+        val LEVEL_UP_PLANTS = Sound.sound(Key.key("burb.generic.level_up.plants"), Sound.Source.VOICE, 1f, 1f)
+        val LEVEL_UP_ZOMBIES = Sound.sound(Key.key("burb.generic.level_up.zombies"), Sound.Source.VOICE, 1f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"

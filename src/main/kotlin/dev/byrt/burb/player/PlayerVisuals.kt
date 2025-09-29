@@ -20,6 +20,7 @@ import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
@@ -59,7 +60,10 @@ object PlayerVisuals {
         player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
         ItemManager.clearItems(player)
         val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN)
+        val deathOverlayItemMeta = deathOverlayItem.itemMeta
         deathOverlayItem.addEnchantment(Enchantment.BINDING_CURSE, 1)
+        deathOverlayItemMeta.itemModel = NamespacedKey("minecraft", "binoculars")
+        deathOverlayItem.itemMeta = deathOverlayItemMeta
         player.inventory.helmet = deathOverlayItem
 
         val deathVehicle = player.world.spawn(player.location, ItemDisplay::class.java).apply {
@@ -223,7 +227,7 @@ object PlayerVisuals {
                         player.showTitle(
                             Title.title(
                                 Formatting.allTags.deserialize(""),
-                                Formatting.allTags.deserialize("<transition:red:green:$reloadPhase>Reloading..."),
+                                Formatting.allTags.deserialize("<transition:red:green:$reloadPhase>Reloading${if(reloadPhase in 0.0..0.33) "." else if(reloadPhase in 0.34..0.66) ".." else "..."}"),
                                 Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(5), Duration.ofSeconds(0))
                             )
                         )
