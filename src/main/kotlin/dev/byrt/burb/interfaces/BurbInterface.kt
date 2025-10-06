@@ -7,17 +7,20 @@ import dev.byrt.burb.player.getCharacter
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.item.ServerItem
 
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.StaticElement
 import com.noxcrew.interfaces.interfaces.buildChestInterface
-import dev.byrt.burb.item.ServerItem
+
+import io.papermc.paper.entity.TeleportFlag
 
 import kotlinx.coroutines.runBlocking
 
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -56,6 +59,15 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                LobbyManager.playerJoinHub(player)
+                            }
+                        }
+                    }
                 }
             } else {
                 val plantsTeamItem = ItemStack(Material.LIME_DYE)
@@ -66,6 +78,17 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     player.burbPlayer().setTeam(Teams.PLANTS)
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            veh.teleportDuration = 40
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                veh.teleport(Location(veh.world, 987.5, 5.5, 998.5, -25f, 20f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                player.setRotation(-25f, 20f)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -77,6 +100,15 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                LobbyManager.playerJoinHub(player)
+                            }
+                        }
+                    }
                 }
             } else {
                 val zombiesTeamItem = ItemStack(Material.PURPLE_DYE)
@@ -87,6 +119,17 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     player.burbPlayer().setTeam(Teams.ZOMBIES)
                     player.playSound(Sounds.Misc.INTERFACE_INTERACT)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+
+                    if(player.vehicle != null) {
+                        if(player.vehicle is ItemDisplay) {
+                            val veh = player.vehicle as ItemDisplay
+                            veh.teleportDuration = 45
+                            if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                veh.teleport(Location(veh.world, 1004.5, 5.5, 997.5, -90f, 10f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                player.setRotation(-90f, 10f)
+                            }
+                        }
+                    }
                 }
             }
 
@@ -102,7 +145,10 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     if(player.vehicle != null) {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
+                            veh.teleportDuration = 55
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                player.setRotation(-55f, 15f)
                                 LobbyManager.playerJoinHub(player)
                             }
                         }
@@ -121,7 +167,10 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     if(player.vehicle != null) {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
+                            veh.teleportDuration = 80
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
+                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                player.setRotation(-55f, 15f)
                                 LobbyManager.playerJoinHub(player)
                             }
                         }

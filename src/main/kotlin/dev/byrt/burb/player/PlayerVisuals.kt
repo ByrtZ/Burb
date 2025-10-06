@@ -11,6 +11,7 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 
 import io.papermc.paper.entity.TeleportFlag
 
@@ -56,7 +57,10 @@ object PlayerVisuals {
 
     fun death(player: Player, killer: Player?, deathMessage: Component) {
         for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
-        player.clearActivePotionEffects()
+        player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
+        if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
+            player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
+        }
         player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))
         ItemManager.clearItems(player)
         val deathOverlayItem = ItemStack(Material.CARVED_PUMPKIN)
@@ -73,7 +77,7 @@ object PlayerVisuals {
         }
 
         hidePlayer(player)
-        deathEffects(player)
+        player.playSound(Sounds.Score.DEATH)
 
         /** Move death vehicle ahead of the killer as a faux spectator mode. **/
         if(killer != null) {
@@ -86,7 +90,8 @@ object PlayerVisuals {
                                 this.cancel()
                             } else {
                                 if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
-                                val killerDirection = killer.location.add(killer.location.direction.multiply(5).normalize())
+                                val killerLocation = killer.location.setRotation(killer.yaw, 0f)
+                                val killerDirection = killerLocation.add(killerLocation.direction.normalize().multiply(2))
                                 killerDirection.y = killer.location.y + 0.25
                                 deathVehicle.teleport(killerDirection, TeleportFlag.EntityState.RETAIN_PASSENGERS)
                                 player.setRotation(killer.yaw - 180.0f, 5.0f)
@@ -120,7 +125,7 @@ object PlayerVisuals {
                                     )
                                 )
                                 player.playSound(Sounds.Timer.TICK)
-                                player.sendActionBar(Formatting.allTags.deserialize(Translation.Generic.CHARACTER_SELECTION_ACTIONBAR))
+                                player.sendActionBar(Formatting.allTags.deserialize(if(timer % 2 == 0) Translation.Generic.CHARACTER_SELECTION_ACTIONBAR else Translation.Generic.CHARACTER_SELECTION_ACTIONBAR.replace(BURB_FONT_TAG, "$BURB_FONT_TAG<yellow>")))
                             }
                             if(player.isSneaking) {
                                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
@@ -176,10 +181,6 @@ object PlayerVisuals {
         for(other in Bukkit.getOnlinePlayers()) {
             other.showPlayer(plugin, player)
         }
-    }
-
-    private fun deathEffects(player: Player) {
-        player.playSound(Sounds.Score.DEATH)
     }
 
     fun respawn(player: Player) {

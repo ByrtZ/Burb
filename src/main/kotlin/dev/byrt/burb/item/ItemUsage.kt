@@ -1,7 +1,5 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.item.ItemManager.clearItems
@@ -10,12 +8,12 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
-
+import dev.byrt.burb.text.ChatUtility.HEART_UNICODE
+import dev.byrt.burb.text.Formatting
 import io.papermc.paper.math.Rotation
-
 import net.kyori.adventure.text.format.TextDecoration
-
 import org.bukkit.*
+import org.bukkit.Particle.DustOptions
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.BlockFace
 import org.bukkit.entity.*
@@ -27,8 +25,9 @@ import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Transformation
 import org.bukkit.util.Vector
 import org.joml.Vector3f
-
+import kotlin.math.sin
 import kotlin.random.Random
+
 
 object ItemUsage {
     fun useProjectileWeapon(player: Player, usedItem: ItemStack) {
@@ -43,7 +42,7 @@ object ItemUsage {
                 newAmmoMeta.lore(
                     listOf(
                         Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
-                        Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
+                        Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>$HEART_UNICODE<reset>").decoration(TextDecoration.ITALIC, false),
                         Formatting.allTags.deserialize("<white>Ammo: <yellow>${usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER)!! - 1}<gray>/<yellow>${burbPlayer.playerCharacter.characterMainWeapon.maxAmmo}<reset>").decoration(TextDecoration.ITALIC, false),
                         Formatting.allTags.deserialize("<white>Fire Rate: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.fireRate}t<reset>").decoration(TextDecoration.ITALIC, false),
                         Formatting.allTags.deserialize("<white>Reload Speed: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.reloadSpeed}t<reset>").decoration(TextDecoration.ITALIC, false),
@@ -78,7 +77,7 @@ object ItemUsage {
                                 Particle.DUST,
                                 snowball.location,
                                 1, 0.0, 0.0, 0.0, 0.0,
-                                Particle.DustOptions(if (shooter.burbPlayer().playerTeam == Teams.PLANTS) Color.LIME else if (shooter.burbPlayer().playerTeam == Teams.ZOMBIES) Color.PURPLE else Color.GRAY, 0.75f),
+                                DustOptions(if (shooter.burbPlayer().playerTeam == Teams.PLANTS) Color.LIME else if (shooter.burbPlayer().playerTeam == Teams.ZOMBIES) Color.PURPLE else Color.GRAY, 0.75f),
                                 true
                             )
                         }
@@ -100,7 +99,7 @@ object ItemUsage {
                     newAmmoMeta.lore(
                         listOf(
                             Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
-                            Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
+                            Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>$HEART_UNICODE<reset>").decoration(TextDecoration.ITALIC, false),
                             Formatting.allTags.deserialize("<white>Ammo: <green>${usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.max_ammo"), PersistentDataType.INTEGER)}<gray>/<yellow>${burbPlayer.playerCharacter.characterMainWeapon.maxAmmo}<reset>").decoration(TextDecoration.ITALIC, false),
                             Formatting.allTags.deserialize("<white>Fire Rate: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.fireRate}t<reset>").decoration(TextDecoration.ITALIC, false),
                             Formatting.allTags.deserialize("<white>Reload Speed: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.reloadSpeed}t<reset>").decoration(TextDecoration.ITALIC, false),
@@ -124,7 +123,7 @@ object ItemUsage {
     fun useAbility(player: Player, usedItem: ItemStack) {
         if(ItemManager.verifyAbility(usedItem)) {
             val abilityId = usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING)!!
-            player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+            player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
             when(abilityId) {
                 BurbAbility.PLANTS_SCOUT_ABILITY_1.abilityId -> {
                     player.world.playSound(player.location, "burb.ability.peashooter.explosive.fire", SoundCategory.VOICE, 1f, 1f)
@@ -135,7 +134,7 @@ object ItemUsage {
                     tnt.fuseTicks = Int.MAX_VALUE
                     object : BukkitRunnable() {
                         override fun run() {
-                            if(tnt.isOnGround && tnt.velocity.x <= 0.025 && tnt.velocity.y <= 0.025 && tnt.velocity.z <= 0.025) {
+                            if(tnt.isOnGround && tnt.velocity.x <= 0.015 && tnt.velocity.y <= 0.015 && tnt.velocity.z <= 0.015) {
                                 tnt.fuseTicks = 90
                                 player.world.playSound(tnt.location, "burb.ability.peashooter.explosive.voice", SoundCategory.VOICE, 2.5f, 1f)
                                 object : BukkitRunnable() {
@@ -187,7 +186,7 @@ object ItemUsage {
                                                     Particle.DUST,
                                                     snowball.location,
                                                     1, 0.0, 0.0, 0.0,
-                                                    Particle.DustOptions(Color.LIME, 0.75f)
+                                                    DustOptions(Color.LIME, 0.75f)
                                                 )
                                             }
                                         }
@@ -250,7 +249,7 @@ object ItemUsage {
                                         Particle.DUST,
                                         snowball.location,
                                         1, 0.0, 0.0, 0.0, 0.0,
-                                        Particle.DustOptions(Color.FUCHSIA, 0.75f),
+                                        DustOptions(Color.FUCHSIA, 0.75f),
                                         true
                                     )
                                 }
@@ -283,7 +282,7 @@ object ItemUsage {
                                     Particle.DUST,
                                     player.location,
                                     5, 0.05, 0.15, 0.05, 0.0,
-                                    Particle.DustOptions(Color.fromRGB(20, 18, 11), 0.5f)
+                                    DustOptions(Color.fromRGB(20, 18, 11), 0.5f)
                                 )
                             }
                             if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || ticks >= 120 || player.vehicle != null || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
@@ -318,14 +317,14 @@ object ItemUsage {
                             override fun run() {
                                 if(!spikeweedEntity.isDead) {
                                     if(spikeweedEntity.passengers.isEmpty()) {
-                                        for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.5).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }) {
+                                        for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null}) {
                                             spikeweedEntity.addPassenger(nearbyEnemy)
                                             object : BukkitRunnable() {
                                                 var damageTimer = 0
                                                 override fun run() {
                                                     spikeweedEntity.passengers.filterIsInstance<Player>().forEach{ passenger -> passenger.damage(0.75, player) }
                                                     damageTimer++
-                                                    if(damageTimer >= 4) {
+                                                    if(damageTimer >= 4 || nearbyEnemy.vehicle?.scoreboardTags?.contains("${nearbyEnemy.uniqueId}-death-vehicle") == true) {
                                                         spikeweedEntity.world.playSound(spikeweedEntity.location, "block.sweet_berry_bush.break", 1f, 1f)
                                                         spikeweedEntity.removePassenger(nearbyEnemy)
                                                         spikeweedEntity.remove()
@@ -358,7 +357,74 @@ object ItemUsage {
                         player.sendActionBar(Formatting.allTags.deserialize("<red>${BurbAbility.PLANTS_HEAVY_ABILITY_3.abilityName} must be placed on solid ground."))
                     }
                 }
-                //TODO: HEAL BEAM
+                BurbAbility.PLANTS_HEALER_ABILITY_1.abilityId -> {
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }.sortedByDescending { p -> player.location.distanceSquared(p.location) }
+                    if(nearbyTeammates.isNotEmpty()) {
+                        val healingTeammate = nearbyTeammates[0]
+                        player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))
+                        player.setCooldown(usedItem, 20 * 3600)
+                        object : BukkitRunnable() {
+                            var timer = 0
+                            var ticks = 0
+                            override fun run() {
+                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.vehicle != null || healingTeammate.vehicle != null || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                    if(ticks % 5 == 0) {
+                                        if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
+                                            player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                            player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                            cancel()
+                                        }
+                                        val startLoc = player.location.add(0.0, 0.25, 0.0)
+                                        val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
+                                        val steps = 10
+                                        val xIncrement = (endLoc.x - startLoc.x) / steps
+                                        val yIncrement = (endLoc.y - startLoc.y) / steps
+                                        val zIncrement = (endLoc.z - startLoc.z) / steps
+
+                                        for (i in 0..steps) {
+                                            val x = startLoc.x + xIncrement * i
+                                            var y = startLoc.y + yIncrement * i
+                                            val z = startLoc.z + zIncrement * i
+
+                                            y += sin(Math.PI * i / steps) * 0.05
+                                            val particleLoc = Location(startLoc.world, x, y, z)
+                                            player.world.spawnParticle(
+                                                Particle.DUST,
+                                                particleLoc,
+                                                0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                DustOptions(Color.YELLOW, 1.5f)
+                                            )
+                                        }
+                                        if(healingTeammate.health >= 19.75) {
+                                            healingTeammate.health = 20.0
+                                            player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
+                                            player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                            cancel()
+                                        } else {
+                                            healingTeammate.health += 0.25
+                                            player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.5<red>${HEART_UNICODE}"))
+                                        }
+                                    }
+                                } else {
+                                    player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                    player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                    cancel()
+                                }
+                                ticks++
+                                if(ticks >= 20) {
+                                    ticks = 0
+                                    timer++
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 1L)
+                    } else {
+                        player.setCooldown(usedItem, 0)
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>No team mate in range."))
+                    }
+                }
                 BurbAbility.PLANTS_HEALER_ABILITY_2.abilityId -> {
                     if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR && player.location.block.getRelative(BlockFace.DOWN).isSolid) {
                         //player.world.playSound(player.location, "burb.ability.peashooter.gatling.root", SoundCategory.VOICE, 1f, 1f)
@@ -398,7 +464,7 @@ object ItemUsage {
                                                     Particle.DUST,
                                                     snowball.location,
                                                     1, 0.0, 0.0, 0.0,
-                                                    Particle.DustOptions(Color.YELLOW, 2f)
+                                                    DustOptions(Color.YELLOW, 2f)
                                                 )
                                             }
                                         }
@@ -444,7 +510,7 @@ object ItemUsage {
                             }
                             override fun run() {
                                 if(!potatoMineEntity.isDead) {
-                                    for(nearbyEnemy in potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }) {
+                                    for(nearbyEnemy in potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null }) {
                                         potatoMineEntity.world.spawn(potatoMineEntity.location.clone(), TNTPrimed::class.java).apply {
                                             source = player
                                             fuseTicks = 0
@@ -480,8 +546,8 @@ object ItemUsage {
                     val facingLocation = player.location.add(player.location.setRotation(player.yaw, 0f).direction.multiply(5).normalize()).block.location.toBlockLocation()
                     if(facingLocation.block.getRelative(BlockFace.DOWN).isSolid) {
                         if(facingLocation.block.type == Material.AIR && facingLocation.block.getRelative(BlockFace.UP).type == Material.AIR) {
-                            facingLocation.block.type = Material.GOLD_BLOCK
-                            facingLocation.block.getRelative(BlockFace.UP).type = Material.GOLD_BLOCK
+                            facingLocation.block.type = Material.MANGROVE_WOOD
+                            facingLocation.block.getRelative(BlockFace.UP).type = Material.MANGROVE_WOOD
                             facingLocation.world.playSound(facingLocation, "block.anvil.place", SoundCategory.VOICE, 1f, 1f)
                             object : BukkitRunnable() {
                                 var ticks = 0
@@ -529,7 +595,7 @@ object ItemUsage {
                                             Particle.DUST,
                                             smokeGrenadeLocation,
                                             150, 1.75, 1.5, 1.75, 0.0,
-                                            Particle.DustOptions(Color.PURPLE, 3.5f)
+                                            DustOptions(Color.PURPLE, 3.5f)
                                         )
                                         smokeGrenadeLocation.world.playSound(smokeGrenadeLocation, "block.lava.extinguish", SoundCategory.VOICE, 1f, 1f)
                                         for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
@@ -553,7 +619,7 @@ object ItemUsage {
                                     Particle.DUST,
                                     snowball.location,
                                     1, 0.0, 0.0, 0.0, 0.0,
-                                    Particle.DustOptions(Color.PURPLE, 1.25f),
+                                    DustOptions(Color.PURPLE, 1.25f),
                                     true
                                 )
                             }
@@ -623,7 +689,7 @@ object ItemUsage {
                     player.velocity = player.velocity.setY(1.35)
                 }
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_1.abilityId -> {
-                    player.location.world.playSound(player.location, "entity.wither.shoot", 1f, 0.75f)
+                    player.location.world.playSound(player.location, "entity.illusioner.cast_spell", 1f, 1f)
                     object : BukkitRunnable() {
                         var timer = 0
                         var ticks = 0
@@ -637,7 +703,7 @@ object ItemUsage {
                         }
                         override fun run() {
                             if(timer == 1 && ticks == 10) {
-                                player.location.world.playSound(player.location, "entity.illusioner.cast_spell", 1f, 1f)
+                                player.location.world.playSound(player.location, "entity.wither.shoot", 1f, 0.75f)
                                 ultraBall.teleport(player.eyeLocation)
                                 ultraBall.shooter = player
                                 ultraBall.setHasBeenShot(true)
@@ -648,11 +714,11 @@ object ItemUsage {
                                 ultraBallVehicle.removePassenger(player)
                                 ultraBallVehicle.remove()
                             }
-                            if(ultraBall.isDead && player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == false) {
-                                /*ultraBall.location.world.spawn(ultraBall.location.add(0.0, 1.0, 0.0), TNTPrimed::class.java).apply {
+                            if(ultraBall.isDead) {
+                                ultraBall.location.world.spawn(ultraBall.location.add(0.0, 1.0, 0.0), TNTPrimed::class.java).apply {
                                     source = player
                                     fuseTicks = 0
-                                }*/
+                                }
                                 ultraBall.remove()
                                 ultraBallVehicle.remove()
                                 cancel()
@@ -674,7 +740,74 @@ object ItemUsage {
                     player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)
                     player.velocity = player.velocity.add(Vector(player.location.direction.x * 2.25, 0.25, player.location.direction.z * 2.25))
                 }
-                //TODO: HEAL BEAM
+                BurbAbility.ZOMBIES_HEALER_ABILITY_1.abilityId -> {
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }.sortedByDescending { p -> player.location.distanceSquared(p.location) }
+                    if(nearbyTeammates.isNotEmpty()) {
+                        val healingTeammate = nearbyTeammates[0]
+                        player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))
+                        player.setCooldown(usedItem, 20 * 3600)
+                        object : BukkitRunnable() {
+                            var timer = 0
+                            var ticks = 0
+                            override fun run() {
+                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.vehicle != null || healingTeammate.vehicle != null || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                    if(ticks % 5 == 0) {
+                                        if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
+                                            player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                            player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                            cancel()
+                                        }
+                                        val startLoc = player.location.add(0.0, 0.25, 0.0)
+                                        val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
+                                        val steps = 10
+                                        val xIncrement = (endLoc.x - startLoc.x) / steps
+                                        val yIncrement = (endLoc.y - startLoc.y) / steps
+                                        val zIncrement = (endLoc.z - startLoc.z) / steps
+
+                                        for (i in 0..steps) {
+                                            val x = startLoc.x + xIncrement * i
+                                            var y = startLoc.y + yIncrement * i
+                                            val z = startLoc.z + zIncrement * i
+
+                                            y += sin(Math.PI * i / steps) * 0.05
+                                            val particleLoc = Location(startLoc.world, x, y, z)
+                                            player.world.spawnParticle(
+                                                Particle.DUST,
+                                                particleLoc,
+                                                0,
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                DustOptions(Color.PURPLE, 1.5f)
+                                            )
+                                        }
+                                        if(healingTeammate.health >= 19.5) {
+                                            healingTeammate.health = 20.0
+                                            player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
+                                            player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                            cancel()
+                                        } else {
+                                            healingTeammate.health += 0.5
+                                            player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.75<red>${HEART_UNICODE}"))
+                                        }
+                                    }
+                                } else {
+                                    player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                    player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                    cancel()
+                                }
+                                ticks++
+                                if(ticks >= 20) {
+                                    ticks = 0
+                                    timer++
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 1L)
+                    } else {
+                        player.setCooldown(usedItem, 0)
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>No team mate in range"))
+                    }
+                }
                 BurbAbility.ZOMBIES_HEALER_ABILITY_2.abilityId -> {
                     val block = player.getTargetBlock(null, 16)
                     val location = block.location

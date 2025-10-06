@@ -80,7 +80,7 @@ object GameTask {
                             Jukebox.startMusicLoop(player, plugin, Music.LOADING_MELODY)
                         }
                     }
-                    if(Timer.getTimer() == 15) {
+                    if(Timer.getTimer() <= 15) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.removePotionEffect(PotionEffectType.BLINDNESS)
                         }
@@ -272,21 +272,19 @@ object GameTask {
                             Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
                         }
                     }
-                    if(Timer.getTimer() == 1) {
+                    if(Timer.getTimer() <= 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.showTitle(Title.title(
-                                    Formatting.allTags.deserialize("\uD000"),
-                                    Formatting.allTags.deserialize(""),
-                                    Title.Times.times(
-                                        Duration.ofMillis(250),
-                                        Duration.ofSeconds(2),
-                                        Duration.ofMillis(750)
+                                Formatting.allTags.deserialize("\uD000"),
+                                Formatting.allTags.deserialize(""),
+                                Title.Times.times(
+                                    Duration.ofMillis(250),
+                                    Duration.ofSeconds(1),
+                                    Duration.ofMillis(250)
                                     )
                                 )
                             )
                         }
-                    }
-                    if(Timer.getTimer() <= 0) {
                         GameManager.nextState()
                         stopGameLoop()
                     }
