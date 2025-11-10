@@ -47,7 +47,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     implementation("org.json:json:20231013")
     implementation("com.noxcrew.noxesium:api:2.3.3")
-    implementation("com.noxcrew.interfaces:interfaces:1.3.2")
+    implementation("com.noxcrew.interfaces:interfaces:2.0.1-SNAPSHOT")
 }
 
 kotlin {

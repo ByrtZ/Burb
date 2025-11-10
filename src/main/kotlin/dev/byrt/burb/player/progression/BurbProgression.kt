@@ -1,6 +1,6 @@
 package dev.byrt.burb.player.progression
 
-import dev.byrt.burb.game.CapturePointManager
+import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Timer
@@ -104,7 +104,7 @@ object BurbProgression {
                                 if(Timer.getTimer() <= 90) {
                                     Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
                                 } else {
-                                    val music = when(CapturePointManager.getSuburbinatingTeam()) {
+                                    val music = when(CapturePoints.getSuburbinatingTeam()) {
                                         Teams.PLANTS -> Music.SUBURBINATION_PLANTS
                                         Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
                                         else -> if(Jukebox.getMusicStress() == MusicStress.LOW) Music.RANDOM_LOW else if(Jukebox.getMusicStress() == MusicStress.MEDIUM) Music.RANDOM_MEDIUM else if(Jukebox.getMusicStress() == MusicStress.HIGH) Music.RANDOM_HIGH else Music.NULL

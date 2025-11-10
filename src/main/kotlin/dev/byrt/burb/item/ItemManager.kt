@@ -282,5 +282,7 @@ enum class ItemType(val typeName : String, val typeGlyph : String) {
     CONSUMABLE("Consumable", "\uF010"),
     TOOL("Tool", "\uF011"),
     UTILITY("Utility", "\uF012"),
-    WEAPON("Weapon", "\uF013")
+    WEAPON("Weapon", "\uF013"),
+    HAT("Hat", "\uF015"),
+    ACCESSORY("Accessory", "\uF014")
 }

@@ -19,6 +19,8 @@ import org.bukkit.entity.Player
 
 object ChatUtility {
     const val BURB_FONT_TAG = "<font:burb:font>"
+    const val BURB_FONT_LOW_TAG = "<font:burb:font_low>"
+    const val BURB_FONT_LOWER_TAG = "<font:burb:font_lower>"
     const val HEART_UNICODE = "❤"
     /** Sends a message to the specified audience. **/
     fun messageAudience(recipient: Audience, message: String, restricted: Boolean, vararg placeholders: TagResolver) {

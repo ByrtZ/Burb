@@ -2,6 +2,8 @@ package dev.byrt.burb.text
 
 import dev.byrt.burb.game.*
 import dev.byrt.burb.game.Timer
+import dev.byrt.burb.game.objective.CapturePoint
+import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -104,7 +106,7 @@ object InfoBoardManager {
         if(GameManager.getGameState() == GameState.IDLE) {
             currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}NONE"))
         } else {
-            currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}${RoundManager.getRound().ordinal + 1}/${RoundManager.getTotalRounds()}"))
+            currentRoundLine.suffix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}${Rounds.getRound().ordinal + 1}/${Rounds.getTotalRounds()}"))
         }
     }
 
@@ -117,7 +119,7 @@ object InfoBoardManager {
             }
             GameState.STARTING -> {
                 objective.displaySlot = DisplaySlot.SIDEBAR
-                if(RoundManager.getRound() == Round.ONE) {
+                if(Rounds.getRound() == Round.ONE) {
                     gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}GAME<reset> ${ChatUtility.BURB_FONT_TAG}<red>BEGINS:<reset> "))
                 } else {
                     gameStatusLine.prefix(Formatting.allTags.deserialize("<red>${ChatUtility.BURB_FONT_TAG}ROUND<reset> ${ChatUtility.BURB_FONT_TAG}<red>BEGINS:<reset> "))
@@ -216,17 +218,17 @@ object InfoBoardManager {
                             scoreBossBar.name(TextAlignment.centreBossBarText("WINNERS: <gray><obf>???"))
                         }
                         if(Timer.getTimer() <= 89 && ticks == 0) {
-                            scoreBossBar.name(TextAlignment.centreBossBarText("WINNERS: ${if(ScoreManager.getWinningTeam() in listOf(Teams.PLANTS, Teams.ZOMBIES)) "${ScoreManager.getWinningTeam().teamColourTag}${ScoreManager.getWinningTeam()}" else "<gray>NONE"}"))
+                            scoreBossBar.name(TextAlignment.centreBossBarText("WINNERS: ${if(Scores.getWinningTeam() in listOf(Teams.PLANTS, Teams.ZOMBIES)) "${Scores.getWinningTeam().teamColourTag}${Scores.getWinningTeam()}" else "<gray>NONE"}"))
                         }
                     }
                     else -> {
-                        if(CapturePointManager.isSuburbinating()) {
-                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${ScoreManager.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${ScoreManager.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("<u>${CapturePointManager.getSuburbinatingTeam().teamColourTag}SUBURBINATION")))
+                        if(CapturePoints.isSuburbinating()) {
+                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${Scores.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("<u>${CapturePoints.getSuburbinatingTeam().teamColourTag}SUBURBINATION")))
                         } else {
-                            val pointA = CapturePointManager.getCapturePointData(CapturePoint.A)
-                            val pointB = CapturePointManager.getCapturePointData(CapturePoint.B)
-                            val pointC = CapturePointManager.getCapturePointData(CapturePoint.C)
-                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${ScoreManager.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${ScoreManager.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%")))
+                            val pointA = CapturePoints.getCapturePointData(CapturePoint.A)
+                            val pointB = CapturePoints.getCapturePointData(CapturePoint.B)
+                            val pointC = CapturePoints.getCapturePointData(CapturePoint.C)
+                            scoreBossBar.name(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${Scores.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}").append(Formatting.allTags.deserialize("<font:burb:font> ".repeat(75))).append(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%")))
                         }
                     }
                 }
@@ -245,12 +247,12 @@ object InfoBoardManager {
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}<dark_gray>-<reset> "))
             secondPlaceLine.suffix(Formatting.allTags.deserialize("<zombiescolour>${ChatUtility.BURB_FONT_TAG}ZOMBIES<white>:<reset> ${ChatUtility.BURB_FONT_TAG}NONE"))
         } else {
-            val placementKeys = ScoreManager.getPlacementMap().keys.toTypedArray()
-            val placementValues = ScoreManager.getPlacementMap().values.toTypedArray()
+            val placementKeys = Scores.getPlacementMap().keys.toTypedArray()
+            val placementValues = Scores.getPlacementMap().values.toTypedArray()
             firstPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}1.<reset> "))
-            firstPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[0]) "<b>" else ""}${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[0]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
+            firstPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePoints.getSuburbinatingTeam() == placementKeys[0]) "<b>" else ""}${placementKeys[0].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[0].teamName.uppercase()}${if(CapturePoints.getSuburbinatingTeam() == placementKeys[0]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[0]}"))
             secondPlaceLine.prefix(Formatting.allTags.deserialize("${ChatUtility.BURB_FONT_TAG}2.<reset> "))
-            secondPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[1]) "<b>" else ""}${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}${if(CapturePointManager.getSuburbinatingTeam() == placementKeys[1]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
+            secondPlaceLine.suffix(Formatting.allTags.deserialize("${if(CapturePoints.getSuburbinatingTeam() == placementKeys[1]) "<b>" else ""}${placementKeys[1].teamColourTag}${ChatUtility.BURB_FONT_TAG}${placementKeys[1].teamName.uppercase()}${if(CapturePoints.getSuburbinatingTeam() == placementKeys[1]) "</b>" else ""}<white>:<reset> ${ChatUtility.BURB_FONT_TAG}${placementValues[1]}"))
         }
     }
 

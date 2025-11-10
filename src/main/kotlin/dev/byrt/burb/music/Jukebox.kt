@@ -1,6 +1,6 @@
 package dev.byrt.burb.music
 
-import dev.byrt.burb.game.CapturePointManager
+import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
 
@@ -52,7 +52,7 @@ object Jukebox {
     fun setMusicStress(newStress: MusicStress) {
         if(newStress == this.musicStress) return
         this.musicStress = newStress
-        if(!CapturePointManager.isSuburbinating()) {
+        if(!CapturePoints.isSuburbinating()) {
             when(this.musicStress) {
                 MusicStress.LOW -> {
                     for(player in Bukkit.getOnlinePlayers()) {

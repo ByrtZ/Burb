@@ -2,13 +2,15 @@ package dev.byrt.burb.command
 
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.game.ScoreManager
+import dev.byrt.burb.game.Scores
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.logger
+import dev.byrt.burb.player.cosmetics.BurbCosmetic
+import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbProgression
 import dev.byrt.burb.plugin
@@ -60,7 +62,7 @@ class AdminCommands {
         }
     }
 
-    @Command("item test rarities")
+    @Command("debug item_rarities")
     @CommandDescription("Debug command for item rarity testing.")
     @Permission("burb.cmd.debug")
     fun debugTestRarities(css: CommandSourceStack) {
@@ -83,7 +85,7 @@ class AdminCommands {
         }
     }
 
-    @Command("item test types")
+    @Command("debug item_types")
     @CommandDescription("Debug command for item type testing.")
     @Permission("burb.cmd.debug")
     fun debugTestTypes(css: CommandSourceStack) {
@@ -132,7 +134,7 @@ class AdminCommands {
     fun debugDisplayScore(css: CommandSourceStack, @Argument("team") team: Teams) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            player.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${ScoreManager.getDisplayScore(team)} (${if(team == Teams.PLANTS) ScoreManager.getPlantsScore() else if(team == Teams.ZOMBIES) ScoreManager.getZombiesScore() else -1})"))
+            player.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${Scores.getDisplayScore(team)} (${if(team == Teams.PLANTS) Scores.getPlantsScore() else if(team == Teams.ZOMBIES) Scores.getZombiesScore() else -1})"))
         }
     }
 
@@ -174,6 +176,16 @@ class AdminCommands {
         }
     }
 
+    @Command("debug actionbar <low> <lower>")
+    @CommandDescription("Shows temporary test actionbar")
+    @Permission("burb.cmd.debug")
+    fun debugActionbar(css: CommandSourceStack, @Argument("low") low: String, @Argument("lower") lower: String) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            player.sendActionBar(TextAlignment.centreActionBarText(low, lower))
+        }
+    }
+
     @Command("progression add_xp <xp>")
     @CommandDescription("Debug command for XP")
     @Permission("burb.cmd.debug")
@@ -191,6 +203,30 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             BurbProgression.setLevel(player, level)
+        }
+    }
+
+    @Command("cosmetic give <cosmetic> [player]")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmetic(css: CommandSourceStack, @Argument("cosmetic") cosmetic: BurbCosmetic, @Argument("player") player: Player?) {
+        if(css.sender is Player) {
+            if(player == null) {
+                val self = css.sender as Player
+                BurbCosmetics.giveCosmeticItem(self, cosmetic)
+            } else {
+                BurbCosmetics.giveCosmeticItem(player, cosmetic)
+            }
+        }
+    }
+
+    @Command("cosmetic view_all")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmeticView(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbInterface(player, BurbInterfaceType.ALL_COSMETICS)
         }
     }
 }

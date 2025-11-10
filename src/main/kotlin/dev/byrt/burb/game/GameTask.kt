@@ -222,7 +222,7 @@ object GameTask {
                 if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
                     if(Timer.getTimer() == 90) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            if(ScoreManager.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
+                            if(Scores.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
                                 if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
                                 if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
                                 if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbProgression.appendExperience(player, 30)
@@ -234,14 +234,14 @@ object GameTask {
                                     )
                                 )
                             } else {
-                                player.sendMessage(Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
+                                player.sendMessage(Formatting.allTags.deserialize("${Scores.getWinningTeam().teamColourTag}<b>${Scores.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
                                 player.showTitle(
                                     Title.title(
-                                        Formatting.allTags.deserialize("${ScoreManager.getWinningTeam().teamColourTag}<b>${ScoreManager.getWinningTeam().teamName.uppercase()}"),
+                                        Formatting.allTags.deserialize("${Scores.getWinningTeam().teamColourTag}<b>${Scores.getWinningTeam().teamName.uppercase()}"),
                                         Formatting.allTags.deserialize("won the game!")
                                     )
                                 )
-                                when(ScoreManager.getWinningTeam()) {
+                                when(Scores.getWinningTeam()) {
                                     Teams.PLANTS -> {
                                         if (player.burbPlayer().playerTeam == Teams.PLANTS) {
                                             player.playSound(Sounds.Score.PLANTS_WIN)

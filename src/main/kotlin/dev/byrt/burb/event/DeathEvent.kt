@@ -1,6 +1,6 @@
 package dev.byrt.burb.event
 
-import dev.byrt.burb.game.ScoreManager
+import dev.byrt.burb.game.Scores
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -19,7 +19,7 @@ class DeathEvent: Listener {
         if(e.player.killer != null) {
             if(e.player.killer is Player) {
                 e.player.killer!!.playSound(Sounds.Score.ELIMINATION)
-                ScoreManager.addScore(e.player.killer!!.burbPlayer().playerTeam, 50)
+                Scores.addScore(e.player.killer!!.burbPlayer().playerTeam, 50)
                 BurbProgression.appendExperience(e.player.killer!!, 25)
             }
         }

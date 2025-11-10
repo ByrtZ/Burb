@@ -3,6 +3,7 @@ package dev.byrt.burb.game
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
+import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
@@ -41,7 +42,7 @@ object Game {
     fun cleanup() {
         TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
-        CapturePointManager.clearCapturePoints()
+        CapturePoints.clearCapturePoints()
         ItemManager.destroyBullets()
         LobbyBall.cleanup()
     }
@@ -50,9 +51,9 @@ object Game {
         InfoBoardManager.updateStatus()
         InfoBoardManager.updateRound()
         InfoBoardManager.updateTimer()
-        ScoreManager.setPlantsScore(0)
-        ScoreManager.setZombiesScore(0)
-        CapturePointManager.clearCapturePoints()
+        Scores.setPlantsScore(0)
+        Scores.setZombiesScore(0)
+        CapturePoints.clearCapturePoints()
         Jukebox.resetMusicStress()
         for(player in Bukkit.getOnlinePlayers()) {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {

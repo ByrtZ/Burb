@@ -10,8 +10,17 @@ import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.item.ServerItem
 
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
+import com.noxcrew.interfaces.element.Element
 import com.noxcrew.interfaces.element.StaticElement
+import com.noxcrew.interfaces.grid.GridPoint
+import com.noxcrew.interfaces.grid.GridPositionGenerator
 import com.noxcrew.interfaces.interfaces.buildChestInterface
+import com.noxcrew.interfaces.pane.Pane
+import com.noxcrew.interfaces.transform.builtin.PaginationButton
+import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
+import dev.byrt.burb.logger
+import dev.byrt.burb.player.cosmetics.BurbCosmetic
+import dev.byrt.burb.player.cosmetics.BurbCosmetics
 
 import io.papermc.paper.entity.TeleportFlag
 
@@ -24,6 +33,7 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
 
@@ -34,21 +44,26 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
         when(interfaceType) {
             BurbInterfaceType.TEAM_SELECT -> {
                 runBlocking {
-                    val teamInterface = createTeamInterface(player, interfaceType)
-                    teamInterface.open(player)
+                    createTeamInterface(player, interfaceType)
                 }
             }
             BurbInterfaceType.CHARACTER_SELECT -> {
                 runBlocking {
-                    val characterInterface = createCharacterInterface(player, interfaceType)
-                    characterInterface.open(player)
+                    createCharacterInterface(player, interfaceType)
                 }
+            }
+            BurbInterfaceType.ALL_COSMETICS -> {
+                runBlocking {
+                    createAllCosmeticsInterface(player, interfaceType)
+                }
+            } else -> {
+                logger.warning("An error occurred when trying to create an interface.")
             }
         }
     }
 
-    private fun createTeamInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
-        initialTitle = Formatting.allTags.deserialize(interfaceType.interfaceName)
+    private suspend fun createTeamInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
         rows = 3
         withTransform { pane, _ ->
             if(player.burbPlayer().playerTeam == Teams.PLANTS) {
@@ -178,10 +193,10 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 }
             }
         }
-    }
+    }.open(player)
 
-    private fun createCharacterInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
-        initialTitle = Formatting.allTags.deserialize(interfaceType.interfaceName)
+    private suspend fun createCharacterInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
         rows = 3
         withTransform { pane, _ ->
             var i = 0
@@ -222,5 +237,106 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 }
             }
         }
+    }.open(player)
+
+    private suspend fun createAllCosmeticsInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        val cosmeticItems = mutableListOf<ItemStack>()
+        for(entry in BurbCosmetic.entries) {
+            cosmeticItems.add(BurbCosmetics.getCosmeticItem(entry))
+        }
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 6
+        /** Apply pagination transform **/
+        addTransform(PaginatedMenu(cosmeticItems))
+        /** Add overview item **/
+        withTransform { pane, _ ->
+            val infoMenuItem = ItemStack(Material.NETHER_STAR)
+            val infoMenuItemMeta = infoMenuItem.itemMeta
+            infoMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>${interfaceType.interfaceName}"))
+            infoMenuItemMeta.lore(listOf(
+                Formatting.allTags.deserialize("<!i><white>Debug interface to view"),
+                Formatting.allTags.deserialize("<!i><white>all registered cosmetics.")
+            ))
+            infoMenuItem.itemMeta = infoMenuItemMeta
+            pane[0,4] = StaticElement(drawable(infoMenuItem))
+        }
+        /** Add close menu button **/
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[5,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+            }
+        }
+        /** Draw central information item if the interface cannot be populated **/
+        if(cosmeticItems.isEmpty()) {
+            withTransform { pane, _ ->
+                val noCosmeticsMenuItem = ItemStack(Material.BARRIER)
+                val noCosmeticsMenuItemMeta = noCosmeticsMenuItem.itemMeta
+                noCosmeticsMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>No cosmetics found."))
+                noCosmeticsMenuItemMeta.lore(listOf(
+                    Formatting.allTags.deserialize("<i><dark_gray>Where are the artists?!")
+                ))
+                noCosmeticsMenuItem.itemMeta = noCosmeticsMenuItemMeta
+                pane[2,4] = StaticElement(drawable(noCosmeticsMenuItem))
+            }
+        }
+        /** Fill border with blank items **/
+        withTransform { pane, _ ->
+            val borderItem = ItemStack(Material.GRAY_STAINED_GLASS_PANE).apply {
+                itemMeta = itemMeta.apply {
+                    isHideTooltip = true
+                }
+            }
+            val borderElement = StaticElement(drawable(borderItem))
+            for(column in 0..8) {
+                for(row in 0..5) {
+                    if(column in listOf(0, 8) || row in listOf(0, 5)) {
+                        if(pane[row, column] == null) {
+                            pane[row, column] = borderElement
+                        }
+                    }
+                }
+            }
+        }
+    }.open(player)
+}
+
+class PaginatedMenu(items: List<ItemStack>): PaginationTransformation<Pane, ItemStack>(
+    positionGenerator = GridPositionGenerator { buildList {
+        for(row in 1..4) {
+            for(col in 1..7) {
+                add(GridPoint(row, col))
+            }
+        }
+    }},
+    items,
+    back = PaginationButton(
+        position = GridPoint(5, 2),
+        drawable = drawable(ItemStack(Material.ARROW).apply { itemMeta = itemMeta.apply {
+            displayName(Formatting.allTags.deserialize("<!i><burbcolour>Previous Page"))
+        } }),
+        increments = mapOf(Pair(ClickType.LEFT, -1)),
+        clickHandler = { player -> player.playSound(Sounds.Misc.INTERFACE_INTERACT) }
+    ),
+    forward = PaginationButton(
+        position = GridPoint(5, 6),
+        drawable = drawable(ItemStack(Material.ARROW).apply { itemMeta = itemMeta.apply {
+            displayName(Formatting.allTags.deserialize("<!i><burbcolour>Next Page"))
+        } }),
+        increments = mapOf(Pair(ClickType.LEFT, 1)),
+        clickHandler = { player -> player.playSound(Sounds.Misc.INTERFACE_INTERACT) }
+    )) {
+    override suspend fun drawElement(index: Int, element: ItemStack): Element {
+        return StaticElement(drawable(if(element.type == Material.AIR)
+            ItemStack(Material.BARRIER).apply {
+                itemMeta = itemMeta.apply {
+                    displayName(Formatting.allTags.deserialize("<!i><red>An error occurred when loading this item."))
+                }
+            } else element)
+        )
     }
 }
