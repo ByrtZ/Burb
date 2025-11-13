@@ -12,7 +12,7 @@ import dev.byrt.burb.logger
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.progression.BurbLevel
-import dev.byrt.burb.player.progression.BurbProgression
+import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.TextAlignment
@@ -192,7 +192,7 @@ class AdminCommands {
     fun debugXp(css: CommandSourceStack, @Argument("xp") xp: Int) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            BurbProgression.appendExperience(player, xp)
+            BurbPlayerData.appendExperience(player, xp)
         }
     }
 
@@ -202,14 +202,14 @@ class AdminCommands {
     fun debugLevel(css: CommandSourceStack, @Argument("level") level: BurbLevel) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            BurbProgression.setLevel(player, level)
+            BurbPlayerData.setLevel(player, level)
         }
     }
 
-    @Command("cosmetic give <cosmetic> [player]")
+    @Command("cosmetic item <cosmetic> [player]")
     @CommandDescription("Debug command for cosmetics")
     @Permission("burb.cmd.debug")
-    fun debugCosmetic(css: CommandSourceStack, @Argument("cosmetic") cosmetic: BurbCosmetic, @Argument("player") player: Player?) {
+    fun debugCosmeticItem(css: CommandSourceStack, @Argument("cosmetic") cosmetic: BurbCosmetic, @Argument("player") player: Player?) {
         if(css.sender is Player) {
             if(player == null) {
                 val self = css.sender as Player
@@ -217,6 +217,55 @@ class AdminCommands {
             } else {
                 BurbCosmetics.giveCosmeticItem(player, cosmetic)
             }
+        }
+    }
+
+    @Command("cosmetic give <cosmetic> [player]")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmeticUnlock(css: CommandSourceStack, @Argument("cosmetic") cosmetic: BurbCosmetic, @Argument("player") player: Player?) {
+        if(cosmetic == BurbCosmetic.INVALID_COSMETIC) return
+        if(css.sender is Player) {
+            if(player == null) {
+                val self = css.sender as Player
+                BurbCosmetics.unlockCosmetic(self, cosmetic)
+            } else {
+                BurbCosmetics.unlockCosmetic(player, cosmetic)
+            }
+        }
+    }
+
+    @Command("cosmetic give_all [player]")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmeticUnlockAll(css: CommandSourceStack, @Argument("player") player: Player?) {
+        if(css.sender is Player) {
+            if(player == null) {
+                val self = css.sender as Player
+                BurbCosmetic.entries.forEach { cosmetic -> if(cosmetic != BurbCosmetic.INVALID_COSMETIC) BurbCosmetics.unlockCosmetic(self, cosmetic) }
+            } else {
+                BurbCosmetic.entries.forEach { cosmetic -> if(cosmetic != BurbCosmetic.INVALID_COSMETIC) BurbCosmetics.unlockCosmetic(player, cosmetic) }
+            }
+        }
+    }
+
+    @Command("cosmetic equip <cosmetic>")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmeticEquip(css: CommandSourceStack, @Argument("cosmetic") cosmetic: BurbCosmetic) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbCosmetics.equipCosmetic(player, cosmetic, false)
+        }
+    }
+
+    @Command("cosmetic unequip <type>")
+    @CommandDescription("Debug command for cosmetics")
+    @Permission("burb.cmd.debug")
+    fun debugCosmeticUnequip(css: CommandSourceStack, @Argument("type") type: ItemType) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            BurbCosmetics.unequipCosmetic(player, type)
         }
     }
 

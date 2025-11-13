@@ -7,7 +7,7 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.progression.BurbProgression
+import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -225,7 +225,7 @@ object GameTask {
                             if(Scores.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
                                 if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
                                 if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
-                                if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbProgression.appendExperience(player, 30)
+                                if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbPlayerData.appendExperience(player, 30)
                                 player.sendMessage(Formatting.allTags.deserialize("Nobody won, what a disappointment!"))
                                 player.showTitle(
                                     Title.title(
@@ -245,21 +245,21 @@ object GameTask {
                                     Teams.PLANTS -> {
                                         if (player.burbPlayer().playerTeam == Teams.PLANTS) {
                                             player.playSound(Sounds.Score.PLANTS_WIN)
-                                            BurbProgression.appendExperience(player, 200)
+                                            BurbPlayerData.appendExperience(player, 200)
                                         }
                                         if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
                                             player.playSound(Sounds.Score.ZOMBIES_LOSE)
-                                            BurbProgression.appendExperience(player, 50)
+                                            BurbPlayerData.appendExperience(player, 50)
                                         }
                                     }
                                     Teams.ZOMBIES -> {
                                         if (player.burbPlayer().playerTeam == Teams.PLANTS) {
                                             player.playSound(Sounds.Score.PLANTS_LOSE)
-                                            BurbProgression.appendExperience(player, 50)
+                                            BurbPlayerData.appendExperience(player, 50)
                                         }
                                         if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
                                             player.playSound(Sounds.Score.ZOMBIES_WIN)
-                                            BurbProgression.appendExperience(player, 200)
+                                            BurbPlayerData.appendExperience(player, 200)
                                         }
                                     }
                                     else -> {}

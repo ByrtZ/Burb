@@ -10,7 +10,7 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.progression.BurbProgression
+import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
@@ -114,11 +114,11 @@ object CapturePoints {
             when(newSuburbinationTeam) {
                 Teams.PLANTS -> for(player in Bukkit.getOnlinePlayers()
                     .filter { filter -> filter.burbPlayer().playerTeam == Teams.PLANTS }) {
-                    BurbProgression.appendExperience(player, 40)
+                    BurbPlayerData.appendExperience(player, 40)
                 }
                 Teams.ZOMBIES -> for(player in Bukkit.getOnlinePlayers()
                     .filter { filter -> filter.burbPlayer().playerTeam == Teams.ZOMBIES }) {
-                    BurbProgression.appendExperience(player, 40)
+                    BurbPlayerData.appendExperience(player, 40)
                 }
                 else -> {}
             }
@@ -227,7 +227,7 @@ object CapturePoints {
                         Bukkit.getOnlinePlayers().forEach {
                             it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>Point $capturePoint<reset> is now controlled by the ${capturePoint.dominatingTeam.teamColourTag}${capturePoint.dominatingTeam.teamName}<reset>."))
                             it.playSound(if(it.burbPlayer().playerTeam == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
-                            if(it.burbPlayer().playerTeam == capturePoint.dominatingTeam) BurbProgression.appendExperience(it, 10)
+                            if(it.burbPlayer().playerTeam == capturePoint.dominatingTeam) BurbPlayerData.appendExperience(it, 10)
                         }
                     }
                 }

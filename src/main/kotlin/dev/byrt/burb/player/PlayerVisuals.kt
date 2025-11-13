@@ -10,6 +10,7 @@ import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 
@@ -207,6 +208,7 @@ object PlayerVisuals {
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
+        BurbCosmetics.equipCosmetics(player)
         showPlayer(player)
     }
 

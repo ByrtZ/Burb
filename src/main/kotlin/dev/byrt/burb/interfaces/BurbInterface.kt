@@ -242,7 +242,9 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
     private suspend fun createAllCosmeticsInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
         val cosmeticItems = mutableListOf<ItemStack>()
         for(entry in BurbCosmetic.entries) {
-            cosmeticItems.add(BurbCosmetics.getCosmeticItem(entry))
+            if (entry != BurbCosmetic.INVALID_COSMETIC) {
+                cosmeticItems.add(BurbCosmetics.getCosmeticItem(entry))
+            }
         }
         titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 6

@@ -23,7 +23,7 @@ import java.io.File
 import java.time.Duration
 import java.util.*
 
-object BurbProgression {
+object BurbPlayerData {
     private const val EXPERIENCE_PATH = ".experience"
     private const val LEVEL_PATH = ".level"
     private val playerData = mutableMapOf<UUID, FileConfiguration>()
@@ -55,7 +55,7 @@ object BurbProgression {
         }
     }
 
-    private fun getPlayerConfiguration(player: Player): FileConfiguration {
+    fun getPlayerConfiguration(player: Player): FileConfiguration {
         return playerData[player.uniqueId]!!
     }
 

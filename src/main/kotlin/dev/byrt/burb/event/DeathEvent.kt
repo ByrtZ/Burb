@@ -5,7 +5,7 @@ import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
-import dev.byrt.burb.player.progression.BurbProgression
+import dev.byrt.burb.player.progression.BurbPlayerData
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -20,7 +20,7 @@ class DeathEvent: Listener {
             if(e.player.killer is Player) {
                 e.player.killer!!.playSound(Sounds.Score.ELIMINATION)
                 Scores.addScore(e.player.killer!!.burbPlayer().playerTeam, 50)
-                BurbProgression.appendExperience(e.player.killer!!, 25)
+                BurbPlayerData.appendExperience(e.player.killer!!, 25)
             }
         }
         PlayerVisuals.death(
