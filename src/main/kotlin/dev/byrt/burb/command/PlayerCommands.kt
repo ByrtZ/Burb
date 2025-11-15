@@ -63,4 +63,13 @@ class PlayerCommands {
             BurbInterface(player, BurbInterfaceType.TEAM_SELECT)
         }
     }
+
+    @Command("wardrobe")
+    @CommandDescription("Opens the wardrobe.")
+    fun openWardrobe(css: CommandSourceStack) {
+        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
+            val player = css.sender as Player
+            BurbInterface(player, BurbInterfaceType.WARDROBE)
+        }
+    }
 }

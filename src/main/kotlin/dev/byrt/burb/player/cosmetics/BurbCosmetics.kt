@@ -14,6 +14,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import java.io.File
 
 @Suppress("unstableApiUsage")
@@ -46,6 +47,7 @@ object BurbCosmetics {
             cosmeticItemMeta.setEquippable(cosmeticEquippable)
         }
 
+        cosmeticItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "cosmetic"), PersistentDataType.STRING, cosmetic.cosmeticId)
         cosmeticItemMeta.itemModel = NamespacedKey("minecraft", cosmetic.cosmeticModel)
         cosmeticItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
         cosmeticItem.itemMeta = cosmeticItemMeta
@@ -125,7 +127,7 @@ object BurbCosmetics {
         }
     }
 
-    private fun getCosmeticById(string: String): BurbCosmetic {
+    fun getCosmeticById(string: String): BurbCosmetic {
         for(cosmetic in BurbCosmetic.entries) {
             if(cosmetic.cosmeticId == string) {
                 return cosmetic

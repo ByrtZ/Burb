@@ -18,9 +18,11 @@ import com.noxcrew.interfaces.interfaces.buildChestInterface
 import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
-import dev.byrt.burb.logger
+
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.plugin
 
 import io.papermc.paper.entity.TeleportFlag
 
@@ -31,11 +33,13 @@ import net.kyori.adventure.title.Title
 
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 import java.time.Duration
 
@@ -56,8 +60,11 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                 runBlocking {
                     createAllCosmeticsInterface(player, interfaceType)
                 }
-            } else -> {
-                logger.warning("An error occurred when trying to create an interface.")
+            }
+            BurbInterfaceType.WARDROBE -> {
+                runBlocking {
+                    createWardrobeInterface(player, interfaceType)
+                }
             }
         }
     }
@@ -249,7 +256,7 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
         titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 6
         /** Apply pagination transform **/
-        addTransform(PaginatedMenu(cosmeticItems))
+        addTransform(GenericPaginationTransformation(cosmeticItems))
         /** Add overview item **/
         withTransform { pane, _ ->
             val infoMenuItem = ItemStack(Material.NETHER_STAR)
@@ -305,9 +312,137 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
             }
         }
     }.open(player)
+
+    private suspend fun createWardrobeInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        val playerConfig = BurbPlayerData.getPlayerConfiguration(player)
+        val rawUnlockedCosmetics = playerConfig.getList("${player.uniqueId}.cosmetics") ?: emptyList()
+        val unlockedCosmetics = rawUnlockedCosmetics.mapNotNull { it as? String }.toMutableList()
+
+        // Check unlocked cosmetics and replace item type with a locked material if the cosmetic is not unlocked
+        val cosmeticItems = mutableListOf<ItemStack>()
+        for(cosmetic in BurbCosmetic.entries) {
+            if(cosmetic != BurbCosmetic.INVALID_COSMETIC) {
+                val cosmeticItem = BurbCosmetics.getCosmeticItem(cosmetic)
+                if(!unlockedCosmetics.contains(cosmetic.cosmeticId)) {
+                    cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }
+                    cosmeticItem.type = Material.GRAY_DYE
+                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.rarityGlyph}${cosmetic.cosmeticType.typeGlyph}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment)
+                }
+                cosmeticItems.add(cosmeticItem)
+            }
+        }
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 6
+        /** Apply pagination transform **/
+        addTransform(WardrobePaginationTransformation(cosmeticItems))
+        /** Add overview item **/
+        withTransform { pane, _ ->
+            val infoMenuItem = ItemStack(Material.NETHER_STAR)
+            val infoMenuItemMeta = infoMenuItem.itemMeta
+            infoMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>${interfaceType.interfaceName}"))
+            infoMenuItemMeta.lore(listOf(
+                Formatting.allTags.deserialize("<!i>"),
+                Formatting.allTags.deserialize("<!i><white>Browse and equip various cosmetics"),
+                Formatting.allTags.deserialize("<!i><white>to be displayed on your character.")
+            ))
+            infoMenuItem.itemMeta = infoMenuItemMeta
+            pane[0,4] = StaticElement(drawable(infoMenuItem))
+        }
+        /** Add close menu button **/
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[5,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+            }
+        }
+        /** Draw central information item if the interface cannot be populated **/
+        if(cosmeticItems.isEmpty()) {
+            withTransform { pane, _ ->
+                val noCosmeticsMenuItem = ItemStack(Material.BARRIER)
+                val noCosmeticsMenuItemMeta = noCosmeticsMenuItem.itemMeta
+                noCosmeticsMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>No cosmetics found."))
+                noCosmeticsMenuItemMeta.lore(listOf(
+                    Formatting.allTags.deserialize("<i><dark_gray>I have no idea what went wrong here.")
+                ))
+                noCosmeticsMenuItem.itemMeta = noCosmeticsMenuItemMeta
+                pane[2,4] = StaticElement(drawable(noCosmeticsMenuItem))
+            }
+        }
+        /** Fill border with blank items **/
+        withTransform { pane, _ ->
+            val borderItem = ItemStack(Material.GRAY_STAINED_GLASS_PANE).apply {
+                itemMeta = itemMeta.apply {
+                    isHideTooltip = true
+                }
+            }
+            val borderElement = StaticElement(drawable(borderItem))
+            for(column in 0..8) {
+                for(row in 0..5) {
+                    if(column in listOf(0, 8) || row in listOf(0, 5)) {
+                        if(pane[row, column] == null) {
+                            pane[row, column] = borderElement
+                        }
+                    }
+                }
+            }
+        }
+    }.open(player)
 }
 
-class PaginatedMenu(items: List<ItemStack>): PaginationTransformation<Pane, ItemStack>(
+class WardrobePaginationTransformation(items: List<ItemStack>): PaginationTransformation<Pane, ItemStack>(
+    positionGenerator = GridPositionGenerator { buildList {
+        for(row in 1..4) {
+            for(col in 1..7) {
+                add(GridPoint(row, col))
+            }
+        }
+    }},
+    items,
+    back = PaginationButton(
+        position = GridPoint(5, 2),
+        drawable = drawable(ItemStack(Material.ARROW).apply { itemMeta = itemMeta.apply {
+            displayName(Formatting.allTags.deserialize("<!i><burbcolour>Previous Page"))
+        } }),
+        increments = mapOf(Pair(ClickType.LEFT, -1)),
+        clickHandler = { player -> player.playSound(Sounds.Misc.INTERFACE_INTERACT) }
+    ),
+    forward = PaginationButton(
+        position = GridPoint(5, 6),
+        drawable = drawable(ItemStack(Material.ARROW).apply { itemMeta = itemMeta.apply {
+            displayName(Formatting.allTags.deserialize("<!i><burbcolour>Next Page"))
+        } }),
+        increments = mapOf(Pair(ClickType.LEFT, 1)),
+        clickHandler = { player -> player.playSound(Sounds.Misc.INTERFACE_INTERACT) }
+    )) {
+    override suspend fun drawElement(index: Int, element: ItemStack): Element {
+        return StaticElement(drawable(if(element.type == Material.AIR)
+            ItemStack(Material.BARRIER).apply {
+                itemMeta = itemMeta.apply {
+                    displayName(Formatting.allTags.deserialize("<!i><red>An error occurred when loading this item."))
+                }
+            } else element)
+        ) { click ->
+            val player = click.player
+            when(click.type) {
+                ClickType.LEFT -> {
+                    element.persistentDataContainer.get(NamespacedKey(plugin, "cosmetic"), PersistentDataType.STRING)
+                        ?.let { BurbCosmetics.getCosmeticById(it) }?.let {
+                            BurbCosmetics.equipCosmetic(player,
+                                it, false)
+                        }
+                } else -> {
+                    player.playSound(Sounds.Misc.INTERFACE_ERROR)
+                }
+            }
+        }
+    }
+}
+
+class GenericPaginationTransformation(items: List<ItemStack>): PaginationTransformation<Pane, ItemStack>(
     positionGenerator = GridPositionGenerator { buildList {
         for(row in 1..4) {
             for(col in 1..7) {
