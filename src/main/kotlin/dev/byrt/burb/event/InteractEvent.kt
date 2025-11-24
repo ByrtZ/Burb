@@ -2,7 +2,10 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.interfaces.BurbInterface
+import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemUsage
+import dev.byrt.burb.item.ServerItem
 
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -33,6 +36,12 @@ class InteractEvent: Listener {
                 if(e.player.inventory.itemInMainHand.type in listOf(Material.YELLOW_DYE, Material.ORANGE_DYE, Material.RED_DYE) && e.action.isRightClick && !e.player.hasCooldown(e.player.inventory.itemInMainHand.type)) {
                     ItemUsage.useAbility(e.player, e.player.inventory.itemInMainHand)
                 }
+            }
+            if(GameManager.getGameState() == GameState.IDLE) {
+                if(e.player.inventory.itemInMainHand == ServerItem.getProfileItem() && e.action.isRightClick) {
+                    BurbInterface(e.player, BurbInterfaceType.WARDROBE)
+                }
+
             }
             if(e.player.gameMode != GameMode.CREATIVE) {
                 if(e.action.isRightClick

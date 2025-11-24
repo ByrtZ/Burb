@@ -7,6 +7,7 @@ import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemManager
+import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -209,6 +210,11 @@ object PlayerVisuals {
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
         ItemManager.giveCharacterItems(player)
         BurbCosmetics.equipCosmetics(player)
+        if(GameManager.getGameState() == GameState.IDLE) {
+            player.inventory.setItem(8, ServerItem.getProfileItem())
+        } else {
+            player.inventory.remove(ServerItem.getProfileItem())
+        }
         showPlayer(player)
     }
 

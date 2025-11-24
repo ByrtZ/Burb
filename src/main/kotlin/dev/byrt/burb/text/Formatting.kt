@@ -18,7 +18,9 @@ object Formatting {
         ADMIN_PREFIX("admin", "\uD002"),
         SPECTATOR_PREFIX("spectator", "\uD003"),
         WARNING_PREFIX("warning", "⚠"),
-        SKULL_PREFIX("skull", "☠");
+        SKULL_PREFIX("skull", "☠"),
+        LOCK_PREFIX("locked", "\uD83D\uDD12"),
+        UNLOCKED_PREFIX("unlocked", "\uD83D\uDD13");
 
         companion object {
             fun ofName(str : String): Prefix {

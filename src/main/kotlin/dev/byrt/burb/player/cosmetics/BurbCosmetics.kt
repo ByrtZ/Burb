@@ -118,7 +118,7 @@ object BurbCosmetics {
         player.playSound(Sounds.Score.CAPTURE_FRIENDLY)
     }
 
-    private fun getEquippedCosmetic(player: Player, cosmeticType: ItemType): BurbCosmetic {
+    fun getEquippedCosmetic(player: Player, cosmeticType: ItemType): BurbCosmetic {
         val playerConfig = BurbPlayerData.getPlayerConfiguration(player)
         return when(cosmeticType) {
             ItemType.HAT -> getCosmeticById(playerConfig.get("${player.uniqueId}.cosmetic_equipped_hat").toString())
@@ -167,4 +167,6 @@ enum class BurbCosmetic(val cosmeticName: String, val cosmeticId: String, val co
     // Legendary
     HAT_PENNY_RV("Penny", "burb.cosmetic.hat.penny_rv", listOf(Formatting.allTags.deserialize("<i><gray>Crazy Dave's best friend.")), listOf(Formatting.allTags.deserialize("<!i><burbcolour>Obtained from the sticker shop.")), ItemType.HAT, "penny_rv", ItemRarity.LEGENDARY),
     HAT_ROCKET_SHUTTLE("Rocket Shuttle", "burb.cosmetic.hat.rocket_shuttle", listOf(Formatting.allTags.deserialize("<i><gray>Take off in, T-minus 3 seconds.")), listOf(Formatting.allTags.deserialize("<!i><burbcolour>Obtained from the sticker shop.")), ItemType.HAT, "rocket_shuttle", ItemRarity.LEGENDARY),
+    // Mythic
+    HAT_CRAZY_DAVE("Crazy Dave", "burb.cosmetic.hat.crazy_dave", listOf(Formatting.allTags.deserialize("<i><gray>*unintelligible rambling noises*.")), listOf(Formatting.allTags.deserialize("<!i><burbcolour>Obtained from the sticker shop.")), ItemType.HAT, "crazy_dave", ItemRarity.MYTHIC);
 }

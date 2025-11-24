@@ -75,6 +75,7 @@ object LobbyManager {
                             }.runTaskLater(plugin, 1240L)
                         } else {
                             if(GameManager.getGameState() == GameState.IN_GAME) Jukebox.playCurrentMusicStress(player)
+                            if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
                             if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
                                 player.gameMode = GameMode.SPECTATOR
                             }

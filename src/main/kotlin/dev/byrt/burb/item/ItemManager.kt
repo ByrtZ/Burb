@@ -138,6 +138,7 @@ object ItemManager {
         player.inventory.remove(Material.POPPED_CHORUS_FRUIT)
         player.inventory.remove(Material.WOODEN_SWORD)
         player.inventory.remove(Material.BREEZE_ROD)
+        player.inventory.remove(ServerItem.getProfileItem())
     }
 
     fun verifyItem(item: ItemStack):  Boolean {

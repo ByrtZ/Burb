@@ -4,6 +4,7 @@ import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.BurbCharacter
 
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.inventory.ItemStack
 
 object ServerItem {
@@ -22,5 +23,20 @@ object ServerItem {
         characterItemMeta.lore(loreList)
         characterItem.itemMeta = characterItemMeta
         return characterItem
+    }
+
+    fun getProfileItem(): ItemStack {
+        val profileItem = ItemStack(Material.RESIN_CLUMP, 1)
+        val profileItemMeta = profileItem.itemMeta
+        profileItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>My Profile"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><yellow>View your profile and cosmetics."),
+            Formatting.allTags.deserialize("<!i>")
+        )
+        profileItemMeta.lore(loreList)
+        profileItemMeta.itemModel = NamespacedKey("minecraft", "profile")
+        profileItem.itemMeta = profileItemMeta
+        return profileItem
     }
 }
