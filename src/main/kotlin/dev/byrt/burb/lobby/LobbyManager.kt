@@ -36,7 +36,7 @@ object LobbyManager {
         if(!Jukebox.getJukeboxMap().containsKey(player.uniqueId)) {
             object : BukkitRunnable() {
                 override fun run() {
-                    Jukebox.startMusicLoop(player, plugin, Music.LOBBY_TITLE_SCREEN)
+                    Jukebox.startMusicLoop(player, Music.LOBBY_TITLE_SCREEN)
                 }
             }.runTaskLater(plugin, 20L)
         }
@@ -70,12 +70,18 @@ object LobbyManager {
                             player.playSound(Sounds.Music.LOBBY_INTRO)
                             object : BukkitRunnable() {
                                 override fun run() {
-                                    if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+                                    if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(
+                                        player,
+                                        Music.LOBBY_WAITING
+                                    )
                                 }
                             }.runTaskLater(plugin, 1240L)
                         } else {
                             if(GameManager.getGameState() == GameState.IN_GAME) Jukebox.playCurrentMusicStress(player)
-                            if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
+                            if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(
+                                player,
+                                Music.POST_GAME
+                            )
                             if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
                                 player.gameMode = GameMode.SPECTATOR
                             }

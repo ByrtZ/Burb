@@ -358,7 +358,7 @@ object ItemUsage {
                     }
                 }
                 BurbAbility.PLANTS_HEALER_ABILITY_1.abilityId -> {
-                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }.sortedByDescending { p -> player.location.distanceSquared(p.location) }
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }.sortedBy { p -> player.location.distanceSquared(p.location) }
                     if(nearbyTeammates.isNotEmpty()) {
                         val healingTeammate = nearbyTeammates[0]
                         player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))
@@ -741,7 +741,7 @@ object ItemUsage {
                     player.velocity = player.velocity.add(Vector(player.location.direction.x * 2.25, 0.25, player.location.direction.z * 2.25))
                 }
                 BurbAbility.ZOMBIES_HEALER_ABILITY_1.abilityId -> {
-                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }.sortedByDescending { p -> player.location.distanceSquared(p.location) }
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }.sortedBy { p -> player.location.distanceSquared(p.location) }
                     if(nearbyTeammates.isNotEmpty()) {
                         val healingTeammate = nearbyTeammates[0]
                         player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))

@@ -3,28 +3,117 @@ package dev.byrt.burb.game.events
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Timer
+import dev.byrt.burb.library.Translation
+import dev.byrt.burb.music.Jukebox
+import dev.byrt.burb.music.Music
+import dev.byrt.burb.plugin
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.text.TextAlignment
+
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.bossbar.BossBar
+
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitRunnable
 
 object SpecialEvents {
     private var currentEvent: SpecialEvent? = null
+    private const val EVENT_DURATION = 120
+
     fun rollSpecialEvent() {
         if(currentEvent == null && GameManager.getGameState() == GameState.IN_GAME && Timer.getTimer() >= 4 * 60 && (0..9).random() == 0) {
-            val randomEvent = SpecialEvent.entries.random()
-            currentEvent = randomEvent
-            
-            Bukkit.broadcast(Formatting.allTags.deserialize("${randomEvent.eventName} starting!"))
-            when(randomEvent) {
-                SpecialEvent.BOOSTED_SCORE_AND_REWARDS -> TODO()
-                SpecialEvent.LOW_GRAVITY -> TODO()
-                SpecialEvent.RANDOM_CHARACTER -> TODO()
-            }
+            startEvent(SpecialEvent.entries.random())
         }
     }
+
+    fun startEvent(event: SpecialEvent) {
+        if(currentEvent != null || GameManager.getGameState() != GameState.IN_GAME) return
+        currentEvent = event
+        Bukkit.broadcast(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}${event.eventNameFormatted}<reset>has begun!"))
+        runEvent(event)
+    }
+
+    private fun runEvent(event: SpecialEvent) {
+        val bossBar = BossBar.bossBar(
+            Formatting.allTags.deserialize(""),
+            0f,
+            BossBar.Color.RED,
+            BossBar.Overlay.PROGRESS
+        )
+
+        object : BukkitRunnable() {
+            var ticks = 0
+            var seconds = 0
+            override fun run() {
+                if(ticks == 0 && seconds == 0) {
+                    event.onStart(Bukkit.getOnlinePlayers())
+                }
+                if(ticks % 10 == 0) {
+                    Bukkit.getOnlinePlayers().forEach { bossBar.addViewer(it) }
+                    bossBar.name(TextAlignment.centreBossBarText(event.bossBarString.replace("%s", "%02d:%02d".format((EVENT_DURATION - seconds) / 60, (EVENT_DURATION - seconds) % 60))))
+                }
+
+                event.onTick(Bukkit.getOnlinePlayers(), ticks, seconds)
+
+                if(ticks == 0 && seconds >= EVENT_DURATION || GameManager.getGameState() != GameState.IN_GAME) {
+                    Bukkit.broadcast(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}${event.eventNameFormatted}<reset>has ended."))
+                    bossBar.removeViewer(Audience.audience(Bukkit.getOnlinePlayers()))
+                    currentEvent = null
+                    cancel()
+                }
+
+                ticks++
+                if (ticks >= 20) {
+                    ticks = 0
+                    seconds++
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 1L)
+    }
+    fun getCurrentEvent(): SpecialEvent? = currentEvent
+    fun isEventRunning(): Boolean = currentEvent != null
 }
 
-enum class SpecialEvent(var eventName: String) {
-    BOOSTED_SCORE_AND_REWARDS("Treasure Time"),
-    LOW_GRAVITY("Moon Gravity"),
-    RANDOM_CHARACTER("Rando's Revenge")
+enum class SpecialEvent(
+    val eventName: String,
+    val eventNameFormatted: String,
+    val bossBarString: String,
+    val onStart: (Collection<Player>) -> Unit = {},
+    val onTick: (Collection<Player>, Int, Int) -> Unit = { _, _, _ -> }
+) {
+    BOOSTED_SCORE_AND_REWARDS(
+        "Treasure Time",
+        "<gradient:gold:yellow:gold:yellow:gold>Treasure Time ",
+        "${ChatUtility.BURB_FONT_TAG}<gradient:gold:yellow:gold:yellow:gold>TREASURE TIME<white>: %s",
+        onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.TREASURE_TIME_LOW) } },
+        onTick = { players, ticks, seconds -> if(ticks == 0 && seconds == 60) players.forEach { Jukebox.startMusicLoop(it, Music.TREASURE_TIME_HIGH) } }
+    ),
+    LOW_GRAVITY(
+        "Moon Gravity",
+        "<gradient:dark_purple:light_purple:dark_purple:light_purple:dark_purple>Moon Gravity ",
+        "${ChatUtility.BURB_FONT_TAG}<gradient:dark_purple:light_purple:dark_purple:light_purple:dark_purple>MOON GRAVITY<white>: %s",
+        onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.LOBBY_UNDERWORLD) } },
+        onTick = { players, ticks, _ ->
+            if (ticks % 10 == 0) {
+                players.forEach {
+                    it.addPotionEffects(
+                        listOf(
+                            PotionEffect(PotionEffectType.JUMP_BOOST, 20, 7, false, false),
+                            PotionEffect(PotionEffectType.SLOW_FALLING, 20, 0, false, false)
+                        )
+                    )
+                }
+            }
+        }
+    ),
+    RANDOM_CHARACTER(
+        "Rando's Revenge",
+        "<rainbow>Rando's Revenge ",
+        "${ChatUtility.BURB_FONT_TAG}<rainbow>RANDO'S REVENGE</rainbow>: %s"
+        // No custom behaviour needed
+    );
 }

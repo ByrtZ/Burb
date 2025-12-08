@@ -2,6 +2,8 @@ package dev.byrt.burb.player
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.game.events.SpecialEvent
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
@@ -127,9 +129,11 @@ object PlayerVisuals {
                                     )
                                 )
                                 player.playSound(Sounds.Timer.TICK)
-                                player.sendActionBar(Formatting.allTags.deserialize(if(timer % 2 == 0) Translation.Generic.CHARACTER_SELECTION_ACTIONBAR else Translation.Generic.CHARACTER_SELECTION_ACTIONBAR.replace(BURB_FONT_TAG, "$BURB_FONT_TAG<yellow>")))
+                                if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOM_CHARACTER) {
+                                    player.sendActionBar(Formatting.allTags.deserialize(if(timer % 2 == 0) Translation.Generic.CHARACTER_SELECTION_ACTIONBAR else Translation.Generic.CHARACTER_SELECTION_ACTIONBAR.replace(BURB_FONT_TAG, "$BURB_FONT_TAG<yellow>")))
+                                }
                             }
-                            if(player.isSneaking) {
+                            if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOM_CHARACTER && player.isSneaking) {
                                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
                             }
                         } else {
@@ -208,7 +212,13 @@ object PlayerVisuals {
         player.inventory.helmet = null
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
-        ItemManager.giveCharacterItems(player)
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.RANDOM_CHARACTER) {
+            player.burbPlayer().setRandomCharacter()
+            player.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.ARROW_PREFIX}<rainbow>Rando's Revenge<reset> morphed you into a different character!<newline>"))
+            player.playSound(Sounds.Misc.RANDO_NEW_CHARACTER)
+        } else {
+            ItemManager.giveCharacterItems(player)
+        }
         BurbCosmetics.equipCosmetics(player)
         if(GameManager.getGameState() == GameState.IDLE) {
             player.inventory.setItem(8, ServerItem.getProfileItem())

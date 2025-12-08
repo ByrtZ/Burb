@@ -3,7 +3,6 @@ package dev.byrt.burb.command
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.plugin
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -22,7 +21,7 @@ class JukeboxCommands {
         if(music == Music.NULL) return
         if(css.sender is Player) {
             val player = css.sender as Player
-            Jukebox.startMusicLoop(player, plugin, music)
+            Jukebox.startMusicLoop(player, music)
             player.sendMessage(ChatUtility.formatMessage("<green>Now playing music track <yellow>$music<green>.", false))
         }
     }

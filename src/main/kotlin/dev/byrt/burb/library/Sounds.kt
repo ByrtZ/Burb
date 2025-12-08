@@ -11,6 +11,12 @@ object Sounds {
         val LOBBY_TITLE_SCREEN = sound(key("burb.lobby.title_screen"), Source.VOICE, 0.35f, 1f)
         val LOBBY_INTRO = sound(key("burb.lobby.intro"), Source.VOICE, 0.4f, 1f)
         val LOBBY_WAITING = sound(key("burb.lobby.waiting"), Source.VOICE, 0.75f, 1f)
+        val LOBBY_UNDERWORLD = sound(key("burb.lobby.underworld"), Source.VOICE, 0.5f, 1f)
+        val LOBBY_UNDERWORLD_CHALLENGE_INTRO = sound(key("burb.lobby.underworld.challenge_intro"), Source.VOICE, 0.5f, 1f)
+        val LOBBY_UNDERWORLD_CHALLENGE_LOW = sound(key("burb.lobby.underworld.challenge.0"), Source.VOICE, 0.5f, 1f)
+        val LOBBY_UNDERWORLD_CHALLENGE_MEDIUM = sound(key("burb.lobby.underworld.challenge.1"), Source.VOICE, 0.5f, 1f)
+        val LOBBY_UNDERWORLD_CHALLENGE_HIGH = sound(key("burb.lobby.underworld.challenge.2"), Source.VOICE, 0.5f, 1f)
+        val LOBBY_UNDERWORLD_CHALLENGE_INTENSE = sound(key("burb.lobby.underworld.challenge.3"), Source.VOICE, 0.5f, 1f)
         val LOADING_MELODY = sound(key("burb.game.loading_melody"), Source.VOICE, 0.75f, 1f)
         val GAME_INTRO_JINGLE = sound(key("burb.game.intro_jingle"), Source.VOICE, 1f, 1f)
         val SUBURBINATION_PLANTS = sound(key("burb.game.suburbination.plants"), Source.VOICE, 0.75f, 1f)
@@ -18,6 +24,9 @@ object Sounds {
         val RANDOM_LOW = sound(key("burb.music.low.random"), Source.VOICE, 0.4f, 1f)
         val RANDOM_MEDIUM = sound(key("burb.music.medium.random"), Source.VOICE, 0.4f, 1f)
         val RANDOM_HIGH = sound(key("burb.music.high.random"), Source.VOICE, 0.4f, 1f)
+        val TREASURE_TIME_INTRO = sound(key("burb.game.event.treasure_intro"), Source.VOICE, 0.5f, 1f)
+        val TREASURE_TIME_LOW = sound(key("burb.game.event.treasure_low"), Source.VOICE, 0.5f, 1f)
+        val TREASURE_TIME_HIGH = sound(key("burb.game.event.treasure_high"), Source.VOICE, 0.5f, 1f)
         val DOWNTIME_LOOP = sound(key("event.downtime.loop"), Source.VOICE, 1f, 1f)
         val DOWNTIME_SUSPENSE = sound(key("event.downtime.suspense"), Source.VOICE, 1f, 1f)
         val NULL = sound(key(""), Source.VOICE, 0f, 0f)
@@ -62,6 +71,7 @@ object Sounds {
         val SUCCESS = sound(key("burb.generic.success"), Source.VOICE, 0.75f, 1f)
         val LEVEL_UP_PLANTS = sound(key("burb.generic.level_up.plants"), Source.VOICE, 1f, 1f)
         val LEVEL_UP_ZOMBIES = sound(key("burb.generic.level_up.zombies"), Source.VOICE, 1f, 1f)
+        val RANDO_NEW_CHARACTER = sound(key("burb.lobby.shop.pack_jingle"), Source.VOICE, 0.5f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"

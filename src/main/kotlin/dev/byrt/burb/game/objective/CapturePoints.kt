@@ -108,7 +108,7 @@ object CapturePoints {
                         Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
                         else -> if(Jukebox.getMusicStress() == MusicStress.LOW) Music.RANDOM_LOW else if(Jukebox.getMusicStress() == MusicStress.MEDIUM) Music.RANDOM_MEDIUM else if(Jukebox.getMusicStress() == MusicStress.HIGH) Music.RANDOM_HIGH else Music.NULL
                     }
-                    Jukebox.startMusicLoop(player, plugin, music)
+                    Jukebox.startMusicLoop(player, music)
                 }
             }
             when(newSuburbinationTeam) {
@@ -203,7 +203,7 @@ object CapturePoints {
 
                 // Point text display information
                 textDisplay!!.text(
-                    Formatting.allTags.deserialize("<font:burb:font><yellow><bold>POINT <gold>[<yellow>${capturePoint}<gold>]<newline><newline><burbcolour>${
+                    Formatting.allTags.deserialize("<font:burb:font><yellow><bold>${capturePoint.pointName}<newline><newline><burbcolour>${
                     when {
                         capturePoint.plantProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Plants own point"
                         capturePoint.zombieProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Zombies own point"
@@ -225,7 +225,7 @@ object CapturePoints {
                         capturedPoints[capturePoint] = capturePoint.dominatingTeam
                         capturePoint.lastCapturedTeam = capturePoint.dominatingTeam
                         Bukkit.getOnlinePlayers().forEach {
-                            it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>Point $capturePoint<reset> is now controlled by the ${capturePoint.dominatingTeam.teamColourTag}${capturePoint.dominatingTeam.teamName}<reset>."))
+                            it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>${capturePoint.pointName}<reset> is now controlled by the ${capturePoint.dominatingTeam.teamColourTag}${capturePoint.dominatingTeam.teamName}<reset>."))
                             it.playSound(if(it.burbPlayer().playerTeam == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
                             if(it.burbPlayer().playerTeam == capturePoint.dominatingTeam) BurbPlayerData.appendExperience(it, 10)
                         }
@@ -288,8 +288,8 @@ object CapturePoints {
     }
 }
 
-enum class CapturePoint(var location: Location, var plantProgress: Int, var zombieProgress: Int, var dominatingTeam: Teams, var lastCapturedTeam: Teams) {
-    A(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
-    B(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
-    C(Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL);
+enum class CapturePoint(val pointName: String, var location: Location, var plantProgress: Int, var zombieProgress: Int, var dominatingTeam: Teams, var lastCapturedTeam: Teams) {
+    A("Perilous Park", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
+    B("Mount Burbmore", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
+    C("Sleepy Suburbs", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL);
 }

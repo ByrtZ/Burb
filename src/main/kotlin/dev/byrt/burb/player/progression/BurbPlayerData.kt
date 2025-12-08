@@ -98,22 +98,22 @@ object BurbPlayerData {
                     override fun run() {
                         when(GameManager.getGameState()) {
                             GameState.IDLE -> {
-                                Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+                                Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
                             }
                             GameState.IN_GAME -> {
                                 if(Timer.getTimer() <= 90) {
-                                    Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
+                                    Jukebox.startMusicLoop(player, Music.OVERTIME)
                                 } else {
                                     val music = when(CapturePoints.getSuburbinatingTeam()) {
                                         Teams.PLANTS -> Music.SUBURBINATION_PLANTS
                                         Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
                                         else -> if(Jukebox.getMusicStress() == MusicStress.LOW) Music.RANDOM_LOW else if(Jukebox.getMusicStress() == MusicStress.MEDIUM) Music.RANDOM_MEDIUM else if(Jukebox.getMusicStress() == MusicStress.HIGH) Music.RANDOM_HIGH else Music.NULL
                                     }
-                                    Jukebox.startMusicLoop(player, plugin, music)
+                                    Jukebox.startMusicLoop(player, music)
                                 }
                             }
                             GameState.GAME_END -> {
-                                Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
+                                Jukebox.startMusicLoop(player, Music.POST_GAME)
                             }
                             else -> {}
                         }

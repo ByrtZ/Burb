@@ -21,6 +21,22 @@ enum class BurbCharacter(val characterName: String, val characterMainWeapon: Bur
     ZOMBIES_RANGED("Deadbeard", BurbCharacterMainWeapon.ZOMBIES_RANGED_MAIN, BurbCharacterAbilities.ZOMBIES_RANGED_ABILITIES)
 }
 
+fun BurbPlayer.setRandomCharacter() {
+    when(this.playerTeam) {
+        Teams.PLANTS -> {
+            val charactersList = mutableListOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_HEAVY, BurbCharacter.PLANTS_HEALER, BurbCharacter.PLANTS_RANGED)
+            charactersList.remove(this.playerCharacter)
+            this.setCharacter(charactersList.random())
+        }
+        Teams.ZOMBIES -> {
+            val charactersList = mutableListOf(BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_HEAVY, BurbCharacter.ZOMBIES_HEALER, BurbCharacter.ZOMBIES_RANGED)
+            charactersList.remove(this.playerCharacter)
+            this.setCharacter(charactersList.random())
+        }
+        else -> {}
+    }
+}
+
 fun BurbPlayer.characterSelect() {
     setCharacter(BurbCharacter.NULL)
     object : BukkitRunnable() {

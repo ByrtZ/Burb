@@ -5,6 +5,8 @@ import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Rounds
+import dev.byrt.burb.game.events.SpecialEvent
+import dev.byrt.burb.game.events.SpecialEvents
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.incendo.cloud.annotations.Argument
@@ -65,6 +67,17 @@ class GameCommands {
         if(GameManager.getGameState() == GameState.IDLE) {
             ChatUtility.broadcastDev("<yellow>${css.sender.name} <gray>set the total number of rounds to $amount.", false)
             Rounds.setTotalRounds(amount)
+        } else {
+            return
+        }
+    }
+
+    @Command("event start <event>")
+    @CommandDescription("Starts the specified event.")
+    @Permission("burb.cmd.game")
+    fun startEvent(css: CommandSourceStack, @Argument("event") newEvent: SpecialEvent) {
+        if(GameManager.getGameState() == GameState.IN_GAME) {
+            SpecialEvents.startEvent(newEvent)
         } else {
             return
         }

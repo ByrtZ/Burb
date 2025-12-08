@@ -9,7 +9,6 @@ import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.util.CommitGrabber
@@ -61,7 +60,7 @@ object Game {
             }
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
-            Jukebox.startMusicLoop(player, plugin, Music.LOBBY_WAITING)
+            Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
         }
     }
 }

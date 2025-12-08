@@ -32,22 +32,6 @@ object Formatting {
         }
     }
 
-    /** ActionBarIcon enum for allowing MiniMessage usage of the <actionbar:NAME> tag for actionbar icons. **/
-    enum class ActionBarIcon(val iconName: String, val value: String) {
-        ADMIN("admin", "\uE004"),
-        ADMIN_STAFF_MODE("staffmode", "\uE005"),
-        NULL("", "");
-
-        companion object {
-            fun ofName(str : String): ActionBarIcon {
-                for(ab in ActionBarIcon.entries) {
-                    if (ab.iconName == str) return ab
-                }
-                return NULL
-            }
-        }
-    }
-
     private val BURB_COLOUR = TagResolver.resolver("burbcolour", Tag.styling(TextColor.color(34, 224, 97)))
     private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(Teams.PLANTS.teamHexColour))
     private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(Teams.ZOMBIES.teamHexColour))
@@ -65,7 +49,6 @@ object Formatting {
                 .resolver(SPECTATOR_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .resolver(prefix())
-                .resolver(actionBar())
                 .build()
         )
         .build()
@@ -92,16 +75,6 @@ object Formatting {
             val prefixName = args.popOr("Name not supplied.")
             Tag.inserting(
                 Component.text(Prefix.ofName(prefixName.toString()).value)
-            )
-        }
-    }
-
-    /** Builds an action bar tag. **/
-    private fun actionBar() : TagResolver {
-        return TagResolver.resolver("actionbar") { args, _ ->
-            val iconName = args.popOr("Name not supplied.")
-            Tag.inserting(
-                Component.text(ActionBarIcon.ofName(iconName.toString()).value)
             )
         }
     }

@@ -1,5 +1,6 @@
 package dev.byrt.burb.game
 
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.library.Sounds
@@ -77,7 +78,7 @@ object GameTask {
                     }
                     if(Timer.getTimer() == 70) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            Jukebox.startMusicLoop(player, plugin, Music.LOADING_MELODY)
+                            Jukebox.startMusicLoop(player, Music.LOADING_MELODY)
                         }
                     }
                     if(Timer.getTimer() <= 15) {
@@ -156,13 +157,13 @@ object GameTask {
 
                 /** IN GAME **/
                 if(GameManager.getGameState() == GameState.IN_GAME && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 90) {
+                    if(Timer.getTimer() == 120) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            Jukebox.startMusicLoop(player, plugin, Music.OVERTIME)
+                            Jukebox.startMusicLoop(player, Music.OVERTIME)
                             player.playSound(Sounds.Alert.ALARM)
                             player.showTitle(Title.title(
                                     Formatting.allTags.deserialize(""),
-                                    Formatting.allTags.deserialize("<red>90 seconds remain!"),
+                                    Formatting.allTags.deserialize("<red>2 minutes remain!"),
                                     Title.Times.times(
                                         Duration.ofMillis(250),
                                         Duration.ofSeconds(3),
@@ -172,19 +173,57 @@ object GameTask {
                             )
                         }
                     }
+                    if(Timer.getTimer() == 60) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_LOW)
+                            player.playSound(Sounds.Alert.ALARM)
+                            player.showTitle(Title.title(
+                                Formatting.allTags.deserialize(""),
+                                Formatting.allTags.deserialize("<red>1 minute remains!"),
+                                Title.Times.times(
+                                    Duration.ofMillis(250),
+                                    Duration.ofSeconds(3),
+                                    Duration.ofMillis(750)
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    if(Timer.getTimer() == 50) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_MEDIUM)
+                        }
+                    }
+                    if(Timer.getTimer() == 35) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_HIGH)
+                        }
+                    }
+                    if(Timer.getTimer() == 20) {
+                        for(player in Bukkit.getOnlinePlayers()) {
+                            Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_INTENSE)
+                        }
+                    }
+                    if(Timer.getTimer() % 60 == 0) {
+                        SpecialEvents.rollSpecialEvent()
+                    }
                     if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
-                    if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 240)..GameManager.GameTime.IN_GAME_TIME) {
-                        Jukebox.setMusicStress(MusicStress.LOW)
-                    }
-                    if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
-                        Jukebox.setMusicStress(MusicStress.MEDIUM)
-                    }
-                    if(Timer.getTimer() in 90..(GameManager.GameTime.IN_GAME_TIME - 660)) {
-                        Jukebox.setMusicStress(MusicStress.HIGH)
+                    if(!SpecialEvents.isEventRunning()) {
+                        if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 240)..GameManager.GameTime.IN_GAME_TIME) {
+                            Jukebox.setMusicStress(MusicStress.LOW)
+                        }
+                        if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
+                            Jukebox.setMusicStress(MusicStress.MEDIUM)
+                        }
+                        if(Timer.getTimer() in 90..(GameManager.GameTime.IN_GAME_TIME - 660)) {
+                            Jukebox.setMusicStress(MusicStress.HIGH)
+                        }
+                    } else {
+                        Jukebox.setMusicStress(MusicStress.NULL)
                     }
                     if(Timer.getTimer() in 0..10) {
                         for(player in Bukkit.getOnlinePlayers()) {
@@ -269,7 +308,7 @@ object GameTask {
                     }
                     if(Timer.getTimer() == 85) {
                         for(player in Bukkit.getOnlinePlayers()) {
-                            Jukebox.startMusicLoop(player, plugin, Music.POST_GAME)
+                            Jukebox.startMusicLoop(player, Music.POST_GAME)
                         }
                     }
                     if(Timer.getTimer() <= 0) {

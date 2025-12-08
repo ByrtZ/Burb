@@ -1,5 +1,7 @@
 package dev.byrt.burb.game
 
+import dev.byrt.burb.game.events.SpecialEvent
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.InfoBoardManager
 
@@ -25,20 +27,20 @@ object Scores {
     }
 
     fun addScore(team: Teams, score: Int) {
-        if (team == Teams.PLANTS) this.plantsScore += score
-        if (team == Teams.ZOMBIES) this.zombiesScore += score
+        if (team == Teams.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
+        if (team == Teams.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }
 
     fun addPlantsScore(score: Int) {
-        this.plantsScore += score
+        this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }
 
     fun addZombiesScore(score: Int) {
-        this.zombiesScore += score
+        this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }

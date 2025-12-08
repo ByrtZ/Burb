@@ -70,6 +70,6 @@ object TextAlignment {
     }
 
     private fun String.burbFontTextSize(): Int {
-        return this.sumOf { ch -> if(ch in listOf(' ')) SPACE_WIDTH else if(ch in listOf(':', '|', '.', ',', ';')) SPACE_WIDTH + LETTER_SPACING else if(ch in listOf('0', '2', '3', '4', '5', '6', '7', '8', '9')) NUMBER_WIDTH + LETTER_SPACING else if(ch in listOf('1')) NUMBER_WIDTH_SMALL + LETTER_SPACING else FONT_WIDTH + LETTER_SPACING } - 1
+        return this.sumOf { ch -> if(ch in listOf(' ')) SPACE_WIDTH else if(ch in listOf(':', '|', '.', ',', ';', "'")) SPACE_WIDTH + LETTER_SPACING else if(ch in listOf('0', '2', '3', '4', '5', '6', '7', '8', '9')) NUMBER_WIDTH + LETTER_SPACING else if(ch in listOf('1')) NUMBER_WIDTH_SMALL + LETTER_SPACING else FONT_WIDTH + LETTER_SPACING } - 1
     }
 }
