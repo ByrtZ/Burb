@@ -36,7 +36,6 @@ object Game {
         InfoBoardManager.buildScoreboard()
         TeamManager.buildDisplayTeams()
         CommitIntegration.grabLatestCommit()
-        CommitIntegration.initialiseGitWebhook(port = 8080)
     }
 
     fun cleanup() {
