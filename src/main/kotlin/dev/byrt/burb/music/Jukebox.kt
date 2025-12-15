@@ -24,7 +24,7 @@ object Jukebox {
         when(music) {
             Music.TREASURE_TIME_LOW -> {
                 player.playSound(Sounds.Music.TREASURE_TIME_INTRO)
-                runMusicTask(player, music, 30L)
+                runMusicTask(player, music, 25L)
             }
             else -> runMusicTask(player, music)
         }

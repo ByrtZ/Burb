@@ -21,23 +21,23 @@ import org.incendo.cloud.annotations.processing.CommandContainer
 @Suppress("unused", "unstableApiUsage")
 @CommandContainer
 class PlayerCommands {
-    @Command("player get <player>")
+    @Command("player <player>")
     @CommandDescription("Gets all information about a player that is stored.")
     @Permission("burb.cmd.player")
     fun getPlayer(css: CommandSourceStack, @Argument("player") player : Player) {
         val abilityNames = mutableSetOf<String>()
         player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> abilityNames.add(ability.abilityName) }
-        css.sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}"))
+        css.sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}\nDead: <yellow>${player.burbPlayer().isDead}"))
     }
 
-    @Command("player get <player> type")
+    @Command("player <player> type")
     @CommandDescription("Gets the specified player's type.")
     @Permission("burb.cmd.player")
     fun getType(css: CommandSourceStack, @Argument("player") player : Player) {
         css.sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s type is <gold>${player.burbPlayer().playerType}<yellow>."))
     }
 
-    @Command("player get <player> team")
+    @Command("player <player> team")
     @CommandDescription("Gets the specified player's team.")
     @Permission("burb.cmd.player")
     fun getTeam(css: CommandSourceStack, @Argument("player") player : Player) {
@@ -46,6 +46,7 @@ class PlayerCommands {
 
     @Command("character")
     @CommandDescription("Opens character selection screen.")
+    @Permission("burb.cmd.player")
     fun setCharacter(css: CommandSourceStack) {
         if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
             val player = css.sender as Player
@@ -57,6 +58,7 @@ class PlayerCommands {
 
     @Command("teams")
     @CommandDescription("Opens team selection screen.")
+    @Permission("burb.cmd.player")
     fun setTeam(css: CommandSourceStack) {
         if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
             val player = css.sender as Player
@@ -66,6 +68,7 @@ class PlayerCommands {
 
     @Command("wardrobe")
     @CommandDescription("Opens the wardrobe.")
+    @Permission("burb.cmd.wardrobe")
     fun openWardrobe(css: CommandSourceStack) {
         if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
             val player = css.sender as Player

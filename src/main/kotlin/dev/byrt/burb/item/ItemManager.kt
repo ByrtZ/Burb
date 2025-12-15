@@ -49,7 +49,7 @@ object ItemManager {
 
     fun giveCharacterItems(player: Player) {
         if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
-        if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+        if(player.burbPlayer().isDead) {
             clearItems(player)
             return
         }

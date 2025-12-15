@@ -13,7 +13,7 @@ object PlayerManager {
     private val burbPlayers = mutableSetOf<BurbPlayer>()
     fun registerPlayer(player: Player) {
         logger.info("Player Manager: Registering player ${player.name} as BurbPlayer.")
-        val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL)
+        val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL, isDead = false)
         burbPlayers.add(burbPlayer)
         BurbPlayerData.getPlayerData(player)
         ResourcePacker.applyPackPlayer(player)

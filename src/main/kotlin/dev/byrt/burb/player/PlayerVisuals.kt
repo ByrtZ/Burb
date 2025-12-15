@@ -61,6 +61,9 @@ object PlayerVisuals {
 
     fun death(player: Player, killer: Player?, deathMessage: Component) {
         for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
+
+        player.burbPlayer().setIsDead(true)
+
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
             player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
@@ -90,7 +93,7 @@ object PlayerVisuals {
                     player.playSound(Sounds.Score.DEATH_STATS)
                     object : BukkitRunnable() {
                         override fun run() {
-                            if(killer.vehicle?.scoreboardTags?.contains("${killer.uniqueId}-death-vehicle") == true || deathVehicle.isDead || !player.isOnline) {
+                            if(killer.burbPlayer().isDead || deathVehicle.isDead || !player.isOnline) {
                                 this.cancel()
                             } else {
                                 if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
@@ -207,6 +210,7 @@ object PlayerVisuals {
     fun postRespawn(player: Player, vehicle: ItemDisplay) {
         player.eject()
         vehicle.remove()
+        player.burbPlayer().setIsDead(false)
         player.fireTicks = 0
         player.health = 20.0
         player.inventory.helmet = null
@@ -236,7 +240,7 @@ object PlayerVisuals {
             override fun run() {
                 if(!player.isOnline) cancel()
                 if(player.vehicle != null) {
-                    if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+                    if(player.burbPlayer().isDead) {
                         cancel()
                     }
                 }

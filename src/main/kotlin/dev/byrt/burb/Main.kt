@@ -63,6 +63,8 @@ class Main : JavaPlugin() {
 
     private fun setupCommandConfirmation() {
         logger.info("Setting up command confirmation.")
+        ConfirmationBuilderModifier.install(annotationParser)
+
         val confirmationConfig = ConfirmationConfiguration.builder<CommandSourceStack>()
             .cache(SimpleCache.of())
             .noPendingCommandNotifier { css ->
@@ -93,7 +95,6 @@ class Main : JavaPlugin() {
                 .permission("burb.confirm")
                 .build()
         )
-        ConfirmationBuilderModifier.install(annotationParser)
     }
 
     private fun setupEventListeners() {

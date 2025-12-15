@@ -1,5 +1,7 @@
 package dev.byrt.burb.util
 
+import com.sun.net.httpserver.HttpServer
+import dev.byrt.burb.logger
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.plugin
@@ -12,19 +14,20 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
+import org.bukkit.scheduler.BukkitRunnable
 
 import org.json.JSONArray
+import org.json.JSONObject
 
 import java.net.HttpURLConnection
+import java.net.InetSocketAddress
 import java.net.URL
+import java.util.concurrent.Executors
 import java.util.stream.Collectors
 
 @Suppress("unstableApiUsage")
-object CommitGrabber {
+object CommitIntegration {
     private val latestDefaultBranchCommitURL = URL("https://api.github.com/repos/ByrtZ/Burb/commits?per_page=1")
-    private val branchesURL = URL("https://api.github.com/repos/ByrtZ/Burb/branches")
-    private val singleCommitURLSuffix = "?per_page=1"
-    //TODO: Add ability to view commits on each branch
     fun grabLatestCommit() = runBlocking {
         for(world in Bukkit.getWorlds()) {
             for(textDisplay in world.getEntitiesByClass(TextDisplay::class.java)) {
@@ -74,6 +77,57 @@ object CommitGrabber {
             null
         } finally {
             connection?.disconnect()
+        }
+    }
+
+    fun initialiseGitWebhook(port: Int) {
+        val server = HttpServer.create(InetSocketAddress("0.0.0.0", port), 0)
+        server.createContext("/github") { exchange ->
+            try {
+                if (exchange.requestMethod != "POST") {
+                    exchange.sendResponseHeaders(405, -1)
+                    return@createContext
+                }
+
+                val body = exchange.requestBody.bufferedReader().readText()
+                logger.info("Incoming GitHub webhook")
+
+                handleIncomingCommit(body)
+
+                val response = "OK"
+                exchange.sendResponseHeaders(200, response.toByteArray().size.toLong())
+                exchange.responseBody.use { it.write(response.toByteArray()) }
+
+            } catch (e: Exception) {
+                logger.severe("Webhook error: ${e.message}")
+                exchange.sendResponseHeaders(500, -1)
+            } finally {
+                exchange.close()
+            }
+        }
+
+        server.executor = Executors.newSingleThreadExecutor()
+        server.start()
+
+        logger.info("GitHub webhook server listening on port $port")
+    }
+
+
+    private fun handleIncomingCommit(json: String) {
+        val payload = JSONObject(json)
+        val commits = payload.getJSONArray("commits")
+
+        for (i in 0 until commits.length()) {
+            val commit = commits.getJSONObject(i)
+            val message = commit.getString("message")
+            val author = commit.getJSONObject("author").getString("name")
+            val id = commit.getString("id").substring(0, 7)
+
+            object : BukkitRunnable() {
+                override fun run() {
+                    ChatUtility.broadcastDev("<gray><i>$id<reset> <burbcolour>$message<reset> <dark_gray>[$author]", false)
+                }
+            }.runTask(plugin)
         }
     }
 }

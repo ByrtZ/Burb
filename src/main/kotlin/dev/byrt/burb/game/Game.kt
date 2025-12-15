@@ -11,7 +11,7 @@ import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
-import dev.byrt.burb.util.CommitGrabber
+import dev.byrt.burb.util.CommitIntegration
 
 import org.bukkit.Bukkit
 
@@ -35,7 +35,8 @@ object Game {
     fun setup() {
         InfoBoardManager.buildScoreboard()
         TeamManager.buildDisplayTeams()
-        CommitGrabber.grabLatestCommit()
+        CommitIntegration.grabLatestCommit()
+        CommitIntegration.initialiseGitWebhook(port = 8080)
     }
 
     fun cleanup() {

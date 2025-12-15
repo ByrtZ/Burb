@@ -6,6 +6,7 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemUsage
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -19,7 +20,7 @@ class InteractEvent: Listener {
     @EventHandler
     private fun onInteract(e: PlayerInteractEvent) {
         if(e.player.vehicle != null) {
-            if(e.player.vehicle?.scoreboardTags?.contains("${e.player.uniqueId}-death-vehicle") == true) {
+            if(e.player.burbPlayer().isDead) {
                 e.isCancelled = true
             }
         } else {

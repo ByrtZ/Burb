@@ -16,7 +16,7 @@ import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.TextAlignment
-import dev.byrt.burb.util.CommitGrabber
+import dev.byrt.burb.util.CommitIntegration
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import net.kyori.adventure.audience.Audience
@@ -144,7 +144,7 @@ class AdminCommands {
     fun latestCommit(css: CommandSourceStack) {
         if(css.sender is Player) {
             ChatUtility.broadcastDev("<dark_gray>Fetching latest commit.", false)
-            CommitGrabber.grabLatestCommit()
+            CommitIntegration.grabLatestCommit()
         }
     }
 

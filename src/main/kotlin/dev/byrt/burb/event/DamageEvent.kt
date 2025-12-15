@@ -45,7 +45,7 @@ class DamageEvent: Listener {
                 if(e.entity is Player) {
                     val player = e.entity as Player
                     if(player.vehicle != null) {
-                        if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true) {
+                        if(player.burbPlayer().isDead) {
                             e.isCancelled = true
                         }
                     }
@@ -67,7 +67,7 @@ class DamageEvent: Listener {
                 val damager = e.damager as Player
                 val damaged = e.entity as Player
                 if(damager.vehicle != null) {
-                    if(damager.vehicle?.scoreboardTags?.contains("${damager.uniqueId}-death-vehicle") == true) {
+                    if(damager.burbPlayer().isDead) {
                         e.isCancelled = true
                         return
                     }

@@ -154,7 +154,7 @@ object CapturePoints {
                 }
 
                 val playersInRange = TeamManager.getParticipants().filter {
-                    it.getBukkitPlayer().location.distanceSquared(location) <= 25.0 && (it.getBukkitPlayer().vehicle == null || (it.getBukkitPlayer().vehicle != null && it.getBukkitPlayer().vehicle?.scoreboardTags?.contains("${it.getBukkitPlayer().uniqueId}-death-vehicle") == false))
+                    it.getBukkitPlayer().location.distanceSquared(location) <= 25.0 && !it.isDead
                 }
                 val plants = playersInRange.count { it.playerTeam == Teams.PLANTS }
                 val zombies = playersInRange.count { it.playerTeam == Teams.ZOMBIES }

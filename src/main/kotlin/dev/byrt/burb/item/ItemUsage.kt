@@ -28,7 +28,6 @@ import org.joml.Vector3f
 import kotlin.math.sin
 import kotlin.random.Random
 
-
 object ItemUsage {
     fun useProjectileWeapon(player: Player, usedItem: ItemStack) {
         // Verify item if it has all necessary data to be used
@@ -194,7 +193,7 @@ object ItemUsage {
                                     player.world.playSound(player.location, "burb.ability.peashooter.gatling.fire", SoundCategory.VOICE, 1f, 1f)
                                     bulletsRemaining--
                                 }
-                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.vehicle != gatlingVehicle || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.burbPlayer().isDead || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                     player.sendActionBar(Formatting.allTags.deserialize(""))
                                     gatlingVehicle.eject()
                                     gatlingVehicle.remove()
@@ -285,7 +284,7 @@ object ItemUsage {
                                     DustOptions(Color.fromRGB(20, 18, 11), 0.5f)
                                 )
                             }
-                            if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || ticks >= 120 || player.vehicle != null || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                            if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || ticks >= 120 || player.burbPlayer().isDead || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                 player.sendActionBar(Formatting.allTags.deserialize(""))
                                 player.inventory.remove(Material.BREEZE_ROD)
                                 player.velocity = player.velocity.add(Vector(0.0, 0.75, 0.0))
@@ -317,14 +316,14 @@ object ItemUsage {
                             override fun run() {
                                 if(!spikeweedEntity.isDead) {
                                     if(spikeweedEntity.passengers.isEmpty()) {
-                                        for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null}) {
+                                        for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && !p.burbPlayer().isDead}) {
                                             spikeweedEntity.addPassenger(nearbyEnemy)
                                             object : BukkitRunnable() {
                                                 var damageTimer = 0
                                                 override fun run() {
                                                     spikeweedEntity.passengers.filterIsInstance<Player>().forEach{ passenger -> passenger.damage(0.75, player) }
                                                     damageTimer++
-                                                    if(damageTimer >= 4 || nearbyEnemy.vehicle?.scoreboardTags?.contains("${nearbyEnemy.uniqueId}-death-vehicle") == true) {
+                                                    if(damageTimer >= 4 || nearbyEnemy.burbPlayer().isDead) {
                                                         spikeweedEntity.world.playSound(spikeweedEntity.location, "block.sweet_berry_bush.break", 1f, 1f)
                                                         spikeweedEntity.removePassenger(nearbyEnemy)
                                                         spikeweedEntity.remove()
@@ -367,7 +366,7 @@ object ItemUsage {
                             var timer = 0
                             var ticks = 0
                             override fun run() {
-                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.vehicle != null || healingTeammate.vehicle != null || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || !player.burbPlayer().isDead || !healingTeammate.burbPlayer().isDead || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                     if(ticks % 5 == 0) {
                                         if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
                                             player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
@@ -472,7 +471,7 @@ object ItemUsage {
                                     //player.world.playSound(player.location, "burb.ability.peashooter.gatling.fire", SoundCategory.VOICE, 1f, 1f)
                                     bulletsRemaining--
                                 }
-                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.vehicle != sunbeamVehicle || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.burbPlayer().isDead || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                     player.sendActionBar(Formatting.allTags.deserialize(""))
                                     sunbeamVehicle.eject()
                                     sunbeamVehicle.remove()
@@ -600,7 +599,7 @@ object ItemUsage {
                                         smokeGrenadeLocation.world.playSound(smokeGrenadeLocation, "block.lava.extinguish", SoundCategory.VOICE, 1f, 1f)
                                         for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
                                             if(nearbyPlayer.burbPlayer().playerTeam == Teams.PLANTS) {
-                                                if(nearbyPlayer.vehicle == null || nearbyPlayer.vehicle?.scoreboardTags?.contains("${nearbyPlayer.uniqueId}-death-vehicle") == false) {
+                                                if(!nearbyPlayer.burbPlayer().isDead) {
                                                     nearbyPlayer.damage(0.001, player)
                                                     if(nearbyPlayer.health >= 1.0) {
                                                         nearbyPlayer.health -= 1.0
@@ -728,7 +727,7 @@ object ItemUsage {
                                 ticks = 0
                                 timer++
                             }
-                            if(player.vehicle?.scoreboardTags?.contains("${player.uniqueId}-death-vehicle") == true || timer >= 8) {
+                            if(player.burbPlayer().isDead || timer >= 8) {
                                 ultraBall.remove()
                                 cancel()
                             }
@@ -750,7 +749,7 @@ object ItemUsage {
                             var timer = 0
                             var ticks = 0
                             override fun run() {
-                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.vehicle != null || healingTeammate.vehicle != null || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.burbPlayer().isDead || healingTeammate.burbPlayer().isDead || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                     if(ticks % 5 == 0) {
                                         if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
                                             player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))

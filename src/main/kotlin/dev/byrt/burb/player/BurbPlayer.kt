@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType
 
 import java.util.UUID
 
-class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerTeam: Teams, var playerCharacter: BurbCharacter) {
+class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerTeam: Teams, var playerCharacter: BurbCharacter, var isDead: Boolean) {
     init {
         setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
@@ -45,6 +45,12 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
             this.getBukkitPlayer().addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
         }
         logger.info("Character: ${this.playerName} now has value ${this.playerCharacter}.")
+    }
+
+    fun setIsDead(newIsDead: Boolean) {
+        if(newIsDead == isDead) return
+        this.isDead = newIsDead
+        logger.info("Dead State: ${this.playerName} now has value ${this.isDead}")
     }
 
     fun getBukkitPlayer(): Player {
