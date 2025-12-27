@@ -106,6 +106,15 @@ object TeamManager {
         ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${sender?.name ?: "the game"} ${if(ignoreAdmins) "<italic>[Non-Admins]</italic>." else "."}", false)
     }
 
+    fun getTeam(team: Teams): Set<BurbPlayer> {
+        return when(team) {
+            Teams.SPECTATOR -> spectators
+            Teams.PLANTS -> plants
+            Teams.ZOMBIES -> zombies
+            Teams.NULL -> emptySet()
+        }
+    }
+
     fun getParticipants(): Set<BurbPlayer> {
         return this.plants + this.zombies
     }
@@ -152,6 +161,56 @@ object TeamManager {
         return teamMates
     }
 
+    fun Teams.areTeamMatesDead(burbPlayer: BurbPlayer): Boolean {
+        val teamMates = mutableSetOf<BurbPlayer>()
+        when(this) {
+            Teams.PLANTS -> {
+                for(teamMate in plants) {
+                    if(teamMate != burbPlayer) {
+                        if(teamMate.isDead) {
+                            teamMates.add(teamMate)
+                        }
+                    }
+                }
+                return if(teamMates.size <= 0) false else teamMates.size >= plants.size - 1
+            }
+            Teams.ZOMBIES -> {
+                for(teamMate in zombies) {
+                    if(teamMate != burbPlayer) {
+                        if(teamMate.isDead) {
+                            teamMates.add(teamMate)
+                        }
+                    }
+                }
+                return if(teamMates.size <= 0) false else teamMates.size >= zombies.size - 1
+            }
+            else -> { return false }
+        }
+    }
+
+    fun isTeamDead(team: Teams): Boolean {
+        val deadTeammates = mutableSetOf<BurbPlayer>()
+        return when(team) {
+            Teams.PLANTS -> {
+                for(player in plants) {
+                    if(player.isDead) {
+                        deadTeammates.add(player)
+                    }
+                }
+                deadTeammates.size >= plants.size
+            }
+            Teams.ZOMBIES -> {
+                for(player in zombies) {
+                    if(player.isDead) {
+                        deadTeammates.add(player)
+                    }
+                }
+                deadTeammates.size >= zombies.size
+            }
+            else -> false
+        }
+    }
+
     fun refreshGlowing() {
         for(player in Bukkit.getOnlinePlayers()) {
             cancelAllGlowing(player)
@@ -195,24 +254,28 @@ object TeamManager {
         plantsDisplayTeam.prefix(Component.text("\uD83E\uDEB4 ").color(NamedTextColor.WHITE))
         plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
+        plantsDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         plantsDisplayTeam.setAllowFriendlyFire(false)
 
         zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
         zombiesDisplayTeam.prefix(Component.text("\uD83E\uDDDF ").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
+        zombiesDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         zombiesDisplayTeam.setAllowFriendlyFire(false)
 
         adminDisplayTeam.color(NamedTextColor.DARK_RED)
         adminDisplayTeam.prefix(Component.text("\uD002 ").color(NamedTextColor.WHITE))
         adminDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         adminDisplayTeam.displayName(Component.text("Admin").color(NamedTextColor.DARK_RED))
+        adminDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         adminDisplayTeam.setAllowFriendlyFire(false)
 
         spectatorDisplayTeam.color(NamedTextColor.GRAY)
         spectatorDisplayTeam.prefix(Component.text("\uD003 ").color(NamedTextColor.WHITE))
         spectatorDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         spectatorDisplayTeam.displayName(Component.text("Spectator").color(Teams.SPECTATOR.teamHexColour))
+        spectatorDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         spectatorDisplayTeam.setAllowFriendlyFire(false)
     }
 

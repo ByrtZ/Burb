@@ -219,7 +219,7 @@ object GameTask {
                         if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
                             Jukebox.setMusicStress(MusicStress.MEDIUM)
                         }
-                        if(Timer.getTimer() in 90..(GameManager.GameTime.IN_GAME_TIME - 660)) {
+                        if(Timer.getTimer() in 121..(GameManager.GameTime.IN_GAME_TIME - 660)) {
                             Jukebox.setMusicStress(MusicStress.HIGH)
                         }
                     } else {

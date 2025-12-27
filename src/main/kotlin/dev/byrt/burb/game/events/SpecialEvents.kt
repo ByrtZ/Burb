@@ -25,7 +25,7 @@ object SpecialEvents {
     private const val EVENT_DURATION = 120
 
     fun rollSpecialEvent() {
-        if(currentEvent == null && GameManager.getGameState() == GameState.IN_GAME && Timer.getTimer() >= 4 * 60 && (0..9).random() == 0) {
+        if(currentEvent == null && GameManager.getGameState() == GameState.IN_GAME && Timer.getTimer() >= 4 * 60 && (0..9).random() == 0 && Timer.getTimer() != GameManager.GameTime.IN_GAME_TIME) {
             startEvent(SpecialEvent.entries.random())
         }
     }
@@ -114,6 +114,10 @@ enum class SpecialEvent(
         "Rando's Revenge",
         "<rainbow>Rando's Revenge ",
         "${ChatUtility.BURB_FONT_TAG}<rainbow>RANDO'S REVENGE</rainbow>: %s"
-        // No custom behaviour needed
+    ),
+    VANQUISH_SHOWDOWN(
+        "Showdown",
+        "<gradient:dark_red:red:dark_red>Showdown ",
+        "${ChatUtility.BURB_FONT_TAG}<gradient:red:dark_red:red:dark_red:red>Showdown<white>: %s"
     );
 }

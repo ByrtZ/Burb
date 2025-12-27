@@ -44,13 +44,12 @@ class DamageEvent: Listener {
             } else {
                 if(e.entity is Player) {
                     val player = e.entity as Player
-                    if(player.vehicle != null) {
-                        if(player.burbPlayer().isDead) {
-                            e.isCancelled = true
+                    if(player.burbPlayer().isDead) {
+                        e.isCancelled = true
+                    } else {
+                        if(e.damage.toInt() > 0) {
+                            PlayerVisuals.damageIndicator(player, e.damage)
                         }
-                    }
-                    if(e.damage.toInt() > 0) {
-                        PlayerVisuals.damageIndicator(player, e.damage)
                     }
                 }
             }
@@ -66,11 +65,9 @@ class DamageEvent: Listener {
             if(e.damager is Player && e.entity is Player) {
                 val damager = e.damager as Player
                 val damaged = e.entity as Player
-                if(damager.vehicle != null) {
-                    if(damager.burbPlayer().isDead) {
-                        e.isCancelled = true
-                        return
-                    }
+                if(damager.burbPlayer().isDead) {
+                    e.isCancelled = true
+                    return
                 }
                 // 1.5x backstab damage for melee classes
                 if(damager.burbPlayer().playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
@@ -80,6 +77,7 @@ class DamageEvent: Listener {
                     if(angle <= 45) {
                         e.damage *= 1.5
                     }
+                    damaged.world.playSound(damaged.location, "entity.warden.attack_impact", 0.75f, 0.75f)
                     e.isCancelled = false
                 }
             }

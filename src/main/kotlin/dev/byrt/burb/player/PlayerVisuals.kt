@@ -15,6 +15,8 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.TeamManager
+import dev.byrt.burb.team.TeamManager.areTeamMatesDead
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 
 import io.papermc.paper.entity.TeleportFlag
@@ -59,11 +61,8 @@ object PlayerVisuals {
         }.runTaskLater(plugin, 30L)
     }
 
-    fun death(player: Player, killer: Player?, deathMessage: Component) {
-        for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
-
+    fun death(player: Player, killer: Player?, deathMessage: Component, isTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
-
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
             player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
@@ -77,14 +76,56 @@ object PlayerVisuals {
         deathOverlayItem.itemMeta = deathOverlayItemMeta
         player.inventory.helmet = deathOverlayItem
 
-        val deathVehicle = player.world.spawn(player.location, ItemDisplay::class.java).apply {
+        val deathVehicle = player.world.spawn(player.location.add(0.0, 0.6, 0.0), ItemDisplay::class.java).apply {
             teleportDuration = 1
             addScoreboardTag("${player.uniqueId}-death-vehicle")
             addPassenger(player)
         }
 
+        if(!isTeamWipe) {
+            player.showTitle(
+                Title.title(
+                    Formatting.allTags.deserialize("<red>You died!"),
+                    Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
+                    Title.Times.times(
+                        Duration.ofMillis(250),
+                        Duration.ofSeconds(8),
+                        Duration.ofMillis(750)
+                    )
+                )
+            )
+            player.playSound(Sounds.Score.DEATH)
+            for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
+        } else {
+            player.showTitle(
+                Title.title(
+                    Formatting.allTags.deserialize("<#ff3333>You have been team wiped!"),
+                    Formatting.allTags.deserialize("<gray>Your respawn timer has been extended."),
+                    Title.Times.times(
+                        Duration.ofMillis(250),
+                        Duration.ofSeconds(8),
+                        Duration.ofMillis(750)
+                    )
+                )
+            )
+        }
+
+        /** TEAM WIPE SPECIAL EVENT **/
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
+            // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
+            if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
+                for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
+                    deathVehicle.remove()
+                    death(teamMember.getBukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
+                }
+                for(online in Bukkit.getOnlinePlayers()) {
+                    online.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.DEATH_PREFIX}The ${player.burbPlayer().playerTeam.teamColourTag}${player.burbPlayer().playerTeam.teamName}<reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>"))
+                    online.playSound(Sounds.Score.TEAM_WIPE)
+                }
+            }
+        }
+
         hidePlayer(player)
-        player.playSound(Sounds.Score.DEATH)
 
         /** Move death vehicle ahead of the killer as a faux spectator mode. **/
         if(killer != null) {
@@ -112,7 +153,7 @@ object PlayerVisuals {
 
         /** Respawn, includes ability to change characters, and Post Respawn **/
         object : BukkitRunnable() {
-            val RESPAWN_TIME = 15
+            val RESPAWN_TIME = if(isTeamWipe) 30 else 12
             var timer = RESPAWN_TIME
             var ticks = 0
             override fun run() {
@@ -122,7 +163,7 @@ object PlayerVisuals {
                             if(ticks == 1) {
                                 player.showTitle(
                                     Title.title(
-                                        Formatting.allTags.deserialize("<yellow>Respawning in"),
+                                        Formatting.allTags.deserialize("<${if(isTeamWipe) "red" else "yellow"}>Respawning in"),
                                         Formatting.allTags.deserialize("<b>►${timer}◄"),
                                         Title.Times.times(
                                             Duration.ofMillis(0),
@@ -167,28 +208,16 @@ object PlayerVisuals {
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L)
-        player.showTitle(
-            Title.title(
-                Formatting.allTags.deserialize("<red>You died!"),
-                Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
-                Title.Times.times(
-                    Duration.ofMillis(250),
-                    Duration.ofSeconds(8),
-                    Duration.ofMillis(750)
-                )
-            )
-        )
-    }
-
-    fun hidePlayer(player: Player) {
-        for(other in Bukkit.getOnlinePlayers()) {
-            other.hidePlayer(plugin, player)
-        }
     }
 
     fun showPlayer(player: Player) {
         for(other in Bukkit.getOnlinePlayers()) {
             other.showPlayer(plugin, player)
+        }
+    }
+    fun hidePlayer(player: Player) {
+        for(other in Bukkit.getOnlinePlayers()) {
+            other.hidePlayer(plugin, player)
         }
     }
 
@@ -239,6 +268,7 @@ object PlayerVisuals {
         object : BukkitRunnable() {
             override fun run() {
                 if(!player.isOnline) cancel()
+                if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) cancel()
                 if(player.vehicle != null) {
                     if(player.burbPlayer().isDead) {
                         cancel()

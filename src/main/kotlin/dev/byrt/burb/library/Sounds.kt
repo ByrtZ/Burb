@@ -48,6 +48,7 @@ object Sounds {
         val CAPTURE_UNFRIENDLY = sound(key("burb.game.capture.unfriendly"), Source.VOICE, 1.25f, 1f)
         val DEATH = sound(key("burb.game.death"), Source.VOICE, 1f, 1f)
         val DEATH_STATS = sound(key("burb.game.death_stats"), Source.VOICE, 0.75f, 1f)
+        val TEAM_WIPE = sound(key("burb.game.event.vanquish_showdown.team_wipe"), Source.VOICE, 0.5f, 1f)
         val RESPAWN = sound(key("block.bubble_column.upwards_inside"), Source.VOICE, 2f, 0.0f)
         val PLANTS_WIN = sound(key("burb.game.win.plants"), Source.VOICE, 0.75f, 1f)
         val PLANTS_LOSE = sound(key("burb.game.lose.plants"), Source.VOICE, 0.75f, 1f)
