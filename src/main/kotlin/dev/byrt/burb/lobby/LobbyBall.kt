@@ -2,9 +2,6 @@ package dev.byrt.burb.lobby
 
 import dev.byrt.burb.plugin
 
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
-
 import org.bukkit.*
 import org.bukkit.entity.Display
 import org.bukkit.entity.EntityType
@@ -149,12 +146,12 @@ class LobbyBallPhysics(val ball: ItemDisplay) {
                     f.ticksToDetonate = 1
                     velocity.zero()
                     ball.teleport(LobbyBall.lobbyBallSpawnLocation)
-                    ball.location.world.playSound(Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.VOICE, 1.0f, 1.0f))
+                    ball.location.world.playSound(ball.location, "entity.enderman.teleport", SoundCategory.VOICE, 1.0f, 1.0f)
                 }
                 if(!LobbyBall.isInArea(ball)) {
                     velocity.zero()
                     ball.teleport(LobbyBall.lobbyBallSpawnLocation)
-                    ball.location.world.playSound(Sound.sound(Key.key("entity.enderman.teleport"), Sound.Source.VOICE, 1.0f, 1.0f))
+                    ball.location.world.playSound(ball.location, "entity.enderman.teleport", SoundCategory.VOICE, 1.0f, 1.0f)
                 }
             }
         }.runTaskTimer(plugin, 0L, 1L)
