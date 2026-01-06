@@ -39,10 +39,9 @@ class InteractEvent: Listener {
                 }
             }
             if(GameManager.getGameState() == GameState.IDLE) {
-                if(e.player.inventory.itemInMainHand == ServerItem.getProfileItem() && e.action.isRightClick) {
-                    BurbInterface(e.player, BurbInterfaceType.WARDROBE)
+                if(e.player.inventory.itemInMainHand == ServerItem.getProfileItem() && e.action.isRightClick && e.player.gameMode in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
+                    BurbInterface(e.player, BurbInterfaceType.MY_PROFILE)
                 }
-
             }
             if(e.player.gameMode != GameMode.CREATIVE) {
                 if(e.action.isRightClick

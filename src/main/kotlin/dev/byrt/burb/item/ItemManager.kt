@@ -1,5 +1,6 @@
 package dev.byrt.burb.item
 
+import dev.byrt.burb.logger
 import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.persistence.PersistentDataType
+import kotlin.random.Random
 
 @Suppress("unstableApiUsage")
 object ItemManager {
@@ -267,15 +269,42 @@ enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set
     ZOMBIES_RANGED_ABILITIES("Deadbeard Abilities", setOf(BurbAbility.ZOMBIES_RANGED_ABILITY_1, BurbAbility.ZOMBIES_RANGED_ABILITY_2, BurbAbility.ZOMBIES_RANGED_ABILITY_3))
 }
 
-enum class ItemRarity(val rarityName : String, val rarityColour : String, val rarityGlyph : String) {
-    COMMON("Common", "#ffffff", "\uF001"),
-    UNCOMMON("Uncommon", "#0ed145", "\uF002"),
-    RARE("Rare", "#00a8f3", "\uF003"),
-    EPIC("Epic", "#b83dba", "\uF004"),
-    LEGENDARY("Legendary", "#ff7f27", "\uF005"),
-    MYTHIC("Mythic", "#ff3374", "\uF006"),
-    SPECIAL("Special", "#ec1c24", "\uF007"),
-    UNREAL("Unreal", "#8666e6", "\uF008")
+enum class ItemRarity(val rarityName : String, val rarityGlyph : String, val colour: Color, val rarityColour : String) {
+    COMMON("Common", "\uF001", Color.fromRGB(255, 255, 255), "#ffffff"),
+    UNCOMMON("Uncommon", "\uF002", Color.fromRGB(14, 209, 69), "#0ed145"),
+    RARE("Rare", "\uF003", Color.fromRGB(0, 168, 243), "#00a8f3"),
+    EPIC("Epic", "\uF004", Color.fromRGB(184, 61, 186), "#b83dba"),
+    LEGENDARY("Legendary", "\uF005", Color.fromRGB(255, 127, 39), "#ff7f27"),
+    MYTHIC("Mythic", "\uF006", Color.fromRGB(255, 51, 116), "#ff3374"),
+    SPECIAL("Special", "\uF007", Color.fromRGB(236, 28, 36), "#ec1c24"),
+    UNREAL("Unreal", "\uF008", Color.fromRGB(134, 102, 230), "#8666e6"),
+    TRANSCENDENT("Transcendent", "\uE004", Color.fromRGB(199, 10, 23), "#c70a17"),
+    CELESTIAL("Celestial", "\uE005", Color.fromRGB(245, 186, 10), "#f5ba0a");
+}
+
+enum class SubRarity(val weight : Double, val subRarityGlyph : String) {
+    NONE(99.95,""),
+    SHINY(0.025, "\uE000"),
+    SHADOW(0.015, "\uE001"),
+    OBFUSCATED(0.01, "\uE002");
+
+    companion object {
+        fun getRandomSubRarity(): SubRarity {
+            val totalWeight = SubRarity.entries.sumOf { it.weight }
+            val randomValue = Random.nextDouble(totalWeight)
+
+            var cumulativeWeight = 0.0
+            for (rarity in SubRarity.entries) {
+                cumulativeWeight += rarity.weight
+                if (randomValue < cumulativeWeight) {
+                    return rarity
+                }
+            }
+
+            logger.warning("Unreachable code hit! No sub rarity selected")
+            return NONE // Should be unreachable but default to null in case of issue
+        }
+    }
 }
 
 enum class ItemType(val typeName : String, val typeGlyph : String) {
@@ -285,5 +314,6 @@ enum class ItemType(val typeName : String, val typeGlyph : String) {
     UTILITY("Utility", "\uF012"),
     WEAPON("Weapon", "\uF013"),
     HAT("Hat", "\uF015"),
-    ACCESSORY("Accessory", "\uF014")
+    ACCESSORY("Accessory", "\uF014"),
+    FISH("Fish", "\uF016")
 }

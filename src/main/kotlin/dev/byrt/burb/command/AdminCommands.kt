@@ -7,6 +7,9 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.item.SubRarity
+import dev.byrt.burb.lobby.FishRarity
+import dev.byrt.burb.lobby.LobbyFishing
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
@@ -27,8 +30,10 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 
 import org.bukkit.Material
+import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
@@ -59,6 +64,25 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             ChatUtility.broadcastDev("<skull:${player.name}><gold>${player.name}<white>: ${text.joinToString(" ")}", false)
+        }
+    }
+
+    @Command("debug catch <rarity> <subrarity>")
+    @Permission("tbd.command.debug")
+    fun debug(css: CommandSourceStack, @Argument("rarity") rarity: FishRarity, @Argument("subrarity") subrarity: SubRarity) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            if(player.gameMode == GameMode.CREATIVE) {
+                css.sender.sendMessage(Component.text("Simulating catch of rarity $rarity"))
+                val loc = player.location
+                object : BukkitRunnable() {
+                    override fun run() {
+                        val item = loc.world.spawn(loc, Item::class.java)
+                        item.itemStack = ItemStack(Material.BEEF, 1)
+                        LobbyFishing.catchFish(player, item, item.location, rarity, subrarity)
+                    }
+                }.runTaskLater(plugin, 100L)
+            }
         }
     }
 

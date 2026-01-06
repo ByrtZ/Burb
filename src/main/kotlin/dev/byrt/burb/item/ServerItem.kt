@@ -5,6 +5,7 @@ import dev.byrt.burb.player.BurbCharacter
 
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
 object ServerItem {
@@ -25,13 +26,43 @@ object ServerItem {
         return characterItem
     }
 
+    fun getTeamSwitcherItem(): ItemStack {
+        val teamSwitcherItem = ItemStack(Material.IRON_SWORD, 1)
+        val teamSwitcherItemMeta = teamSwitcherItem.itemMeta
+        teamSwitcherItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Team & Character Switcher"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><yellow>Change your team and character."),
+            Formatting.allTags.deserialize("<!i>")
+        )
+
+        teamSwitcherItemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
+        teamSwitcherItemMeta.lore(loreList)
+        teamSwitcherItem.itemMeta = teamSwitcherItemMeta
+        return teamSwitcherItem
+    }
+
+    fun getCosmeticsItem(): ItemStack {
+        val cosmeticsItem = ItemStack(Material.CAKE, 1)
+        val cosmeticsItemMeta = cosmeticsItem.itemMeta
+        cosmeticsItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Cosmetics"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><yellow>View your collection of cosmetics."),
+            Formatting.allTags.deserialize("<!i>")
+        )
+        cosmeticsItemMeta.lore(loreList)
+        cosmeticsItem.itemMeta = cosmeticsItemMeta
+        return cosmeticsItem
+    }
+
     fun getProfileItem(): ItemStack {
-        val profileItem = ItemStack(Material.RESIN_CLUMP, 1)
+        val profileItem = ItemStack(Material.RESIN_BRICKS, 1)
         val profileItemMeta = profileItem.itemMeta
         profileItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>My Profile"))
         val loreList = mutableListOf(
             Formatting.allTags.deserialize("<!i>"),
-            Formatting.allTags.deserialize("<!i><yellow>View your profile and cosmetics."),
+            Formatting.allTags.deserialize("<!i><yellow>Change your team and view your cosmetics."),
             Formatting.allTags.deserialize("<!i>")
         )
         profileItemMeta.lore(loreList)

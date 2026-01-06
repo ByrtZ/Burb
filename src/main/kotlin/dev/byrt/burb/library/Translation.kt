@@ -10,7 +10,7 @@ object Translation {
         const val ITEM_RECEIVED_PREFIX = "<burbcolour>(\uD83D\uDCB0) "
         const val TITLE_SCREEN_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}JOIN<reset> ${BURB_FONT_TAG}THE<reset> ${BURB_FONT_TAG}FIGHT<reset>"
         const val CHARACTER_SELECTION_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}CHANGE<reset> ${BURB_FONT_TAG}CHARACTER<reset>"
-        const val DEATH_PREFIX = "<gray>[<red><prefix:skull><gray>]<reset> "
+        const val DEATH_PREFIX = "<gray>[<#ff3333><prefix:skull><gray>]<reset> "
     }
     object Tutorial {
         const val BLANK_LINE = "<newline>"
@@ -21,7 +21,7 @@ object Translation {
         const val LEAVE_TEAM = "You are no longer on team %d%s<reset.>"
     }
     object Overtime {
-        const val OVERTIME_PREFIX = "<red><bold>OVERTIME: "
+        const val OVERTIME_PREFIX = "<#ff3333><bold>OVERTIME: "
         const val OVERTIME_REASON = "burb.game.state.overtime.prefix"
     }
     object Weapon {

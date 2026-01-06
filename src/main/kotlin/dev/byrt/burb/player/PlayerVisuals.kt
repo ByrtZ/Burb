@@ -85,7 +85,7 @@ object PlayerVisuals {
         if(!isTeamWipe) {
             player.showTitle(
                 Title.title(
-                    Formatting.allTags.deserialize("<red>You died!"),
+                    Formatting.allTags.deserialize("<#ff3333>You died!"),
                     Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
                     Title.Times.times(
                         Duration.ofMillis(250),
@@ -114,8 +114,8 @@ object PlayerVisuals {
         if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
             // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
             if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
+                deathVehicle.remove()
                 for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
-                    deathVehicle.remove()
                     death(teamMember.getBukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
                 }
                 for(online in Bukkit.getOnlinePlayers()) {
@@ -134,7 +134,7 @@ object PlayerVisuals {
                     player.playSound(Sounds.Score.DEATH_STATS)
                     object : BukkitRunnable() {
                         override fun run() {
-                            if(killer.burbPlayer().isDead || deathVehicle.isDead || !player.isOnline) {
+                            if(killer.burbPlayer().isDead || deathVehicle.isDead || !deathVehicle.passengers.contains(player) || !player.isOnline) {
                                 this.cancel()
                             } else {
                                 if(!deathVehicle.passengers.contains(player)) deathVehicle.addPassenger(player)
@@ -204,6 +204,7 @@ object PlayerVisuals {
                         ticks++
                     }
                 } else {
+                    deathVehicle.remove()
                     cancel()
                 }
             }
@@ -245,6 +246,7 @@ object PlayerVisuals {
         player.inventory.helmet = null
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+
         if(SpecialEvents.getCurrentEvent() == SpecialEvent.RANDOM_CHARACTER) {
             player.burbPlayer().setRandomCharacter()
             player.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.ARROW_PREFIX}<rainbow>Rando's Revenge<reset> morphed you into a different character!<newline>"))
@@ -252,12 +254,15 @@ object PlayerVisuals {
         } else {
             ItemManager.giveCharacterItems(player)
         }
+
         BurbCosmetics.equipCosmetics(player)
+
         if(GameManager.getGameState() == GameState.IDLE) {
             player.inventory.setItem(8, ServerItem.getProfileItem())
         } else {
             player.inventory.remove(ServerItem.getProfileItem())
         }
+
         showPlayer(player)
     }
 

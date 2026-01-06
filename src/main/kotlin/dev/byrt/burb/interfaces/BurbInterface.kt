@@ -70,6 +70,12 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     BurbInterfaces.createWardrobeInterface(player, interfaceType)
                 }
             }
+
+            BurbInterfaceType.MY_PROFILE -> {
+                runBlocking {
+                    BurbInterfaces.createProfileInterface(player, interfaceType)
+                }
+            }
         }
     }
 }
@@ -85,7 +91,7 @@ object BurbInterfaces {
                 plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
                 plantsTeamItem.itemMeta = plantsTeamItemMeta
                 pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -126,7 +132,7 @@ object BurbInterfaces {
                 zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
                 zombiesTeamItem.itemMeta = zombiesTeamItemMeta
                 pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -167,7 +173,7 @@ object BurbInterfaces {
                 closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
                 closeMenuItem.itemMeta = closeMenuItemMeta
                 pane[2, 4] = StaticElement(drawable(closeMenuItem)) {
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -282,7 +288,7 @@ object BurbInterfaces {
             closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
             closeMenuItem.itemMeta = closeMenuItemMeta
             pane[5,4] = StaticElement(drawable(closeMenuItem)) {
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
                 player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
             }
         }
@@ -315,6 +321,34 @@ object BurbInterfaces {
                         }
                     }
                 }
+            }
+        }
+    }.open(player)
+
+    suspend fun createProfileInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
+        rows = 3
+
+        withTransform { pane, _ ->
+            pane[1,3] = StaticElement(drawable(ServerItem.getTeamSwitcherItem())) {
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                runBlocking { createTeamInterface(player, BurbInterfaceType.TEAM_SELECT) }
+            }
+        }
+        withTransform { pane, _ ->
+            pane[1,5] = StaticElement(drawable(ServerItem.getCosmeticsItem())) {
+                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                runBlocking { createWardrobeInterface(player, BurbInterfaceType.WARDROBE) }
+            }
+        }
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[2,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
             }
         }
     }.open(player)
@@ -372,7 +406,7 @@ object BurbInterfaces {
             closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
             closeMenuItem.itemMeta = closeMenuItemMeta
             pane[5,4] = StaticElement(drawable(closeMenuItem)) {
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
                 player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
             }
         }
@@ -451,7 +485,7 @@ class WardrobePaginationTransformation(items: List<ItemStack>): PaginationTransf
                             element.persistentDataContainer.get(NamespacedKey(plugin, "cosmetic"), PersistentDataType.STRING)
                                 ?.let { BurbCosmetics.getCosmeticById(it) }?.let {
                                     BurbCosmetics.unequipCosmetic(player, it.cosmeticType)
-                                    player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
+                                    player.playSound(Sounds.Misc.INTERFACE_BACK)
                                     runBlocking {
                                         BurbInterfaces.createWardrobeInterface(player, BurbInterfaceType.WARDROBE)
                                     }
