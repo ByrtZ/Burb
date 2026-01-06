@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerFishEvent
 class PlayerFish: Listener {
     @EventHandler
     fun onPlayerFish(event: PlayerFishEvent) {
+        event.expToDrop = 0
+
         if(event.state !== PlayerFishEvent.State.CAUGHT_FISH) return
         val item = event.caught as Item
 
