@@ -1,5 +1,7 @@
 import java.io.BufferedReader
 
+val patchVersion = "INDEV"
+
 val commitHash = Runtime
     .getRuntime()
     .exec(arrayOf("git", "rev-parse", "--short", "HEAD"))
@@ -20,7 +22,7 @@ plugins {
 }
 
 group = "dev.byrt"
-version = "1.0-$commitHash"
+version = "$patchVersion-build-$commitHash"
 
 repositories {
     mavenCentral()
@@ -30,7 +32,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-core:2.0.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
     implementation("org.incendo:cloud-annotations:2.0.0")
@@ -39,7 +41,7 @@ dependencies {
     implementation("org.incendo:cloud-kotlin-extensions:2.0.0")
     implementation("org.incendo:cloud-processors-confirmation:1.0.0-rc.1")
     implementation("org.reflections:reflections:0.10.2")
-    implementation("fr.skytasul:glowingentities:1.4.3")
+    implementation("fr.skytasul:glowingentities:1.4.10")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-cio:2.3.5")
@@ -63,7 +65,7 @@ tasks {
         relocationPrefix = "dev.byrt.burb.shade"
     }
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.11")
     }
     processResources {
         val props = mapOf("version" to version)

@@ -5,7 +5,6 @@ import dev.byrt.burb.text.Formatting.restrictedTags
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.Teams
-import dev.byrt.burb.util.Noxesium
 
 import io.papermc.paper.chat.ChatRenderer
 
@@ -67,7 +66,7 @@ object ChatUtility {
 
 object GlobalRenderer : ChatRenderer {
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience): Component {
-        val playerHead = Noxesium.buildSkullComponent(source.uniqueId, false, 0, 0, 1.0f)
+        val playerHead = allTags.deserialize("<!i><white><head:${source.uniqueId}>")
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
         return if(source.hasPermission("burb.group.admin") && source.burbPlayer().playerTeam == Teams.SPECTATOR) {
             playerHead

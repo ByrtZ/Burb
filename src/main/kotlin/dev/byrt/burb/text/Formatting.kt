@@ -1,7 +1,6 @@
 package dev.byrt.burb.text
 
 import dev.byrt.burb.team.Teams
-import dev.byrt.burb.util.Noxesium
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -42,7 +41,6 @@ object Formatting {
         .tags(
             TagResolver.builder()
                 .resolver(StandardTags.defaults())
-                .resolver(Noxesium.skullResolver())
                 .resolver(BURB_COLOUR)
                 .resolver(PLANTS_COLOUR)
                 .resolver(ZOMBIES_COLOUR)
@@ -59,7 +57,6 @@ object Formatting {
                 .resolver(StandardTags.color())
                 .resolver(StandardTags.decorations())
                 .resolver(StandardTags.reset())
-                .resolver(Noxesium.skullResolver())
                 .resolver(BURB_COLOUR)
                 .resolver(PLANTS_COLOUR)
                 .resolver(ZOMBIES_COLOUR)

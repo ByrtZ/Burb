@@ -8,6 +8,10 @@ import dev.byrt.burb.team.Teams
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.LobbyManager
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.player.cosmetics.BurbCosmetic
+import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.plugin
 
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
 import com.noxcrew.interfaces.element.Element
@@ -19,13 +23,6 @@ import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
 import dev.byrt.burb.item.ItemType
-
-import dev.byrt.burb.player.cosmetics.BurbCosmetic
-import dev.byrt.burb.player.cosmetics.BurbCosmetics
-import dev.byrt.burb.player.progression.BurbPlayerData
-import dev.byrt.burb.plugin
-
-import io.papermc.paper.entity.TeleportFlag
 
 import kotlinx.coroutines.runBlocking
 
@@ -118,7 +115,7 @@ object BurbInterfaces {
                             val veh = player.vehicle as ItemDisplay
                             veh.teleportDuration = 40
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                veh.teleport(Location(veh.world, 987.5, 5.5, 998.5, -25f, 20f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                veh.teleport(Location(veh.world, 987.5, 5.5, 998.5, -25f, 20f))
                                 player.setRotation(-25f, 20f)
                             }
                         }
@@ -159,7 +156,7 @@ object BurbInterfaces {
                             val veh = player.vehicle as ItemDisplay
                             veh.teleportDuration = 45
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                veh.teleport(Location(veh.world, 1004.5, 5.5, 997.5, -90f, 10f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                veh.teleport(Location(veh.world, 1004.5, 5.5, 997.5, -90f, 10f))
                                 player.setRotation(-90f, 10f)
                             }
                         }
@@ -181,7 +178,7 @@ object BurbInterfaces {
                             val veh = player.vehicle as ItemDisplay
                             veh.teleportDuration = 55
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
                                 LobbyManager.playerJoinHub(player)
                             }
@@ -203,7 +200,7 @@ object BurbInterfaces {
                             val veh = player.vehicle as ItemDisplay
                             veh.teleportDuration = 80
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f), TeleportFlag.EntityState.RETAIN_PASSENGERS)
+                                veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
                                 LobbyManager.playerJoinHub(player)
                             }

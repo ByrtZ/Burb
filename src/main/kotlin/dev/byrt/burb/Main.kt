@@ -3,8 +3,6 @@ package dev.byrt.burb
 import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
-import dev.byrt.burb.messenger.NoxesiumMessenger
-import dev.byrt.burb.util.NoxesiumChannel
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -116,8 +114,6 @@ class Main : JavaPlugin() {
     private fun setupPluginMessageListener() {
         logger.info("Registering plugin messengers.")
         messenger.registerIncomingPluginChannel(this, "minecraft:brand", BrandMessenger())
-        messenger.registerIncomingPluginChannel(this, NoxesiumChannel.NOXESIUM_V1_CLIENT_INFORMATION_CHANNEL.channel, NoxesiumMessenger())
-        messenger.registerIncomingPluginChannel(this, NoxesiumChannel.NOXESIUM_V2_CLIENT_INFORMATION_CHANNEL.channel, NoxesiumMessenger())
     }
 
     private fun setupConfigs() {
