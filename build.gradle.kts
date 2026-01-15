@@ -60,9 +60,16 @@ kotlin {
     }
 }
 
+// lucy's quick and dirty shadow fix to make slf4j happy
+val shadowed by configurations.creating {
+    extendsFrom(configurations.implementation.get())
+    exclude(group = "org.slf4j")
+}
+
 tasks {
     shadowJar {
         isEnableRelocation = true
+        configurations = listOf(shadowed)
         relocationPrefix = "dev.byrt.burb.shade"
     }
     runServer {
