@@ -3,6 +3,8 @@ package dev.byrt.burb
 import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
+import dev.byrt.burb.resource.ResourcePackLoader
+import dev.byrt.burb.resource.registry.GitHubReleasesRegistry
 
 import io.papermc.paper.command.brigadier.CommandSourceStack
 
@@ -27,13 +29,22 @@ import org.reflections.Reflections
 import java.lang.Exception
 import java.time.Duration
 import java.util.function.Consumer
+import kotlin.io.path.createDirectories
 
 @Suppress("unused", "unstableApiUsage")
 class Main : JavaPlugin() {
     private lateinit var commandManager: PaperCommandManager<CommandSourceStack>
     private lateinit var annotationParser: AnnotationParser<CommandSourceStack>
+
+    private lateinit var resourcePackLoader: ResourcePackLoader
+
     override fun onEnable() {
         logger.info("Starting Burb plugin...")
+        resourcePackLoader = ResourcePackLoader(
+            GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
+            dataPath.resolve("packs").createDirectories()
+        )
+
         Game.setup()
         setupCommands()
         setupEventListeners()
