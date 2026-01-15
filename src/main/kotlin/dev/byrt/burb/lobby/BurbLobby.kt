@@ -20,7 +20,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 
-object LobbyManager {
+object BurbLobby {
     fun playerJoinTitleScreen(player: Player) {
         player.gameMode = GameMode.ADVENTURE
         player.addPotionEffect(PotionEffect(PotionEffectType.HUNGER, PotionEffect.INFINITE_DURATION, 0, false, false))

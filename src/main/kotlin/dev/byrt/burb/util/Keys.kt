@@ -5,6 +5,11 @@ import org.bukkit.NamespacedKey
 
 object Keys {
     /**
+     * Hub related
+     */
+    val LOBBY_NPC = NamespacedKey(plugin, "burb.lobby.npc")
+    val LOBBY_BALL = NamespacedKey(plugin, "burb.lobby.ball")
+    /**
      * Fishing related
      */
     val FISH_RARITY = NamespacedKey(plugin, "fish.rarity")

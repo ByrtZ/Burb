@@ -57,7 +57,7 @@ object ServerItem {
     }
 
     fun getProfileItem(): ItemStack {
-        val profileItem = ItemStack(Material.RESIN_BRICKS, 1)
+        val profileItem = ItemStack(Material.RESIN_BRICK, 1)
         val profileItemMeta = profileItem.itemMeta
         profileItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>My Profile"))
         val loreList = mutableListOf(
@@ -69,5 +69,20 @@ object ServerItem {
         profileItemMeta.itemModel = NamespacedKey("minecraft", "profile")
         profileItem.itemMeta = profileItemMeta
         return profileItem
+    }
+
+    fun getAdminPanelItem(): ItemStack {
+        val adminItem = ItemStack(Material.DIAMOND, 1)
+        val adminItemMeta = adminItem.itemMeta
+        adminItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Admin Panel"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><red><prefix:warning> Coming soon... <prefix:warning>"),
+            Formatting.allTags.deserialize("<!i><yellow>Access exclusive settings."),
+            Formatting.allTags.deserialize("<!i>")
+        )
+        adminItemMeta.lore(loreList)
+        adminItem.itemMeta = adminItemMeta
+        return adminItem
     }
 }

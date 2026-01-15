@@ -6,14 +6,22 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemUsage
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.lobby.BurbNPC
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.util.Cooldowns
+import dev.byrt.burb.util.Keys
 
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.block.data.*
+import org.bukkit.entity.Mannequin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.persistence.PersistentDataType
+
+import java.util.Locale.getDefault
 
 @Suppress("unused")
 class InteractEvent: Listener {
@@ -57,5 +65,23 @@ class InteractEvent: Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    private fun onInteractEntity(e: PlayerInteractEntityEvent) {
+        /** On interact with mannequin, get PDC to check if is registered NPC **/
+        if(GameManager.getGameState() == GameState.IDLE) {
+            if(e.player.inventory.itemInMainHand.type == Material.AIR && e.rightClicked is Mannequin && e.player.gameMode  in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
+                val npcPdcString = e.rightClicked.persistentDataContainer.get(Keys.LOBBY_NPC, PersistentDataType.STRING)
+                if(npcPdcString != null) {
+                    val burbNPC = BurbNPC.valueOf(npcPdcString.uppercase(getDefault()))
+                    if(Cooldowns.attemptNpcInteraction(e.player)) {
+                        burbNPC.onInteract(e.player, burbNPC.npcName, burbNPC.npcNameColour)
+                    }
+                }
+            }
+        }
+
+        e.isCancelled = true
     }
 }

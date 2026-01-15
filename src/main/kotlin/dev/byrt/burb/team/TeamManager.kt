@@ -79,14 +79,32 @@ object TeamManager {
             }
         }
         ItemManager.givePlayerTeamBoots(player.getBukkitPlayer(), team)
-        player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
-        player.getBukkitPlayer().showTitle(
-            Title.title(
-                Formatting.allTags.deserialize(""),
-                Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)),
-                Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
-            )
-        )
+        when(team) {
+            in listOf(Teams.PLANTS, Teams.ZOMBIES) -> {
+                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
+                player.getBukkitPlayer().showTitle(
+                    Title.title(
+                        Formatting.allTags.deserialize(""),
+                        Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)),
+                        Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
+                    )
+                )
+            }
+            Teams.SPECTATOR -> {
+                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR))
+                player.getBukkitPlayer().showTitle(
+                    Title.title(
+                        Formatting.allTags.deserialize(""),
+                        Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR),
+                        Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
+                    )
+                )
+            }
+            else -> {
+                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize("<red>Something went wrong setting your team, please contact an admin if you see this message."))
+            }
+        }
+
         if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
             if(player.playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
                 refreshGlowing()
@@ -172,7 +190,7 @@ object TeamManager {
                         }
                     }
                 }
-                return if(teamMates.size <= 0) false else teamMates.size >= plants.size - 1
+                return if(teamMates.isEmpty()) false else teamMates.size >= plants.size - 1
             }
             Teams.ZOMBIES -> {
                 for(teamMate in zombies) {
@@ -182,7 +200,7 @@ object TeamManager {
                         }
                     }
                 }
-                return if(teamMates.size <= 0) false else teamMates.size >= zombies.size - 1
+                return if(teamMates.isEmpty()) false else teamMates.size >= zombies.size - 1
             }
             else -> { return false }
         }

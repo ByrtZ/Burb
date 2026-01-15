@@ -3,6 +3,7 @@ package dev.byrt.burb.command
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.Scores
+import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
@@ -10,7 +11,9 @@ import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.item.SubRarity
 import dev.byrt.burb.lobby.FishRarity
 import dev.byrt.burb.lobby.LobbyFishing
-import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.lobby.BurbLobby
+import dev.byrt.burb.lobby.BurbNPC
+import dev.byrt.burb.lobby.BurbNPCs
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
@@ -148,7 +151,7 @@ class AdminCommands {
     fun classCommand(css: CommandSourceStack) {
         if(css.sender is Player) {
             val player = css.sender as Player
-            LobbyManager.playerJoinTitleScreen(player)
+            BurbLobby.playerJoinTitleScreen(player)
         }
     }
 
@@ -176,6 +179,7 @@ class AdminCommands {
     @CommandDescription("Lists all running tasks")
     @Permission("burb.cmd.debug")
     fun debugTasks(css: CommandSourceStack) {
+        ChatUtility.broadcastDev("<dark_gray>Tasks printed to console, <click:open_url:'https://panel.pebblehost.com'>[Click here]</click> to view.", true)
         logger.warning("Active Workers:")
         Bukkit.getScheduler().activeWorkers.forEach { w -> logger.info("ID: ${w.taskId} ||||| Thread: ${w.thread} ||||| Thread name: ${w.thread.name} ||||| Owner: ${w.owner.name}") }
         logger.warning("Pending Tasks:")
@@ -300,6 +304,50 @@ class AdminCommands {
         if(css.sender is Player) {
             val player = css.sender as Player
             BurbInterface(player, BurbInterfaceType.ALL_COSMETICS)
+        }
+    }
+
+    @Command("debug npc spawn <npc>")
+    @CommandDescription("Debug command for NPCs")
+    @Permission("burb.cmd.debug")
+    fun debugSpawnNPC(css: CommandSourceStack, @Argument("npc") npc: BurbNPC) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            ChatUtility.broadcastDev("<dark_gray>${player.name} spawned NPC: ${npc.npcName} [$npc]", false)
+            BurbNPCs.spawnNPC(npc)
+        }
+    }
+
+    @Command("debug npc spawn_all")
+    @CommandDescription("Debug command for NPCs")
+    @Permission("burb.cmd.debug")
+    fun debugSpawnAllNPCs(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            ChatUtility.broadcastDev("<dark_gray>${player.name} spawned all registered NPCs", false)
+            BurbNPCs.spawnAllNPCs()
+        }
+    }
+
+    @Command("debug npc destroy_all")
+    @CommandDescription("Debug command for NPCs")
+    @Permission("burb.cmd.debug")
+    fun debugDestroyAllNPCs(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            BurbNPCs.clearNPCs()
+        }
+    }
+
+    @Command("debug list_spawns")
+    @CommandDescription("Debug command for spawn points")
+    @Permission("burb.cmd.debug")
+    fun debugSpawnsList(css: CommandSourceStack) {
+        if(css.sender is Player) {
+            val player = css.sender as Player
+            player.sendMessage(Formatting.allTags.deserialize("<plantscolour>Plant Spawns:"))
+            SpawnPoints.getPlantSpawns().forEach { spawn -> player.sendMessage(Formatting.allTags.deserialize("<burbcolour>Spawn at ${spawn.x}, ${spawn.y}, ${spawn.z} <#ffff00><click:run_command:'/tp @s ${spawn.x} ${spawn.y} ${spawn.z} ${spawn.yaw} ${spawn.pitch}'>[Click to teleport]</click>")) }
+            player.sendMessage(Formatting.allTags.deserialize("<zombiescolour>Zombie Spawns:"))
+            SpawnPoints.getZombieSpawns().forEach { spawn -> player.sendMessage(Formatting.allTags.deserialize("<burbcolour>Spawn at ${spawn.x}, ${spawn.y}, ${spawn.z} <#ffff00><click:run_command:'/tp @s ${spawn.x} ${spawn.y} ${spawn.z} ${spawn.yaw} ${spawn.pitch}'>[Click to teleport]</click>")) }
         }
     }
 }

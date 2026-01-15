@@ -28,7 +28,7 @@ import java.lang.Exception
 import java.time.Duration
 import java.util.function.Consumer
 
-@Suppress("unstableApiUsage")
+@Suppress("unused", "unstableApiUsage")
 class Main : JavaPlugin() {
     private lateinit var commandManager: PaperCommandManager<CommandSourceStack>
     private lateinit var annotationParser: AnnotationParser<CommandSourceStack>
@@ -43,7 +43,7 @@ class Main : JavaPlugin() {
     }
 
     override fun onDisable() {
-        logger.info("Cleaning up Burb plugin...")
+        logger.info("Disabling Burb plugin and cleaning up...")
         Game.cleanup()
     }
 

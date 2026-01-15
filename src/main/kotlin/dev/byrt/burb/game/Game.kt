@@ -5,6 +5,8 @@ import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.item.ItemManager
+import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.lobby.BurbNPCs
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -36,14 +38,18 @@ object Game {
         InfoBoardManager.buildScoreboard()
         TeamManager.buildDisplayTeams()
         CommitIntegration.grabLatestCommit()
+        LobbyBall.createLobbyBall()
+        BurbNPCs.spawnAllNPCs()
     }
 
     fun cleanup() {
+        BurbNPCs.clearNPCs()
         TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
         CapturePoints.clearCapturePoints()
         ItemManager.destroyBullets()
         LobbyBall.cleanup()
+        CommitIntegration.destroyUpdatesBoard()
     }
 
     fun reload() {
@@ -61,6 +67,8 @@ object Game {
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
+            if(!player.inventory.contains(ServerItem.getProfileItem())) player.inventory.setItem(8, ServerItem.getProfileItem())
         }
+        LobbyBall.createLobbyBall()
     }
 }

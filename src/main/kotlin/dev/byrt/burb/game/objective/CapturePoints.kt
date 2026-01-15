@@ -4,6 +4,7 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Scores
 import dev.byrt.burb.game.Timer
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
@@ -22,6 +23,7 @@ import org.bukkit.Particle
 import org.bukkit.entity.Display
 import org.bukkit.entity.TextDisplay
 import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.util.Transformation
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -38,7 +40,7 @@ object CapturePoints {
         listOf(
             CapturePoint.A to Location(Bukkit.getWorlds()[0], 80.5, 2.0, 104.5),
             CapturePoint.B to Location(Bukkit.getWorlds()[0], 17.5, 3.0, 153.5),
-            CapturePoint.C to Location(Bukkit.getWorlds()[0], -43.5, 1.0, 108.5)
+            CapturePoint.C to Location(Bukkit.getWorlds()[0], -43.5, 0.0, 108.5)
         ).forEach { (point, location) -> addCapturePoint(point, location) }
     }
 
@@ -89,8 +91,7 @@ object CapturePoints {
             else -> Teams.NULL
         }
 
-        if (suburbinatingTeam == Teams.PLANTS) Scores.addPlantsScore(3)
-        if (suburbinatingTeam == Teams.ZOMBIES) Scores.addZombiesScore(3)
+        Scores.addScore(suburbinatingTeam, 3)
 
         if (newSuburbinationTeam != suburbinatingTeam) {
             suburbinatingTeam = newSuburbinationTeam
@@ -102,7 +103,7 @@ object CapturePoints {
             }
             Bukkit.getOnlinePlayers().forEach { player ->
                 player.sendMessage(Formatting.allTags.deserialize(message))
-                if (Timer.getTimer() > 90) {
+                if (Timer.getTimer() > 120 && !SpecialEvents.isEventRunning()) {
                     val music = when (newSuburbinationTeam) {
                         Teams.PLANTS -> Music.SUBURBINATION_PLANTS
                         Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
@@ -114,11 +115,11 @@ object CapturePoints {
             when(newSuburbinationTeam) {
                 Teams.PLANTS -> for(player in Bukkit.getOnlinePlayers()
                     .filter { filter -> filter.burbPlayer().playerTeam == Teams.PLANTS }) {
-                    BurbPlayerData.appendExperience(player, 40)
+                    BurbPlayerData.appendExperience(player, 150)
                 }
                 Teams.ZOMBIES -> for(player in Bukkit.getOnlinePlayers()
                     .filter { filter -> filter.burbPlayer().playerTeam == Teams.ZOMBIES }) {
-                    BurbPlayerData.appendExperience(player, 40)
+                    BurbPlayerData.appendExperience(player, 150)
                 }
                 else -> {}
             }
@@ -150,6 +151,7 @@ object CapturePoints {
                         scoreboardTags.add("burb.game.capture_point.text_display")
                         alignment = TextDisplay.TextAlignment.CENTER
                         billboard = Display.Billboard.VERTICAL
+                        transformation = Transformation(transformation.translation, transformation.leftRotation, transformation.scale.add(1.5f, 1.5f, 1.5f), transformation.rightRotation)
                     }
                 }
 

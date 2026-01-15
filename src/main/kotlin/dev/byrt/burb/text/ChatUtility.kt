@@ -66,7 +66,7 @@ object ChatUtility {
 
 object GlobalRenderer : ChatRenderer {
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience): Component {
-        val playerHead = allTags.deserialize("<!i><white><head:${source.uniqueId}>")
+        val playerHead = allTags.deserialize("<!i><white><head:${source.uniqueId}> ")
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
         return if(source.hasPermission("burb.group.admin") && source.burbPlayer().playerTeam == Teams.SPECTATOR) {
             playerHead

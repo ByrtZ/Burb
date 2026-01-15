@@ -11,9 +11,10 @@ import org.bukkit.entity.Player
 
 //TODO: Dynamic system depending on capture point ownership
 object SpawnPoints {
+    //-38.5 11 76.5 0 0
     private val plantSpawns = listOf(
         Location(Bukkit.getWorlds()[0], 47.5, 2.0, 92.5, -32f, 0f),
-        Location(Bukkit.getWorlds()[0], -21.5, 2.0, 97.5, -130f, 0f),
+        Location(Bukkit.getWorlds()[0], -38.5, 11.0, 76.5, 0f, 0f),
         Location(Bukkit.getWorlds()[0], -53.5, 3.0, 137.5, -90f, 0f),
         Location(Bukkit.getWorlds()[0], 52.5, 2.0, 156.5, 165f, 0f)
     )
@@ -42,5 +43,13 @@ object SpawnPoints {
                 Location(Bukkit.getWorlds()[0], 10.5, 0.0, 0.5, 0f, 0f)
             }
         )
+    }
+
+    fun getPlantSpawns(): List<Location> {
+        return plantSpawns
+    }
+
+    fun getZombieSpawns(): List<Location> {
+        return zombieSpawns
     }
 }

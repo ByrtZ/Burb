@@ -19,13 +19,7 @@ import java.util.stream.Collectors
 object CommitIntegration {
     private val latestDefaultBranchCommitURL = URL("https://api.github.com/repos/ByrtZ/Burb/commits?per_page=1")
     fun grabLatestCommit() = runBlocking {
-        for(world in Bukkit.getWorlds()) {
-            for(textDisplay in world.getEntitiesByClass(TextDisplay::class.java)) {
-                if(textDisplay.scoreboardTags.contains("burb.lobby.updates_display")) {
-                    textDisplay.remove()
-                }
-            }
-        }
+        destroyUpdatesBoard()
         val commit = requestCommitData()
         ChatUtility.broadcastDev("<dark_gray>${if(commit == null) "Failed to fetch" else "Successfully fetched"} latest commit.", false)
         val commitUpdateDisplay = Bukkit.getWorlds()[0].spawn(Location(Bukkit.getWorlds()[0], -32.9375, 5.875, 0.5, -90.0f, 0.0f), TextDisplay::class.java).apply {
@@ -67,6 +61,16 @@ object CommitIntegration {
             null
         } finally {
             connection?.disconnect()
+        }
+    }
+
+    fun destroyUpdatesBoard() {
+        for(world in Bukkit.getWorlds()) {
+            for(textDisplay in world.getEntitiesByClass(TextDisplay::class.java)) {
+                if(textDisplay.scoreboardTags.contains("burb.lobby.updates_display")) {
+                    textDisplay.remove()
+                }
+            }
         }
     }
 }

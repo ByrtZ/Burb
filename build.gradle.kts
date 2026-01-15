@@ -1,6 +1,6 @@
 import java.io.BufferedReader
 
-val patchVersion = "INDEV"
+val patch = "INDEV"
 
 val commitHash = Runtime
     .getRuntime()
@@ -22,7 +22,7 @@ plugins {
 }
 
 group = "dev.byrt"
-version = "$patchVersion-build-$commitHash"
+version = "$patch-build-$commitHash"
 
 repositories {
     mavenCentral()

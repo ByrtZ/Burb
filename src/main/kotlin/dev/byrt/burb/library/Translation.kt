@@ -1,5 +1,6 @@
 package dev.byrt.burb.library
 
+import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 
 import org.bukkit.Bukkit
@@ -19,6 +20,8 @@ object Translation {
     object Teams {
         const val JOIN_TEAM = "You are now on team %d%s<reset>."
         const val LEAVE_TEAM = "You are no longer on team %d%s<reset.>"
+        const val JOIN_SPECTATOR = "You are now a <speccolour>Spectator<reset>."
+        const val LEAVE_SPECTATOR = "You are no longer a <speccolour>Spectator<reset>."
     }
     object Overtime {
         const val OVERTIME_PREFIX = "<#ff3333><bold>OVERTIME: "
@@ -29,10 +32,10 @@ object Translation {
         const val SUNBEAM_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>50<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}SUNBEAM<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
     }
     object TabList {
-        const val SERVER_LIST_PADDING = "<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■<red>■<dark_red>■"
-        const val SERVER_LIST_TITLE = " <gold><bold>Byrt's Server<reset> "
+        const val SERVER_LIST_PADDING = "<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■"
+        const val SERVER_LIST_TITLE = " <burbcolour><bold>SUBURBIA<reset> "
         val SERVER_LIST_VERSION = "<dark_gray>${Bukkit.getMinecraftVersion()}<reset>"
-        const val SERVER_LIST_GAME = "<white> ● <burbcolour><bold>???<reset>"
-        const val SERVER_LIST_EXTRA = "<white> ● <yellow>Coming soon...<reset>"
+        const val SERVER_LIST_GAME = "<white> ● <yellow>The zombies are coming.<reset>"
+        val SERVER_LIST_EXTRA = "<white> ● <dark_gray>${plugin.pluginMeta.displayName}<reset>"
     }
 }

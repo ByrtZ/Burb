@@ -1,7 +1,7 @@
 package dev.byrt.burb.event
 
 import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.logger
 import dev.byrt.burb.plugin
 
@@ -17,7 +17,7 @@ class ResourcePackEvent: Listener {
         if(e.status == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
             object : BukkitRunnable() {
                 override fun run() {
-                    LobbyManager.playerJoinTitleScreen(e.player)
+                    BurbLobby.playerJoinTitleScreen(e.player)
                 }
             }.runTaskLater(plugin, 30L)
         }

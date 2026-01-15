@@ -1,6 +1,8 @@
 package dev.byrt.burb.lobby
 
+import dev.byrt.burb.logger
 import dev.byrt.burb.plugin
+import dev.byrt.burb.util.Keys
 
 import org.bukkit.*
 import org.bukkit.entity.Display
@@ -8,6 +10,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.Firework
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Transformation
 import org.bukkit.util.Vector
@@ -27,7 +30,7 @@ object LobbyBall {
     private val lobbyBallNetZombiesMin = Location(Bukkit.getWorlds()[0], 35.0, -1.0, 43.0)
     private val lobbyBallNetZombiesMax = Location(Bukkit.getWorlds()[0], 44.0, 4.0, 45.0)
 
-    init {
+    fun createLobbyBall() {
         val ballDisplayEntity = lobbyBallSpawnLocation.world.spawnEntity(lobbyBallSpawnLocation, EntityType.ITEM_DISPLAY) as ItemDisplay
         val nerdBallItem = ItemStack(Material.ECHO_SHARD, 1)
         val nerdBallItemMeta = nerdBallItem.itemMeta
@@ -38,11 +41,13 @@ object LobbyBall {
         ballDisplayEntity.transformation = Transformation(Vector3f(0.0f, 0.8f, 0.0f), ballDisplayEntity.transformation.leftRotation, Vector3f(1f, 1f, 1f), ballDisplayEntity.transformation.rightRotation)
         ballDisplayEntity.brightness = Display.Brightness(15, 15)
         ballDisplayEntity.teleportDuration = 1
+        ballDisplayEntity.persistentDataContainer.set(Keys.LOBBY_BALL, PersistentDataType.STRING, ballDisplayEntity.uniqueId.toString())
         val ballPhysics = LobbyBallPhysics(ballDisplayEntity)
         ballMap[ballDisplayEntity.entityId] = ballPhysics
         ballPhysics.start()
     }
 
+    //TODO: Add bounding boxes instead of these box functions
     fun isInPlantsNet(ball: ItemDisplay): Boolean {
         return ball.location.x in lobbyBallNetPlantsMin.x..lobbyBallNetPlantsMax.x
                 && ball.location.y in lobbyBallNetPlantsMin.y..lobbyBallNetPlantsMax.y
@@ -68,6 +73,14 @@ object LobbyBall {
     fun cleanup() {
         ballMap.values.forEach { it.cleanup() }
         ballMap.clear()
+        // Destroy any stray balls
+        for(world in Bukkit.getWorlds()) {
+            for(ball in world.getEntitiesByClass(ItemDisplay::class.java)) {
+                if(ball.persistentDataContainer.has(Keys.LOBBY_BALL)) {
+                    ball.remove()
+                }
+            }
+        }
     }
 }
 
@@ -77,15 +90,16 @@ class LobbyBallPhysics(val ball: ItemDisplay) {
     fun start() {
         object : BukkitRunnable() {
             override fun run() {
-                if(!ball.isValid) {
+                if(ball.isDead) {
+                    logger.info("LobbyBall was destroyed, task cancelled")
                     cancel()
                     return
                 }
                 val currentLocation = ball.location
                 val nextLocation = currentLocation.clone().add(velocity)
-                val collisionX = currentLocation.world.getBlockAt(nextLocation.blockX, currentLocation.blockY, currentLocation.blockZ).type != Material.AIR
-                val collisionY = currentLocation.world.getBlockAt(currentLocation.blockX, nextLocation.blockY, currentLocation.blockZ).type != Material.AIR
-                val collisionZ = currentLocation.world.getBlockAt(currentLocation.blockX, currentLocation.blockY, nextLocation.blockZ).type != Material.AIR
+                val collisionX = currentLocation.world.getBlockAt(nextLocation.blockX, currentLocation.blockY, currentLocation.blockZ).type !in listOf(Material.AIR, Material.LIGHT, Material.MOSS_CARPET, Material.WHITE_CARPET)
+                val collisionY = currentLocation.world.getBlockAt(currentLocation.blockX, nextLocation.blockY, currentLocation.blockZ).type !in listOf(Material.AIR, Material.LIGHT, Material.MOSS_CARPET, Material.WHITE_CARPET)
+                val collisionZ = currentLocation.world.getBlockAt(currentLocation.blockX, currentLocation.blockY, nextLocation.blockZ).type !in listOf(Material.AIR, Material.LIGHT, Material.MOSS_CARPET, Material.WHITE_CARPET)
 
                 if(nextLocation.block.type == Material.SLIME_BLOCK) velocity.multiply(1.2)
                 if(nextLocation.block.type == Material.HONEY_BLOCK) velocity.multiply(0.3)

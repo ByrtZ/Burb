@@ -73,6 +73,7 @@ object Sounds {
         val LEVEL_UP_PLANTS = sound(key("burb.generic.level_up.plants"), Source.VOICE, 1f, 1f)
         val LEVEL_UP_ZOMBIES = sound(key("burb.generic.level_up.zombies"), Source.VOICE, 1f, 1f)
         val RANDO_NEW_CHARACTER = sound(key("burb.lobby.shop.pack_jingle"), Source.VOICE, 0.5f, 1f)
+        val NPC_INTERACT = sound(key("entity.villager.trade"), Source.VOICE, 1f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"

@@ -247,6 +247,13 @@ object PlayerVisuals {
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
 
+        // Add hub item
+        if(GameManager.getGameState() == GameState.IDLE) {
+            player.inventory.setItem(8, ServerItem.getProfileItem())
+        } else {
+            player.inventory.remove(ServerItem.getProfileItem())
+        }
+
         if(SpecialEvents.getCurrentEvent() == SpecialEvent.RANDOM_CHARACTER) {
             player.burbPlayer().setRandomCharacter()
             player.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.ARROW_PREFIX}<rainbow>Rando's Revenge<reset> morphed you into a different character!<newline>"))
@@ -256,12 +263,6 @@ object PlayerVisuals {
         }
 
         BurbCosmetics.equipCosmetics(player)
-
-        if(GameManager.getGameState() == GameState.IDLE) {
-            player.inventory.setItem(8, ServerItem.getProfileItem())
-        } else {
-            player.inventory.remove(ServerItem.getProfileItem())
-        }
 
         showPlayer(player)
     }
@@ -281,7 +282,7 @@ object PlayerVisuals {
                 }
                 if(timer < reloadTime) {
                     if(timer % 2 == 0) {
-                        player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.5f, pitch)
+                        player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.3f, pitch)
                         player.showTitle(
                             Title.title(
                                 Formatting.allTags.deserialize(""),

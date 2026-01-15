@@ -21,8 +21,8 @@ class PlayerMove: Listener {
                 val ball = ballPhysics.ball
                 val ballLocation = ball.location
                 if(player.location.world == ballLocation.world && player.location.distanceSquared(ballLocation) < 1.75) {
-                    val direction = player.location.toVector().subtract(ballLocation.toVector()).normalize().multiply(-1.25)
-                    direction.y += 0.35
+                    val direction = player.location.toVector().subtract(ballLocation.toVector()).normalize().multiply(-0.75)
+                    direction.y += 0.25
                     ballPhysics.applyForce(direction)
                 }
             }

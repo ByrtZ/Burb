@@ -1,9 +1,12 @@
 package dev.byrt.burb.player
 
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.BurbCharacterAbilities
 import dev.byrt.burb.item.BurbCharacterMainWeapon
+import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
@@ -41,9 +44,16 @@ fun BurbPlayer.characterSelect() {
     setCharacter(BurbCharacter.NULL)
     object : BukkitRunnable() {
         override fun run() {
-            if(playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbInterface(getBukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
+            if(playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                BurbInterface(getBukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
+            }
+            if(GameManager.getGameState() == GameState.IDLE) {
+                getBukkitPlayer().inventory.setItem(8, ServerItem.getProfileItem())
+            } else {
+                getBukkitPlayer().inventory.remove(ServerItem.getProfileItem())
+            }
         }
-    }.runTaskLater(plugin, 3 * 20L)
+    }.runTaskLater(plugin, 2 * 20L)
 }
 
 fun String.getCharacter(): BurbCharacter {

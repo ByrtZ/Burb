@@ -6,7 +6,7 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.getCharacter
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.library.Sounds
-import dev.byrt.burb.lobby.LobbyManager
+import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
@@ -79,7 +79,7 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
 
 object BurbInterfaces {
     suspend fun createTeamInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
-        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 3
         withTransform { pane, _ ->
             if(player.burbPlayer().playerTeam == Teams.PLANTS) {
@@ -95,7 +95,7 @@ object BurbInterfaces {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                LobbyManager.playerJoinHub(player)
+                                BurbLobby.playerJoinHub(player)
                             }
                         }
                     }
@@ -107,7 +107,7 @@ object BurbInterfaces {
                 plantsTeamItem.itemMeta = plantsTeamItemMeta
                 pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
                     player.burbPlayer().setTeam(Teams.PLANTS)
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -136,7 +136,7 @@ object BurbInterfaces {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                LobbyManager.playerJoinHub(player)
+                                BurbLobby.playerJoinHub(player)
                             }
                         }
                     }
@@ -148,7 +148,7 @@ object BurbInterfaces {
                 zombiesTeamItem.itemMeta = zombiesTeamItemMeta
                 pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
                     player.burbPlayer().setTeam(Teams.ZOMBIES)
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -180,7 +180,7 @@ object BurbInterfaces {
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
-                                LobbyManager.playerJoinHub(player)
+                                BurbLobby.playerJoinHub(player)
                             }
                         }
                     }
@@ -192,7 +192,7 @@ object BurbInterfaces {
                 spectatorsTeamItem.itemMeta = spectatorsTeamItemMeta
                 pane[2, 4] = StaticElement(drawable(spectatorsTeamItem)) {
                     player.burbPlayer().setTeam(Teams.SPECTATOR)
-                    player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                    player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
@@ -202,9 +202,24 @@ object BurbInterfaces {
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
-                                LobbyManager.playerJoinHub(player)
+                                BurbLobby.playerJoinHub(player)
                             }
                         }
+                    }
+                }
+            }
+        }
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[2,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
                     }
                 }
             }
@@ -212,7 +227,7 @@ object BurbInterfaces {
     }.open(player)
 
     suspend fun createCharacterInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
-        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 3
         withTransform { pane, _ ->
             var i = 0
@@ -228,7 +243,7 @@ object BurbInterfaces {
                         pane[1, i] = StaticElement(drawable(characterItem)) {
                             if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
                                 player.burbPlayer().setCharacter(character.characterName.getCharacter())
-                                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                                player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                                 player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
                                 player.showTitle(
                                     Title.title(
@@ -242,13 +257,28 @@ object BurbInterfaces {
                                     if(player.vehicle is ItemDisplay) {
                                         val veh = player.vehicle as ItemDisplay
                                         if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
-                                            LobbyManager.playerJoinHub(player)
+                                            BurbLobby.playerJoinHub(player)
                                         }
                                     }
                                 }
                             }
                         }
                         i++
+                    }
+                }
+            }
+        }
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[2,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
                     }
                 }
             }
@@ -323,19 +353,27 @@ object BurbInterfaces {
     }.open(player)
 
     suspend fun createProfileInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
-        titleSupplier = { Formatting.allTags.deserialize(interfaceType.interfaceName) }
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 3
 
         withTransform { pane, _ ->
             pane[1,3] = StaticElement(drawable(ServerItem.getTeamSwitcherItem())) {
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                 runBlocking { createTeamInterface(player, BurbInterfaceType.TEAM_SELECT) }
             }
         }
         withTransform { pane, _ ->
             pane[1,5] = StaticElement(drawable(ServerItem.getCosmeticsItem())) {
-                player.playSound(Sounds.Misc.INTERFACE_INTERACT)
+                player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                 runBlocking { createWardrobeInterface(player, BurbInterfaceType.WARDROBE) }
+            }
+        }
+        if(player.isOp) {
+            withTransform { pane, _ ->
+                pane[2,8] = StaticElement(drawable(ServerItem.getAdminPanelItem())) {
+                    player.playSound(Sounds.Misc.INTERFACE_ERROR)
+                    player.sendMessage(Formatting.allTags.deserialize("<red>This interface is not implemented yet."))
+                }
             }
         }
         withTransform { pane, _ ->
@@ -418,6 +456,21 @@ object BurbInterfaces {
                 ))
                 noCosmeticsMenuItem.itemMeta = noCosmeticsMenuItemMeta
                 pane[2,4] = StaticElement(drawable(noCosmeticsMenuItem))
+            }
+        }
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[5,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
+                    }
+                }
             }
         }
         /** Fill border with blank items **/

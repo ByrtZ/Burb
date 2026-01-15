@@ -134,10 +134,11 @@ object ItemUsage {
                     object : BukkitRunnable() {
                         override fun run() {
                             if(tnt.isOnGround && tnt.velocity.x <= 0.015 && tnt.velocity.y <= 0.015 && tnt.velocity.z <= 0.015) {
-                                tnt.fuseTicks = 90
                                 player.world.playSound(tnt.location, "burb.ability.peashooter.explosive.voice", SoundCategory.VOICE, 2.5f, 1f)
                                 object : BukkitRunnable() {
                                     override fun run() {
+                                        tnt.world.createExplosion(player,tnt.location, 3f, false, false)
+                                        tnt.remove()
                                         player.world.playSound(tnt.location, "burb.ability.peashooter.explosive.explode", SoundCategory.VOICE, 3f, 1f)
                                     }
                                 }.runTaskLater(plugin, 90L)
@@ -366,46 +367,52 @@ object ItemUsage {
                             var timer = 0
                             var ticks = 0
                             override fun run() {
-                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || !player.burbPlayer().isDead || !healingTeammate.burbPlayer().isDead || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-                                    if(ticks % 5 == 0) {
-                                        if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
-                                            player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
-                                            player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
-                                            cancel()
-                                        }
-                                        val startLoc = player.location.add(0.0, 0.25, 0.0)
-                                        val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
-                                        val steps = 10
-                                        val xIncrement = (endLoc.x - startLoc.x) / steps
-                                        val yIncrement = (endLoc.y - startLoc.y) / steps
-                                        val zIncrement = (endLoc.z - startLoc.z) / steps
+                                if(!player.burbPlayer().isDead && !healingTeammate.burbPlayer().isDead) {
+                                    if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                        if(ticks % 5 == 0) {
+                                            if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
+                                                player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                                player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                                cancel()
+                                            }
+                                            val startLoc = player.location.add(0.0, 0.25, 0.0)
+                                            val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
+                                            val steps = 10
+                                            val xIncrement = (endLoc.x - startLoc.x) / steps
+                                            val yIncrement = (endLoc.y - startLoc.y) / steps
+                                            val zIncrement = (endLoc.z - startLoc.z) / steps
 
-                                        for (i in 0..steps) {
-                                            val x = startLoc.x + xIncrement * i
-                                            var y = startLoc.y + yIncrement * i
-                                            val z = startLoc.z + zIncrement * i
+                                            for (i in 0..steps) {
+                                                val x = startLoc.x + xIncrement * i
+                                                var y = startLoc.y + yIncrement * i
+                                                val z = startLoc.z + zIncrement * i
 
-                                            y += sin(Math.PI * i / steps) * 0.05
-                                            val particleLoc = Location(startLoc.world, x, y, z)
-                                            player.world.spawnParticle(
-                                                Particle.DUST,
-                                                particleLoc,
-                                                0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                DustOptions(Color.YELLOW, 1.5f)
-                                            )
+                                                y += sin(Math.PI * i / steps) * 0.05
+                                                val particleLoc = Location(startLoc.world, x, y, z)
+                                                player.world.spawnParticle(
+                                                    Particle.DUST,
+                                                    particleLoc,
+                                                    0,
+                                                    0.0,
+                                                    0.0,
+                                                    0.0,
+                                                    DustOptions(Color.YELLOW, 1.5f)
+                                                )
+                                            }
+                                            if(healingTeammate.health >= 19.75) {
+                                                healingTeammate.health = 20.0
+                                                player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
+                                                player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                                cancel()
+                                            } else {
+                                                healingTeammate.health += 0.25
+                                                player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.5<red>${HEART_UNICODE}"))
+                                            }
                                         }
-                                        if(healingTeammate.health >= 19.75) {
-                                            healingTeammate.health = 20.0
-                                            player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
-                                            player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
-                                            cancel()
-                                        } else {
-                                            healingTeammate.health += 0.25
-                                            player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.5<red>${HEART_UNICODE}"))
-                                        }
+                                    } else {
+                                        player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                        player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                        cancel()
                                     }
                                 } else {
                                     player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
@@ -509,11 +516,9 @@ object ItemUsage {
                             }
                             override fun run() {
                                 if(!potatoMineEntity.isDead) {
-                                    for(nearbyEnemy in potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null }) {
-                                        potatoMineEntity.world.spawn(potatoMineEntity.location.clone(), TNTPrimed::class.java).apply {
-                                            source = player
-                                            fuseTicks = 0
-                                        }
+                                    val nearbyEnemies = potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null }
+                                    if(nearbyEnemies.isNotEmpty()) {
+                                        potatoMineEntity.world.createExplosion(player, potatoMineEntity.location, 2.5f, false, false)
                                         potatoMineEntity.world.playSound(potatoMineEntity.location, "block.gravel.break", 1f, 1f)
                                         potatoMineEntity.remove()
                                         cancel()
@@ -650,11 +655,8 @@ object ItemUsage {
                                         }
                                         zpgEntity.teleport(zpgEntity.location.add(direction))
                                         val nearbyEntities = zpgEntity.location.getNearbyPlayers(0.1).filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }
-                                        for(entity in nearbyEntities) {
-                                            zpgEntity.world.spawn(zpgEntity.location, TNTPrimed::class.java).apply {
-                                                source = player
-                                                fuseTicks = 0
-                                            }
+                                        if(nearbyEntities.isNotEmpty()) {
+                                            zpgEntity.world.createExplosion(player,zpgEntity.location, 2.5f, false, false)
                                             zpgEntity.remove()
                                             cancel()
                                         }
@@ -662,9 +664,7 @@ object ItemUsage {
                                             zpgEntity.location.world.playSound(zpgEntity.location, "burb.ability.foot_soldier.zpg.whizz", SoundCategory.VOICE, 1f, 1f)
                                         }
                                         if(zpgEntity.location.block.getRelative(BlockFace.DOWN).type != Material.AIR || ticksLived >= 200) {
-                                            val tnt = zpgEntity.world.spawn(zpgEntity.location, TNTPrimed::class.java)
-                                            tnt.source = player
-                                            tnt.fuseTicks = 0
+                                            zpgEntity.world.createExplosion(player,zpgEntity.location, 2.5f, false, false)
                                             zpgEntity.remove()
                                             cancel()
                                         }
@@ -714,10 +714,7 @@ object ItemUsage {
                                 ultraBallVehicle.remove()
                             }
                             if(ultraBall.isDead) {
-                                ultraBall.location.world.spawn(ultraBall.location.add(0.0, 1.0, 0.0), TNTPrimed::class.java).apply {
-                                    source = player
-                                    fuseTicks = 0
-                                }
+                                ultraBall.world.createExplosion(player,ultraBall.location.add(0.0, 1.0, 0.0), 2f, false, false)
                                 ultraBall.remove()
                                 ultraBallVehicle.remove()
                                 cancel()
@@ -749,46 +746,52 @@ object ItemUsage {
                             var timer = 0
                             var ticks = 0
                             override fun run() {
-                                if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || player.burbPlayer().isDead || healingTeammate.burbPlayer().isDead || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-                                    if(ticks % 5 == 0) {
-                                        if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
-                                            player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
-                                            player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
-                                            cancel()
-                                        }
-                                        val startLoc = player.location.add(0.0, 0.25, 0.0)
-                                        val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
-                                        val steps = 10
-                                        val xIncrement = (endLoc.x - startLoc.x) / steps
-                                        val yIncrement = (endLoc.y - startLoc.y) / steps
-                                        val zIncrement = (endLoc.z - startLoc.z) / steps
+                                if(!player.burbPlayer().isDead && !healingTeammate.burbPlayer().isDead) {
+                                    if(player.location.distanceSquared(healingTeammate.location) <= 64.0 || timer <= 5 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                        if(ticks % 5 == 0) {
+                                            if(player.location.distanceSquared(healingTeammate.location) > 64.0) {
+                                                player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                                player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                                cancel()
+                                            }
+                                            val startLoc = player.location.add(0.0, 0.25, 0.0)
+                                            val endLoc = healingTeammate.location.add(0.0, 0.25, 0.0)
+                                            val steps = 10
+                                            val xIncrement = (endLoc.x - startLoc.x) / steps
+                                            val yIncrement = (endLoc.y - startLoc.y) / steps
+                                            val zIncrement = (endLoc.z - startLoc.z) / steps
 
-                                        for (i in 0..steps) {
-                                            val x = startLoc.x + xIncrement * i
-                                            var y = startLoc.y + yIncrement * i
-                                            val z = startLoc.z + zIncrement * i
+                                            for (i in 0..steps) {
+                                                val x = startLoc.x + xIncrement * i
+                                                var y = startLoc.y + yIncrement * i
+                                                val z = startLoc.z + zIncrement * i
 
-                                            y += sin(Math.PI * i / steps) * 0.05
-                                            val particleLoc = Location(startLoc.world, x, y, z)
-                                            player.world.spawnParticle(
-                                                Particle.DUST,
-                                                particleLoc,
-                                                0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                DustOptions(Color.PURPLE, 1.5f)
-                                            )
+                                                y += sin(Math.PI * i / steps) * 0.05
+                                                val particleLoc = Location(startLoc.world, x, y, z)
+                                                player.world.spawnParticle(
+                                                    Particle.DUST,
+                                                    particleLoc,
+                                                    0,
+                                                    0.0,
+                                                    0.0,
+                                                    0.0,
+                                                    DustOptions(Color.PURPLE, 1.5f)
+                                                )
+                                            }
+                                            if(healingTeammate.health >= 19.5) {
+                                                healingTeammate.health = 20.0
+                                                player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
+                                                player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                                cancel()
+                                            } else {
+                                                healingTeammate.health += 0.5
+                                                player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.75<red>${HEART_UNICODE}"))
+                                            }
                                         }
-                                        if(healingTeammate.health >= 19.5) {
-                                            healingTeammate.health = 20.0
-                                            player.sendActionBar(Formatting.allTags.deserialize("<green>${healingTeammate.name} fully healed"))
-                                            player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
-                                            cancel()
-                                        } else {
-                                            healingTeammate.health += 0.5
-                                            player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.75<red>${HEART_UNICODE}"))
-                                        }
+                                    } else {
+                                        player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
+                                        player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                        cancel()
                                     }
                                 } else {
                                     player.sendActionBar(Formatting.allTags.deserialize("<red>Healing requirements failed or timer exceeded"))
