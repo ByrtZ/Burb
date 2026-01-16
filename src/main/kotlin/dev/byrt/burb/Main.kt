@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import org.incendo.cloud.annotations.AnnotationParser
 import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.execution.ExecutionCoordinator
+import org.incendo.cloud.kotlin.coroutines.annotations.installCoroutineSupport
 import org.incendo.cloud.paper.PaperCommandManager
 import org.incendo.cloud.processors.cache.SimpleCache
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration
@@ -37,7 +38,11 @@ class Main : JavaPlugin() {
     private lateinit var commandManager: PaperCommandManager<CommandSourceStack>
     private lateinit var annotationParser: AnnotationParser<CommandSourceStack>
 
-    private lateinit var resourcePackLoader: ResourcePackLoader
+    lateinit var resourcePackLoader: ResourcePackLoader
+        private set
+
+    lateinit var resourcePackApplier: ResourcePackApplier
+        private set
 
     override fun onEnable() {
         logger.info("Starting Burb plugin...")
@@ -45,7 +50,9 @@ class Main : JavaPlugin() {
             GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
             dataPath.resolve("packs").createDirectories()
         )
-        server.pluginManager.registerEvents(ResourcePackApplier(resourcePackLoader), this)
+
+        resourcePackApplier = ResourcePackApplier(resourcePackLoader)
+        server.pluginManager.registerEvents(resourcePackApplier, this)
 
         Game.setup()
         setupCommands()
@@ -66,7 +73,7 @@ class Main : JavaPlugin() {
             .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
             .buildOnEnable(this)
 
-        annotationParser = AnnotationParser(commandManager, CommandSourceStack::class.java)
+        annotationParser = AnnotationParser(commandManager, CommandSourceStack::class.java).installCoroutineSupport()
         annotationParser.parseContainers()
 
         setupCommandConfirmation()
@@ -134,6 +141,6 @@ class Main : JavaPlugin() {
     }
 }
 
-val plugin = Bukkit.getPluginManager().getPlugin("Burb")!!
+val plugin = Bukkit.getPluginManager().getPlugin("Burb")!! as Main
 val logger = plugin.logger
 val messenger = Bukkit.getMessenger()

@@ -15,10 +15,10 @@ val commitHash = Runtime
     }
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    kotlin("kapt") version "2.0.0"
+    kotlin("jvm") version "2.3.0"
+    kotlin("kapt") version "2.3.0"
     kotlin("plugin.serialization") version "2.0.0"
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.gradleup.shadow") version "9.3.1"
     id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
@@ -32,7 +32,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-core:2.0.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
@@ -68,8 +67,9 @@ val shadowed by configurations.creating {
 
 tasks {
     shadowJar {
-        isEnableRelocation = true
-        configurations = listOf(shadowed)
+        // FIXME(lucy): re-enable me!
+//        enableAutoRelocation = true
+        configurations = listOf()
         relocationPrefix = "dev.byrt.burb.shade"
     }
     runServer {

@@ -52,6 +52,13 @@ class ResourcePackLoader(
     }
 
     /**
+     * Reloads the resource pack.
+     */
+    suspend fun reloadPack(newTag: String? = null) {
+        loadPack(newTag ?: tag)
+    }
+
+    /**
      * Loads the pack from the registry.
      */
     private suspend fun loadPack(tag: String) = reloadMutex.withLock {
@@ -90,6 +97,7 @@ class ResourcePackLoader(
             localHashPath.writeBytes(localHash)
 
             currentPack = newPack.copy(hash = localHash)
+            this.tag = tag
             return@withLock
         }
 
@@ -99,5 +107,6 @@ class ResourcePackLoader(
             throw IllegalStateException("Locally stored pack hash does not match expected hash")
         }
         currentPack = newPack.copy(hash = hash)
+        this.tag = tag
     }
 }
