@@ -8,7 +8,7 @@ import dev.byrt.burb.game.Rounds
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
 
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import org.bukkit.command.CommandSender
 import org.incendo.cloud.annotations.Argument
 
 import org.incendo.cloud.annotations.Command
@@ -24,10 +24,10 @@ class GameCommands {
     @CommandDescription("Starts the game.")
     @Permission("burb.cmd.game")
     @Confirmation
-    fun start(css: CommandSourceStack) {
+    fun start(sender: CommandSender) {
         if(GameManager.getGameState() == GameState.IDLE) {
             //TODO: Add team quantity check
-            ChatUtility.broadcastDev("<yellow>${css.sender.name}<green> started a Suburbination game.", false)
+            ChatUtility.broadcastDev("<yellow>${sender.name}<green> started a Suburbination game.", false)
             Game.start()
         } else {
             return
@@ -38,9 +38,9 @@ class GameCommands {
     @CommandDescription("Stops the game.")
     @Permission("burb.cmd.game")
     @Confirmation
-    fun stop(css: CommandSourceStack) {
+    fun stop(sender: CommandSender) {
         if(GameManager.getGameState() != GameState.IDLE) {
-            ChatUtility.broadcastDev("<yellow>${css.sender.name}<red> stopped the Suburbination game.", false)
+            ChatUtility.broadcastDev("<yellow>${sender.name}<red> stopped the Suburbination game.", false)
             Game.stop()
         } else {
             return
@@ -50,9 +50,9 @@ class GameCommands {
     @Command("game reload")
     @CommandDescription("Reloads the game.")
     @Permission("burb.cmd.game")
-    fun reload(css: CommandSourceStack) {
+    fun reload(sender: CommandSender) {
         if(GameManager.getGameState() == GameState.GAME_END) {
-            ChatUtility.broadcastDev("${css.sender.name} reloaded the game.", false)
+            ChatUtility.broadcastDev("${sender.name} reloaded the game.", false)
             Game.reload()
         } else {
             return
@@ -62,10 +62,10 @@ class GameCommands {
     @Command("rounds set <amount>")
     @CommandDescription("Sets the total number of rounds.")
     @Permission("burb.cmd.game")
-    fun setRounds(css: CommandSourceStack, @Argument amount: Int) {
+    fun setRounds(sender: CommandSender, @Argument amount: Int) {
         if(amount !in 1..3) return
         if(GameManager.getGameState() == GameState.IDLE) {
-            ChatUtility.broadcastDev("<yellow>${css.sender.name} <gray>set the total number of rounds to $amount.", false)
+            ChatUtility.broadcastDev("<yellow>${sender.name} <gray>set the total number of rounds to $amount.", false)
             Rounds.setTotalRounds(amount)
         } else {
             return
@@ -75,7 +75,7 @@ class GameCommands {
     @Command("event start <event>")
     @CommandDescription("Starts the specified event.")
     @Permission("burb.cmd.game")
-    fun startEvent(css: CommandSourceStack, @Argument("event") newEvent: SpecialEvent) {
+    fun startEvent(sender: CommandSender, @Argument("event") newEvent: SpecialEvent) {
         if(GameManager.getGameState() == GameState.IN_GAME) {
             SpecialEvents.startEvent(newEvent)
         } else {

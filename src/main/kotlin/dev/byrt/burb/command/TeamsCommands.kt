@@ -10,9 +10,8 @@ import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.TeamManager.getPlayerNames
 import dev.byrt.burb.team.Teams
 
-import io.papermc.paper.command.brigadier.CommandSourceStack
-
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 import org.incendo.cloud.annotations.*
@@ -24,22 +23,22 @@ class TeamsCommands {
     @Command("teams set <player> <team>")
     @CommandDescription("Puts the specified player on the specified team.")
     @Permission("burb.cmd.teams")
-    fun setTeam(css: CommandSourceStack, @Argument("player") player : Player, @Argument("team") team : Teams) {
+    fun setTeam(sender: CommandSender, @Argument("player") player : Player, @Argument("team") team : Teams) {
         if(GameManager.getGameState() == GameState.IDLE) {
             player.burbPlayer().setTeam(team)
         } else {
-            css.sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
+            sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
         }
     }
 
     @Command("teams shuffle")
     @CommandDescription("Automatically assigns everyone online to a team.")
     @Permission("burb.cmd.teams")
-    fun autoTeam(css: CommandSourceStack, @Flag("ignoreAdmins") doesIgnoreAdmins: Boolean) {
+    fun autoTeam(sender: CommandSender, @Flag("ignoreAdmins") doesIgnoreAdmins: Boolean) {
         if(GameManager.getGameState() == GameState.IDLE) {
             if(!doesIgnoreAdmins) {
-                ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${css.sender.name}.", false)
-                TeamManager.shuffleTeams(css.sender, plugin.server.onlinePlayers.toSet(), false)
+                ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${sender.name}.", false)
+                TeamManager.shuffleTeams(sender, plugin.server.onlinePlayers.toSet(), false)
             } else {
                 try {
                     val nonAdmins = mutableSetOf<Player>()
@@ -49,37 +48,37 @@ class TeamsCommands {
                         }
                     }
                     if(nonAdmins.isEmpty()) {
-                        css.sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be shuffled in non-admin mode if only admins are online."))
+                        sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be shuffled in non-admin mode if only admins are online."))
                     } else {
-                        TeamManager.shuffleTeams(css.sender, nonAdmins, true)
+                        TeamManager.shuffleTeams(sender, nonAdmins, true)
                     }
                 } catch(e : Exception) {
-                    css.sender.sendMessage(Formatting.allTags.deserialize("<red>An unknown error occurred when attempting to shuffle teams."))
+                    sender.sendMessage(Formatting.allTags.deserialize("<red>An unknown error occurred when attempting to shuffle teams."))
                 }
             }
         } else {
-            css.sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
+            sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
         }
     }
 
     @Command("teams list <option>")
     @CommandDescription("Allows the executing player to see the array of the specified team.")
     @Permission("burb.cmd.teams")
-    fun teamList(css: CommandSourceStack, @Argument("option") option : TeamsListOptions) {
+    fun teamList(sender: CommandSender, @Argument("option") option : TeamsListOptions) {
         when (option) {
             TeamsListOptions.PLANTS -> {
-                css.sender.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>Plants Team<white>:<reset><newline><italic><gray>${TeamManager.getPlants().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>Plants Team<white>:<reset><newline><italic><gray>${TeamManager.getPlants().getPlayerNames()}"))
             }
             TeamsListOptions.ZOMBIES -> {
-                css.sender.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>Zombies Team<white>:<reset><newline><italic><gray>${TeamManager.getZombies().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>Zombies Team<white>:<reset><newline><italic><gray>${TeamManager.getZombies().getPlayerNames()}"))
             }
             TeamsListOptions.SPECTATOR -> {
-                css.sender.sendMessage(Formatting.allTags.deserialize("<speccolour><bold>Spectators<white>:<reset><newline><italic><gray>${TeamManager.getSpectators().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<speccolour><bold>Spectators<white>:<reset><newline><italic><gray>${TeamManager.getSpectators().getPlayerNames()}"))
             }
             TeamsListOptions.ALL -> {
-                css.sender.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>Plants Team<white>:<reset><newline><italic><gray>${TeamManager.getPlants().getPlayerNames()}"))
-                css.sender.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>Zombies Team<white>:<reset><newline><italic><gray>${TeamManager.getZombies().getPlayerNames()}"))
-                css.sender.sendMessage(Formatting.allTags.deserialize("<speccolour><bold>Spectators<white>:<reset><newline><italic><gray>${TeamManager.getSpectators().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<plantscolour><bold>Plants Team<white>:<reset><newline><italic><gray>${TeamManager.getPlants().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<zombiescolour><bold>Zombies Team<white>:<reset><newline><italic><gray>${TeamManager.getZombies().getPlayerNames()}"))
+                sender.sendMessage(Formatting.allTags.deserialize("<speccolour><bold>Spectators<white>:<reset><newline><italic><gray>${TeamManager.getSpectators().getPlayerNames()}"))
             }
         }
     }

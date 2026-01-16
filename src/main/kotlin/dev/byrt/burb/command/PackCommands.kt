@@ -2,7 +2,7 @@ package dev.byrt.burb.command
 
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
@@ -17,21 +17,21 @@ class PackCommands {
 
     @Command("pack refresh")
     @Confirmation
-    suspend fun packRefresh(css: CommandSourceStack) {
+    suspend fun packRefresh(sender: CommandSender) {
         plugin.resourcePackLoader.reloadPack()
         ChatUtility.broadcastDev(
-            "<yellow>${css.sender.name} <green>refreshed<reset> the <notifcolour>resource pack<reset>.",
+            "<yellow>${sender.name} <green>refreshed<reset> the <notifcolour>resource pack<reset>.",
             false
         )
     }
 
     @Command("pack on [player]")
-    fun enableForPlayer(css: CommandSourceStack, @Argument player: Player?) {
-        plugin.resourcePackApplier.enablePacks(player ?: css.sender as? Player ?: return)
+    fun enableForPlayer(sender: CommandSender, @Argument player: Player?) {
+        plugin.resourcePackApplier.enablePacks(player ?: sender as? Player ?: return)
     }
 
     @Command("pack off [player]")
-    fun disableForPlayer(css: CommandSourceStack, @Argument player: Player?) {
-        plugin.resourcePackApplier.disablePacks(player ?: css.sender as? Player ?: return)
+    fun disableForPlayer(sender: CommandSender, @Argument player: Player?) {
+        plugin.resourcePackApplier.disablePacks(player ?: sender as? Player ?: return)
     }
 }
