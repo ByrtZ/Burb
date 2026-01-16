@@ -59,18 +59,25 @@ kotlin {
     }
 }
 
-// lucy's quick and dirty shadow fix to make slf4j happy
-val shadowed by configurations.creating {
-    extendsFrom(configurations.implementation.get())
-    exclude(group = "org.slf4j")
+val shaded by configurations.creating {
+    extendsFrom(configurations.runtimeClasspath.get())
+    isCanBeResolved = true
+
+    // These are maven group IDs, not java packages!
+    exclude("com.google.code.gson")
+    exclude("com.google.errorprone")
+    exclude("org.checkerframework")
+    exclude("org.intellij")
+    exclude("org.jetbrains")
+    exclude("org.slf4j")
 }
 
 tasks {
     shadowJar {
-        // FIXME(lucy): re-enable me!
-//        enableAutoRelocation = true
-        configurations = listOf()
-        relocationPrefix = "dev.byrt.burb.shade"
+        configurations = listOf(shaded)
+        exclude(
+            "javax/annotation/**",
+        )
     }
     runServer {
         minecraftVersion("1.21.11")
@@ -79,7 +86,7 @@ tasks {
         val props = mapOf("version" to version)
         inputs.properties(props)
         filteringCharset = "UTF-8"
-        filesMatching("plugin.yml") {
+        filesMatching("paper-plugin.yml") {
             expand(props)
         }
     }
