@@ -3,6 +3,7 @@ package dev.byrt.burb
 import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
+import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.GitHubReleasesRegistry
 
@@ -44,6 +45,7 @@ class Main : JavaPlugin() {
             GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
             dataPath.resolve("packs").createDirectories()
         )
+        server.pluginManager.registerEvents(ResourcePackApplier(resourcePackLoader), this)
 
         Game.setup()
         setupCommands()

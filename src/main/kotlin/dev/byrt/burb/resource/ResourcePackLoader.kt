@@ -1,5 +1,6 @@
 package dev.byrt.burb.resource
 
+import dev.byrt.burb.plugin
 import dev.byrt.burb.resource.registry.ResourcePackRegistry
 import dev.byrt.burb.util.BurbHttpClient
 import io.ktor.client.request.*
@@ -8,7 +9,7 @@ import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.bukkit.event.Listener
+import org.bukkit.Bukkit
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -22,7 +23,7 @@ import kotlin.io.path.*
 class ResourcePackLoader(
     private val registry: ResourcePackRegistry,
     private val localStorageDir: Path,
-) : Listener {
+) {
 
     private companion object {
         private val logger = LoggerFactory.getLogger(ResourcePackLoader::class.java)
@@ -32,8 +33,12 @@ class ResourcePackLoader(
     private var tag = "latest"
     var currentPack: RemotePack? = null
         private set(value) {
+            if (field == value) return // Don't do anything if the pack hasn't changed
             field = value
             logger.info("New active pack: ${value?.id}")
+            Bukkit.getScheduler().runTask(plugin) { _ ->
+                Bukkit.getPluginManager().callEvent(ResourcePackChangedEvent(value))
+            }
         }
 
     // Only allow one reload at a time

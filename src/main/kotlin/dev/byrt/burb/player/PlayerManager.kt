@@ -16,7 +16,7 @@ object PlayerManager {
         val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL, isDead = false)
         burbPlayers.add(burbPlayer)
         BurbPlayerData.getPlayerData(player)
-        ResourcePacker.applyPackPlayer(player)
+//        ResourcePacker.applyPackPlayer(player)
         ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)
     }
