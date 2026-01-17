@@ -8,8 +8,7 @@ import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.Teams
 
-import io.papermc.paper.command.brigadier.CommandSourceStack
-
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 import org.incendo.cloud.annotations.Argument
@@ -24,33 +23,32 @@ class PlayerCommands {
     @Command("player <player>")
     @CommandDescription("Gets all information about a player that is stored.")
     @Permission("burb.cmd.player")
-    fun getPlayer(css: CommandSourceStack, @Argument("player") player : Player) {
+    fun getPlayer(sender: CommandSender, @Argument("player") player: Player) {
         val abilityNames = mutableSetOf<String>()
         player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> abilityNames.add(ability.abilityName) }
-        css.sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}<speccolour>\nDead: <yellow>${player.burbPlayer().isDead}"))
+        sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}<speccolour>\nDead: <yellow>${player.burbPlayer().isDead}"))
     }
 
     @Command("player <player> type")
     @CommandDescription("Gets the specified player's type.")
     @Permission("burb.cmd.player")
-    fun getType(css: CommandSourceStack, @Argument("player") player : Player) {
-        css.sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s type is <gold>${player.burbPlayer().playerType}<yellow>."))
+    fun getType(sender: CommandSender, @Argument("player") player: Player) {
+        sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s type is <gold>${player.burbPlayer().playerType}<yellow>."))
     }
 
     @Command("player <player> team")
     @CommandDescription("Gets the specified player's team.")
     @Permission("burb.cmd.player")
-    fun getTeam(css: CommandSourceStack, @Argument("player") player : Player) {
-        css.sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s team is <gold>${player.burbPlayer().playerTeam}<yellow>."))
+    fun getTeam(sender: CommandSender, @Argument("player") player: Player) {
+        sender.sendMessage(Formatting.allTags.deserialize("<yellow>Player <gold>${player.name}<yellow>'s team is <gold>${player.burbPlayer().playerTeam}<yellow>."))
     }
 
     @Command("character")
     @CommandDescription("Opens character selection screen.")
     @Permission("burb.cmd.player")
-    fun setCharacter(css: CommandSourceStack) {
-        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
-            val player = css.sender as Player
-            if(player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+    fun setCharacter(player: Player) {
+        if (GameManager.getGameState() == GameState.IDLE || player.isOp) {
+            if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
             }
         }
@@ -59,9 +57,8 @@ class PlayerCommands {
     @Command("teams")
     @CommandDescription("Opens team selection screen.")
     @Permission("burb.cmd.player")
-    fun setTeam(css: CommandSourceStack) {
-        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
-            val player = css.sender as Player
+    fun setTeam(player: Player) {
+        if (GameManager.getGameState() == GameState.IDLE || player.isOp) {
             BurbInterface(player, BurbInterfaceType.TEAM_SELECT)
         }
     }
@@ -69,9 +66,8 @@ class PlayerCommands {
     @Command("wardrobe")
     @CommandDescription("Opens the wardrobe.")
     @Permission("burb.cmd.wardrobe")
-    fun openWardrobe(css: CommandSourceStack) {
-        if(css.sender is Player && GameManager.getGameState() == GameState.IDLE || css.sender is Player && css.sender.isOp) {
-            val player = css.sender as Player
+    fun openWardrobe(player: Player) {
+        if (GameManager.getGameState() == GameState.IDLE || player.isOp) {
             BurbInterface(player, BurbInterfaceType.WARDROBE)
         }
     }

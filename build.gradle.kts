@@ -15,9 +15,10 @@ val commitHash = Runtime
     }
 
 plugins {
-    kotlin("jvm") version "2.0.0"
-    kotlin("kapt") version "2.0.0"
-    id("io.github.goooler.shadow") version "8.1.7"
+    kotlin("jvm") version "2.3.0"
+    kotlin("kapt") version "2.3.0"
+    kotlin("plugin.serialization") version "2.0.0"
+    id("com.gradleup.shadow") version "9.3.1"
     id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
@@ -31,7 +32,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
     implementation("org.incendo:cloud-core:2.0.0")
     implementation("org.incendo:cloud-paper:2.0.0-beta.10")
@@ -59,10 +59,25 @@ kotlin {
     }
 }
 
+val shaded by configurations.creating {
+    extendsFrom(configurations.runtimeClasspath.get())
+    isCanBeResolved = true
+
+    // These are maven group IDs, not java packages!
+    exclude("com.google.code.gson")
+    exclude("com.google.errorprone")
+    exclude("org.checkerframework")
+    exclude("org.intellij")
+    exclude("org.jetbrains")
+    exclude("org.slf4j")
+}
+
 tasks {
     shadowJar {
-        isEnableRelocation = true
-        relocationPrefix = "dev.byrt.burb.shade"
+        configurations = listOf(shaded)
+        exclude(
+            "javax/annotation/**",
+        )
     }
     runServer {
         minecraftVersion("1.21.11")
@@ -71,7 +86,7 @@ tasks {
         val props = mapOf("version" to version)
         inputs.properties(props)
         filteringCharset = "UTF-8"
-        filesMatching("plugin.yml") {
+        filesMatching("paper-plugin.yml") {
             expand(props)
         }
     }

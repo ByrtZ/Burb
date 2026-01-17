@@ -1,39 +1,53 @@
 package dev.byrt.burb
 
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
-
-import io.papermc.paper.command.brigadier.CommandSourceStack
-
+import dev.byrt.burb.resource.ResourcePackApplier
+import dev.byrt.burb.resource.ResourcePackLoader
+import dev.byrt.burb.resource.registry.GitHubReleasesRegistry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
-
 import org.incendo.cloud.annotations.AnnotationParser
 import org.incendo.cloud.description.CommandDescription
 import org.incendo.cloud.execution.ExecutionCoordinator
-import org.incendo.cloud.paper.PaperCommandManager
-import org.incendo.cloud.processors.cache.SimpleCache
+import org.incendo.cloud.kotlin.coroutines.annotations.installCoroutineSupport
+import org.incendo.cloud.paper.LegacyPaperCommandManager
+import org.incendo.cloud.processors.cache.CaffeineCache
 import org.incendo.cloud.processors.confirmation.ConfirmationConfiguration
 import org.incendo.cloud.processors.confirmation.ConfirmationManager
 import org.incendo.cloud.processors.confirmation.annotation.ConfirmationBuilderModifier
-
 import org.reflections.Reflections
-
-import java.lang.Exception
 import java.time.Duration
 import java.util.function.Consumer
+import kotlin.io.path.createDirectories
 
 @Suppress("unused", "unstableApiUsage")
 class Main : JavaPlugin() {
-    private lateinit var commandManager: PaperCommandManager<CommandSourceStack>
-    private lateinit var annotationParser: AnnotationParser<CommandSourceStack>
+    private lateinit var commandManager: LegacyPaperCommandManager<CommandSender>
+    private lateinit var annotationParser: AnnotationParser<CommandSender>
+
+    lateinit var resourcePackLoader: ResourcePackLoader
+        private set
+
+    lateinit var resourcePackApplier: ResourcePackApplier
+        private set
+
     override fun onEnable() {
         logger.info("Starting Burb plugin...")
+        resourcePackLoader = ResourcePackLoader(
+            GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
+            dataPath.resolve("packs").createDirectories()
+        )
+
+        resourcePackApplier = ResourcePackApplier(resourcePackLoader)
+        server.pluginManager.registerEvents(resourcePackApplier, this)
+
         Game.setup()
         setupCommands()
         setupEventListeners()
@@ -49,33 +63,34 @@ class Main : JavaPlugin() {
 
     private fun setupCommands() {
         logger.info("Registering commands.")
-        commandManager = PaperCommandManager.builder()
-            .executionCoordinator(ExecutionCoordinator.simpleCoordinator())
-            .buildOnEnable(this)
-
-        annotationParser = AnnotationParser(commandManager, CommandSourceStack::class.java)
-        annotationParser.parseContainers()
-
+        commandManager = LegacyPaperCommandManager.createNative(
+            this,
+            ExecutionCoordinator.simpleCoordinator()
+        )
+        annotationParser = AnnotationParser(commandManager, CommandSender::class.java).installCoroutineSupport()
         setupCommandConfirmation()
+        annotationParser.parseContainers()
     }
 
     private fun setupCommandConfirmation() {
         logger.info("Setting up command confirmation.")
         ConfirmationBuilderModifier.install(annotationParser)
 
-        val confirmationConfig = ConfirmationConfiguration.builder<CommandSourceStack>()
-            .cache(SimpleCache.of())
-            .noPendingCommandNotifier { css ->
-                css.sender.sendMessage(
+        val confirmationConfig = ConfirmationConfiguration.builder<CommandSender>()
+            .cache(CaffeineCache.of(
+                Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(30)).build()
+            ))
+            .noPendingCommandNotifier { sender ->
+                sender.sendMessage(
                     Component.text(
                         "You do not have any pending commands.",
                         NamedTextColor.RED
                     )
                 ) }
-            .confirmationRequiredNotifier { css, ctx ->
-                css.sender.sendMessage(
+            .confirmationRequiredNotifier { sender, ctx ->
+                sender.sendMessage(
                     Component.text("Confirm command ", NamedTextColor.RED).append(
-                        Component.text("'/${ctx.commandContext()}' ", NamedTextColor.GREEN)
+                        Component.text("'/${ctx.commandContext().rawInput().input()}' ", NamedTextColor.GREEN)
                     ).append(Component.text("by running ", NamedTextColor.RED)).append(
                         Component.text("'/confirm' ", NamedTextColor.YELLOW)
                     ).append(Component.text("to execute.", NamedTextColor.RED))
@@ -121,6 +136,6 @@ class Main : JavaPlugin() {
     }
 }
 
-val plugin = Bukkit.getPluginManager().getPlugin("Burb")!!
+val plugin = Bukkit.getPluginManager().getPlugin("Burb")!! as Main
 val logger = plugin.logger
 val messenger = Bukkit.getMessenger()

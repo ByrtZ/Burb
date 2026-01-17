@@ -5,7 +5,6 @@ import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.team.Teams
-import dev.byrt.burb.util.ResourcePacker
 
 import org.bukkit.entity.Player
 
@@ -16,7 +15,7 @@ object PlayerManager {
         val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, Teams.NULL, BurbCharacter.NULL, isDead = false)
         burbPlayers.add(burbPlayer)
         BurbPlayerData.getPlayerData(player)
-        ResourcePacker.applyPackPlayer(player)
+//        ResourcePacker.applyPackPlayer(player)
         ItemManager.clearItems(player)
         PlayerVisuals.showPlayer(player)
     }

@@ -1,7 +1,7 @@
 package dev.byrt.burb.command
 
 import dev.byrt.burb.text.Formatting
-import io.papermc.paper.command.brigadier.CommandSourceStack
+import org.bukkit.command.CommandSender
 
 import org.incendo.cloud.annotations.Command
 import org.incendo.cloud.annotations.Permission
@@ -13,7 +13,7 @@ import org.incendo.cloud.annotations.processing.CommandContainer
 class Echo {
     @Command("echo <text>")
     @Permission("burb.cmd.echo")
-    fun echo(css: CommandSourceStack, text: Array<String>) {
-        css.sender.sendMessage(Formatting.allTags.deserialize(text.joinToString(" ")))
+    fun echo(sender: CommandSender, text: Array<String>) {
+        sender.sendMessage(Formatting.allTags.deserialize(text.joinToString(" ")))
     }
 }
