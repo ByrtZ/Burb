@@ -7,6 +7,7 @@ import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.GitHubReleasesRegistry
+import dev.byrt.burb.text.TextFormatter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -40,6 +41,7 @@ class Main : JavaPlugin() {
 
     override fun onEnable() {
         logger.info("Starting Burb plugin...")
+        server.pluginManager.registerEvents(TextFormatter, this)
         resourcePackLoader = ResourcePackLoader(
             GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
             dataPath.resolve("packs").createDirectories()

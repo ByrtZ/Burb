@@ -50,6 +50,10 @@ dependencies {
     implementation("org.json:json:20231013")
     implementation("com.noxcrew.noxesium:api:2.3.3")
     implementation("com.noxcrew.interfaces:interfaces:2.0.1-SNAPSHOT")
+    implementation("me.lucyydotp.tinsel:tinsel-api:0.1.0") {
+        // Everything tinsel needs is already pulled in by paper
+        isTransitive = false
+    }
 }
 
 kotlin {

@@ -31,11 +31,11 @@ class ResourcePackLoader(
     }
 
     private var tag = "latest"
-    var currentPack: RemotePack? = null
+    var currentPack: LoadedPack? = null
         private set(value) {
             if (field == value) return // Don't do anything if the pack hasn't changed
             field = value
-            logger.info("New active pack: ${value?.id}")
+            logger.info("New active pack: ${value?.pack?.id}")
             Bukkit.getScheduler().runTask(plugin) { _ ->
                 Bukkit.getPluginManager().callEvent(ResourcePackChangedEvent(value))
             }
@@ -96,7 +96,7 @@ class ResourcePackLoader(
             tmpfile.moveTo(localPackPath)
             localHashPath.writeBytes(localHash)
 
-            currentPack = newPack.copy(hash = localHash)
+            this.currentPack = LoadedPack(newPack.copy(hash = localHash), localPackPath)
             this.tag = tag
             return@withLock
         }
@@ -106,7 +106,7 @@ class ResourcePackLoader(
         if (newPack.hash != null && !newPack.hash.contentEquals(hash)) {
             throw IllegalStateException("Locally stored pack hash does not match expected hash")
         }
-        currentPack = newPack.copy(hash = hash)
+        this.currentPack = LoadedPack(newPack.copy(hash = hash), localPackPath)
         this.tag = tag
     }
 }
