@@ -2,6 +2,7 @@ package dev.byrt.burb.resource
 
 import java.net.URL
 import java.nio.ByteBuffer
+import java.nio.file.Path
 
 /**
  * A remote resource pack.
@@ -30,4 +31,18 @@ data class RemotePack(
      * The pack's SHA1 hash, if known.
      */
     val hash: ByteArray?
+)
+
+/**
+ * A loaded resource pack.
+ */
+data class LoadedPack(
+    /**
+     * The pack's metadata.
+     */
+    val pack: RemotePack,
+    /**
+     * The resource pack's path on the server.
+     */
+    val path: Path,
 )
