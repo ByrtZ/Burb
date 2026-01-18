@@ -9,6 +9,7 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.text.GlyphLike
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -32,7 +33,7 @@ object ItemManager {
         val teamBootsType = ItemType.ARMOUR
         teamBootsMeta.displayName(Formatting.allTags.deserialize("<reset><${teamBootsRarity.rarityColour}>${team.teamName} Team Boots").decoration(TextDecoration.ITALIC, false))
         val teamBootsLore = listOf(
-            Formatting.allTags.deserialize("<reset><white>${teamBootsRarity.rarityGlyph}${teamBootsType.typeGlyph}").decoration(TextDecoration.ITALIC, false),
+            Formatting.allTags.deserialize("<reset><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
             Formatting.allTags.deserialize("<reset><white>A snazzy pair of ${team.teamName} team's boots.").decoration(TextDecoration.ITALIC, false)
         )
         teamBootsMeta.lore(teamBootsLore)
@@ -67,7 +68,7 @@ object ItemManager {
         mainWeaponMeta.displayName(Formatting.allTags.deserialize("<${ItemRarity.COMMON.rarityColour}>${burbPlayerCharacter.characterMainWeapon.weaponName}").decoration(TextDecoration.ITALIC, false))
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
+                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>${burbPlayerCharacter.characterMainWeapon.weaponLore}").decoration(TextDecoration.ITALIC, false)
             ))
@@ -76,7 +77,7 @@ object ItemManager {
             // mainWeaponMeta.addAttributeModifier(Attribute.ATTACK_DAMAGE, AttributeModifier(NamespacedKey.minecraft("generic.attack_damage"), burbPlayerCharacter.characterMainWeapon.weaponDamage, AttributeModifier.Operation.ADD_NUMBER))
         } else {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.WEAPON.typeGlyph}").decoration(TextDecoration.ITALIC, false),
+                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>Ammo: <green>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<gray>/<yellow>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<reset>").decoration(TextDecoration.ITALIC, false),
                 Formatting.allTags.deserialize("<white>Fire Rate: <yellow>${burbPlayerCharacter.characterMainWeapon.fireRate}t<reset>").decoration(TextDecoration.ITALIC, false),
@@ -122,7 +123,7 @@ object ItemManager {
             abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
             abilityItemMeta.displayName(Formatting.allTags.deserialize("<${ItemRarity.COMMON.rarityColour}>${if(ability.abilityName == "") ability.abilityId + ".name" else ability.abilityName}").decoration(TextDecoration.ITALIC, false))
             abilityItemMeta.lore(listOf(
-                    Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.rarityGlyph}${ItemType.UTILITY.typeGlyph}").decoration(TextDecoration.ITALIC, false),
+                    Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.UTILITY.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
                     Formatting.allTags.deserialize("<white>${if(ability.abilityLore == "") ability.abilityId + ".lore" else ability.abilityLore}").decoration(TextDecoration.ITALIC, false)
                 )
             )
@@ -271,7 +272,7 @@ enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set
     ZOMBIES_RANGED_ABILITIES("Deadbeard Abilities", setOf(BurbAbility.ZOMBIES_RANGED_ABILITY_1, BurbAbility.ZOMBIES_RANGED_ABILITY_2, BurbAbility.ZOMBIES_RANGED_ABILITY_3))
 }
 
-enum class ItemRarity(val rarityName : String, val rarityGlyph : String, val colour: Color, val rarityColour : String) {
+enum class ItemRarity(val rarityName : String, override val rawGlyph : String, val colour: Color, val rarityColour : String) : GlyphLike {
     COMMON("Common", "\uF001", Color.fromRGB(255, 255, 255), "#ffffff"),
     UNCOMMON("Uncommon", "\uF002", Color.fromRGB(14, 209, 69), "#0ed145"),
     RARE("Rare", "\uF003", Color.fromRGB(0, 168, 243), "#00a8f3"),
@@ -284,7 +285,7 @@ enum class ItemRarity(val rarityName : String, val rarityGlyph : String, val col
     CELESTIAL("Celestial", "\uE005", Color.fromRGB(245, 186, 10), "#f5ba0a");
 }
 
-enum class SubRarity(val weight : Double, val subRarityGlyph : String) {
+enum class SubRarity(val weight : Double, override val rawGlyph : String) : GlyphLike {
     NONE(99.95,""),
     SHINY(0.025, "\uE000"),
     SHADOW(0.015, "\uE001"),
@@ -309,7 +310,7 @@ enum class SubRarity(val weight : Double, val subRarityGlyph : String) {
     }
 }
 
-enum class ItemType(val typeName : String, val typeGlyph : String) {
+enum class ItemType(val typeName : String, override val rawGlyph: String) : GlyphLike {
     ARMOUR("Armour", "\uF009"),
     CONSUMABLE("Consumable", "\uF010"),
     TOOL("Tool", "\uF011"),

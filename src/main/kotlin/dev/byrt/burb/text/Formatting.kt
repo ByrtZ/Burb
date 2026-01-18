@@ -4,6 +4,7 @@ import dev.byrt.burb.team.Teams
 import net.kyori.adventure.key.Key
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -17,7 +18,7 @@ object Formatting {
     /**
      * Creates a new text component with the glyph font.
      */
-    fun glyph(value: String) = Component.text(value).font(GLYPH_FONT)
+    fun glyph(value: String) = Component.text(value).font(GLYPH_FONT).color(NamedTextColor.WHITE)
 
     /** Prefix enum for allowing MiniMessage usage of the <prefix:NAME> tag in messages. **/
     enum class Prefix(val prefixName: String, val value: String) {

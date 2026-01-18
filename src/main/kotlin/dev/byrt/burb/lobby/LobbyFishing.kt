@@ -43,7 +43,7 @@ object LobbyFishing {
         // The number of fish at this point is always one lower than the one shown in the statistics screen.
         val fishNumber = player.getStatistic(Statistic.FISH_CAUGHT) + 1
 
-        lore += "<reset><!i><white>${fishRarity.itemRarity.rarityGlyph}${if (subRarity != SubRarity.NONE) subRarity.subRarityGlyph else ""}${ItemType.FISH.typeGlyph}"
+        lore += "<reset><!i><white>${fishRarity.itemRarity.asMiniMesssage()}${if (subRarity != SubRarity.NONE) subRarity.asMiniMesssage() else ""}${ItemType.FISH.asMiniMesssage()}"
 
         if (subRarity != SubRarity.NONE) {
             when (subRarity) {

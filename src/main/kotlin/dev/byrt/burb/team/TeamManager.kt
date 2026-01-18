@@ -269,22 +269,14 @@ object TeamManager {
 
     fun buildDisplayTeams() {
         plantsDisplayTeam.color(NamedTextColor.GREEN)
-        plantsDisplayTeam.prefix(
-            Component.empty()
-                .append(Formatting.glyph("\uD83E\uDEB4").color(NamedTextColor.WHITE))
-                .appendSpace()
-        )
+        plantsDisplayTeam.prefix(Component.text("\uD83E\uDEB4 ").color(NamedTextColor.WHITE)) // vanilla literal
         plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
         plantsDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         plantsDisplayTeam.setAllowFriendlyFire(false)
 
         zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
-        zombiesDisplayTeam.prefix(
-            Component.empty()
-                .append(Formatting.glyph("\uD83E\uDDDF").color(NamedTextColor.WHITE))
-                .appendSpace()
-        )
+        zombiesDisplayTeam.prefix(Component.text("\uD83E\uDDDF ").color(NamedTextColor.WHITE)) // vanilla literal
         zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
         zombiesDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)

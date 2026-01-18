@@ -23,12 +23,10 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.Formatting.BURB_FONT
 import dev.byrt.burb.text.TextAlignment
-import dev.byrt.burb.text.TextFormatter
 import dev.byrt.burb.util.CommitIntegration
 
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.key.Key
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -109,7 +107,7 @@ class AdminCommands {
                 )
             )
             val rarityTestItemLore = listOf(
-                Component.text(rarity.rarityGlyph, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
+                rarity.glyphAsComponent().decoration(TextDecoration.ITALIC, false),
                 Component.text("Debug item.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
             )
             rarityTestItemMeta.lore(rarityTestItemLore)
@@ -131,7 +129,7 @@ class AdminCommands {
                 )
             )
             val typeTestItemLore = listOf(
-                Component.text(type.typeGlyph, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
+                type.glyphAsComponent().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
                 Component.text("Debug item.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
             )
             typeTestItemMeta.lore(typeTestItemLore)
@@ -187,7 +185,7 @@ class AdminCommands {
     @CommandDescription("Shows temporary test bossbar")
     @Permission("burb.cmd.debug")
     fun debugBossbar(sender: Player, @Argument("text") @Greedy text: String) {
-        val text = TextFormatter.tinsel.draw(100, Style.empty()) {
+        val text = TextAlignment.tinsel.draw(100, Style.empty()) {
             it.drawAligned(Formatting.glyph("\uD011").shadowColor(ShadowColor.none()), 0.5f)
             it.drawAligned(
                 Component.text(text).font(BURB_FONT),
