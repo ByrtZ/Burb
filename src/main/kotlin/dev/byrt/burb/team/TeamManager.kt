@@ -269,28 +269,44 @@ object TeamManager {
 
     fun buildDisplayTeams() {
         plantsDisplayTeam.color(NamedTextColor.GREEN)
-        plantsDisplayTeam.prefix(Component.text("\uD83E\uDEB4 ").color(NamedTextColor.WHITE))
+        plantsDisplayTeam.prefix(
+            Component.empty()
+                .append(Formatting.glyph("\uD83E\uDEB4").color(NamedTextColor.WHITE))
+                .appendSpace()
+        )
         plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
         plantsDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         plantsDisplayTeam.setAllowFriendlyFire(false)
 
         zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
-        zombiesDisplayTeam.prefix(Component.text("\uD83E\uDDDF ").color(NamedTextColor.WHITE))
+        zombiesDisplayTeam.prefix(
+            Component.empty()
+                .append(Formatting.glyph("\uD83E\uDDDF").color(NamedTextColor.WHITE))
+                .appendSpace()
+        )
         zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
         zombiesDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         zombiesDisplayTeam.setAllowFriendlyFire(false)
 
         adminDisplayTeam.color(NamedTextColor.DARK_RED)
-        adminDisplayTeam.prefix(Component.text("\uD002 ").color(NamedTextColor.WHITE))
+        adminDisplayTeam.prefix(
+            Component.empty()
+                .append(Formatting.glyph("\uD002").color(NamedTextColor.WHITE))
+                .appendSpace()
+        )
         adminDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         adminDisplayTeam.displayName(Component.text("Admin").color(NamedTextColor.DARK_RED))
         adminDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
         adminDisplayTeam.setAllowFriendlyFire(false)
 
         spectatorDisplayTeam.color(NamedTextColor.GRAY)
-        spectatorDisplayTeam.prefix(Component.text("\uD003 ").color(NamedTextColor.WHITE))
+        spectatorDisplayTeam.prefix(
+            Component.empty()
+                .append(Formatting.glyph("\uD003").color(NamedTextColor.WHITE))
+                .appendSpace()
+        )
         spectatorDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
         spectatorDisplayTeam.displayName(Component.text("Spectator").color(Teams.SPECTATOR.teamHexColour))
         spectatorDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)

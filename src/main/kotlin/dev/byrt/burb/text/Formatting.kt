@@ -1,6 +1,7 @@
 package dev.byrt.burb.text
 
 import dev.byrt.burb.team.Teams
+import net.kyori.adventure.key.Key
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -10,6 +11,14 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 
 object Formatting {
+    val BURB_FONT = Key.key("burb", "font")
+    val GLYPH_FONT = Key.key("burb", "glyph")
+
+    /**
+     * Creates a new text component with the glyph font.
+     */
+    fun glyph(value: String) = Component.text(value).font(GLYPH_FONT)
+
     /** Prefix enum for allowing MiniMessage usage of the <prefix:NAME> tag in messages. **/
     enum class Prefix(val prefixName: String, val value: String) {
         NO_PREFIX("", ""),
@@ -70,8 +79,8 @@ object Formatting {
     private fun prefix() : TagResolver {
         return TagResolver.resolver("prefix") { args, _ ->
             val prefixName = args.popOr("Name not supplied.")
-            Tag.inserting(
-                Component.text(Prefix.ofName(prefixName.toString()).value)
+            Tag.selfClosingInserting(
+                Component.text(Prefix.ofName(prefixName.toString()).value).font(GLYPH_FONT)
             )
         }
     }

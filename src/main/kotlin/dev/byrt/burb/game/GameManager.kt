@@ -13,6 +13,7 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.Formatting
 
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
@@ -117,7 +118,7 @@ object GameManager {
         CapturePoints.initializeCapturePoints()
         if(Rounds.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
-                player.showTitle(Title.title(Component.text("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
+                player.showTitle(Title.title(Formatting.glyph("\uD000"), Component.text(""), Title.Times.times(Duration.ofSeconds(0), Duration.ofSeconds(2), Duration.ofSeconds(1))))
                 player.stopSound(Sounds.Music.LOBBY_INTRO)
                 player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0, false, false))
             }
