@@ -5,6 +5,7 @@ import dev.byrt.burb.resource.registry.ResourcePackRegistry
 import dev.byrt.burb.util.BurbHttpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -23,6 +24,7 @@ import kotlin.io.path.*
 class ResourcePackLoader(
     private val registry: ResourcePackRegistry,
     private val localStorageDir: Path,
+    private var tag: String,
 ) {
 
     private companion object {
@@ -30,12 +32,11 @@ class ResourcePackLoader(
         private val tmpdir = System.getProperty("java.io.tmpdir")
     }
 
-    private var tag = "latest"
-    var currentPack: RemotePack? = null
+    var currentPack: LoadedPack? = null
         private set(value) {
             if (field == value) return // Don't do anything if the pack hasn't changed
             field = value
-            logger.info("New active pack: ${value?.id}")
+            logger.info("New active pack: ${value?.pack?.id}")
             Bukkit.getScheduler().runTask(plugin) { _ ->
                 Bukkit.getPluginManager().callEvent(ResourcePackChangedEvent(value))
             }
@@ -82,6 +83,7 @@ class ResourcePackLoader(
             ).use { outStream ->
                 BurbHttpClient
                     .get(newPack.url)
+                    .also { require(it.status.isSuccess()) { "Failed to download pack ${newPack.id}: ${it.status}"} }
                     .bodyAsChannel()
                     .copyTo(DigestOutputStream(outStream, md))
             }
@@ -96,7 +98,7 @@ class ResourcePackLoader(
             tmpfile.moveTo(localPackPath)
             localHashPath.writeBytes(localHash)
 
-            currentPack = newPack.copy(hash = localHash)
+            this.currentPack = LoadedPack(newPack.copy(hash = localHash), localPackPath)
             this.tag = tag
             return@withLock
         }
@@ -106,7 +108,7 @@ class ResourcePackLoader(
         if (newPack.hash != null && !newPack.hash.contentEquals(hash)) {
             throw IllegalStateException("Locally stored pack hash does not match expected hash")
         }
-        currentPack = newPack.copy(hash = hash)
+        this.currentPack = LoadedPack(newPack.copy(hash = hash), localPackPath)
         this.tag = tag
     }
 }

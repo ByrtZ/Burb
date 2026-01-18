@@ -29,8 +29,6 @@ class GameCommands {
             //TODO: Add team quantity check
             ChatUtility.broadcastDev("<yellow>${sender.name}<green> started a Suburbination game.", false)
             Game.start()
-        } else {
-            return
         }
     }
 
@@ -42,8 +40,6 @@ class GameCommands {
         if(GameManager.getGameState() != GameState.IDLE) {
             ChatUtility.broadcastDev("<yellow>${sender.name}<red> stopped the Suburbination game.", false)
             Game.stop()
-        } else {
-            return
         }
     }
 
@@ -54,8 +50,6 @@ class GameCommands {
         if(GameManager.getGameState() == GameState.GAME_END) {
             ChatUtility.broadcastDev("${sender.name} reloaded the game.", false)
             Game.reload()
-        } else {
-            return
         }
     }
 

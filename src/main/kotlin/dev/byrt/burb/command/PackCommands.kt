@@ -18,6 +18,7 @@ class PackCommands {
     @Command("pack refresh")
     @Confirmation
     suspend fun packRefresh(sender: CommandSender) {
+        sender.sendMessage("Refreshing resource pack...")
         plugin.resourcePackLoader.reloadPack()
         ChatUtility.broadcastDev(
             "<yellow>${sender.name} <green>refreshed<reset> the <notifcolour>resource pack<reset>.",
@@ -33,5 +34,16 @@ class PackCommands {
     @Command("pack off [player]")
     fun disableForPlayer(sender: CommandSender, @Argument player: Player?) {
         plugin.resourcePackApplier.disablePacks(player ?: sender as? Player ?: return)
+    }
+
+    @Command("pack switch <tag>")
+    @Confirmation
+    suspend fun switchPackTag(sender: CommandSender, @Argument tag: String) {
+        sender.sendMessage("Switching resource pack tag to $tag...")
+        plugin.resourcePackLoader.reloadPack(tag)
+        ChatUtility.broadcastDev(
+            "<yellow>${sender.name} <green>switched<reset> the <notifcolour>resource pack tag<reset> to <notifcolour>$tag<reset>.",
+            false
+        )
     }
 }

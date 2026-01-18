@@ -55,20 +55,20 @@ class ResourcePackApplier(private val loader: ResourcePackLoader) : Listener {
      * Enables resource packs for a player.
      */
     fun enablePacks(player: Player) {
-        if (disabledPlayers.remove(player.uniqueId)) applyToPlayer(player, loader.currentPack)
+        if (disabledPlayers.remove(player.uniqueId)) applyToPlayer(player, loader.currentPack?.pack)
     }
 
     @EventHandler
     private fun onPackChange(e: ResourcePackChangedEvent) {
         Bukkit.getOnlinePlayers().forEach {
             if (it.uniqueId in disabledPlayers) return@forEach
-            applyToPlayer(it, loader.currentPack)
+            applyToPlayer(it, loader.currentPack?.pack)
         }
     }
 
     @EventHandler
     private fun onPlayerJoin(e: PlayerJoinEvent) {
         // No need to apply a null pack here as they've just joined.
-        applyToPlayer(e.player, loader.currentPack ?: return)
+        applyToPlayer(e.player, loader.currentPack?.pack ?: return)
     }
 }

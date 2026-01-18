@@ -8,9 +8,11 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat
+import me.lucyydotp.tinsel.font.Spacing
 
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.bossbar.BossBar.Color
+import net.kyori.adventure.text.Component
 
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -222,14 +224,20 @@ object InfoBoardManager {
                         }
                     }
                     else -> {
+                        val text = Component.text()
+                            .append(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${Scores.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}"))
+                            .append(Spacing.spacing(75))
+
+
                         if(CapturePoints.isSuburbinating()) {
-                            scoreBossBar.name(Formatting.allTags.deserialize("<translate:space.-25>").append(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${Scores.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}")).append(Formatting.allTags.deserialize("<translate:space.75>")).append(TextAlignment.centreBossBarText("<u>${CapturePoints.getSuburbinatingTeam().teamColourTag}SUBURBINATION")))
+                            text.append(TextAlignment.centreBossBarText("<u>${CapturePoints.getSuburbinatingTeam().teamColourTag}SUBURBINATION"))
                         } else {
                             val pointA = CapturePoints.getCapturePointData(CapturePoint.A)
                             val pointB = CapturePoints.getCapturePointData(CapturePoint.B)
                             val pointC = CapturePoints.getCapturePointData(CapturePoint.C)
-                            scoreBossBar.name(Formatting.allTags.deserialize("<translate:space.-25>").append(TextAlignment.centreBossBarText("<plantscolour>PLANTS<white>: ${Scores.getDisplayScore(Teams.PLANTS)} <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}")).append(Formatting.allTags.deserialize("<translate:space.75>")).append(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%")))
+                            text.append(TextAlignment.centreBossBarText("${if(pointA.second == Teams.PLANTS) "<plantscolour>" else if(pointA.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointA.first}<white>% <gray>| ${if(pointB.second == Teams.PLANTS) "<plantscolour>" else if(pointB.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointB.first}<white>% <gray>| ${if(pointC.second == Teams.PLANTS) "<plantscolour>" else if(pointC.second == Teams.ZOMBIES) "<zombiescolour>" else "<speccolour>"}${pointC.first}<white>%"))
                         }
+                        scoreBossBar.name(text)
                     }
                 }
                 ticks++

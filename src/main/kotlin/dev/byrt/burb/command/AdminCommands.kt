@@ -21,6 +21,7 @@ import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.Formatting.BURB_FONT
 import dev.byrt.burb.text.TextAlignment
 import dev.byrt.burb.util.CommitIntegration
 
@@ -29,6 +30,8 @@ import net.kyori.adventure.bossbar.BossBar
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.ShadowColor
+import net.kyori.adventure.text.format.Style
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
@@ -40,6 +43,7 @@ import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
+import org.incendo.cloud.annotation.specifier.Greedy
 
 import org.incendo.cloud.annotations.Argument
 import org.incendo.cloud.annotations.Command
@@ -103,7 +107,7 @@ class AdminCommands {
                 )
             )
             val rarityTestItemLore = listOf(
-                Component.text(rarity.rarityGlyph, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
+                rarity.glyphAsComponent().decoration(TextDecoration.ITALIC, false),
                 Component.text("Debug item.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
             )
             rarityTestItemMeta.lore(rarityTestItemLore)
@@ -125,7 +129,7 @@ class AdminCommands {
                 )
             )
             val typeTestItemLore = listOf(
-                Component.text(type.typeGlyph, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
+                type.glyphAsComponent().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
                 Component.text("Debug item.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
             )
             typeTestItemMeta.lore(typeTestItemLore)
@@ -180,9 +184,17 @@ class AdminCommands {
     @Command("debug bossbar <text>")
     @CommandDescription("Shows temporary test bossbar")
     @Permission("burb.cmd.debug")
-    fun debugBossbar(sender: Player, @Argument("text") text: Array<String>) {
+    fun debugBossbar(sender: Player, @Argument("text") @Greedy text: String) {
+        val text = TextAlignment.tinsel.draw(100, Style.empty()) {
+            it.drawAligned(Formatting.glyph("\uD011").shadowColor(ShadowColor.none()), 0.5f)
+            it.drawAligned(
+                Component.text(text).font(BURB_FONT),
+                0.5f,
+            )
+        }
+
         val tempBossBar = BossBar.bossBar(
-            TextAlignment.centreBossBarText(text.joinToString(" ")),
+            text,
             0f,
             BossBar.Color.WHITE,
             BossBar.Overlay.PROGRESS

@@ -35,7 +35,7 @@ object GameTask {
                     if(Timer.getTimer() == 80) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.showTitle(Title.title(
-                                Component.text("\uD000"),
+                                Formatting.glyph("\uD000"),
                                 Component.text(""),
                                 Title.Times.times(
                                     Duration.ofSeconds(0),
@@ -314,7 +314,7 @@ object GameTask {
                     if(Timer.getTimer() <= 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.showTitle(Title.title(
-                                Formatting.allTags.deserialize("\uD000"),
+                                Formatting.glyph("\uD000"),
                                 Formatting.allTags.deserialize(""),
                                 Title.Times.times(
                                     Duration.ofMillis(250),

@@ -403,7 +403,7 @@ object BurbInterfaces {
                 if(!unlockedCosmetics.contains(cosmetic.cosmeticId)) {
                     cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }
                     cosmeticItem.type = Material.GRAY_DYE
-                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.rarityGlyph}${cosmetic.cosmeticType.typeGlyph}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><prefix:locked> Locked")) )
+                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><prefix:locked> Locked")) )
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }

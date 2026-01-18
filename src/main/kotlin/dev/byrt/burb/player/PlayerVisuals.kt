@@ -225,7 +225,7 @@ object PlayerVisuals {
     fun respawn(player: Player) {
         player.showTitle(
             Title.title(
-                Formatting.allTags.deserialize("\uD000"),
+                Formatting.glyph("\uD000"),
                 Formatting.allTags.deserialize(""),
                 Title.Times.times(
                     Duration.ofMillis(250),

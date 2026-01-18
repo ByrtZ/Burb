@@ -46,10 +46,16 @@ dependencies {
     implementation("io.ktor:ktor-client-core:2.3.13")
     implementation("io.ktor:ktor-client-cio:2.3.5")
     implementation("io.ktor:ktor-client-logging:2.0.3")
+    implementation("io.ktor:ktor-client-content-negotiation:2.0.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.0.3")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
     implementation("org.json:json:20231013")
     implementation("com.noxcrew.noxesium:api:2.3.3")
     implementation("com.noxcrew.interfaces:interfaces:2.0.1-SNAPSHOT")
+    implementation("me.lucyydotp.tinsel:tinsel-api:0.1.0") {
+        // Everything tinsel needs is already pulled in by paper
+        isTransitive = false
+    }
 }
 
 kotlin {
