@@ -6,7 +6,7 @@ import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
-import dev.byrt.burb.resource.registry.GitHubReleasesRegistry
+import dev.byrt.burb.resource.registry.CdnPackRegistry
 import dev.byrt.burb.text.TextFormatter
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -43,8 +43,9 @@ class Main : JavaPlugin() {
         logger.info("Starting Burb plugin...")
         server.pluginManager.registerEvents(TextFormatter, this)
         resourcePackLoader = ResourcePackLoader(
-            GitHubReleasesRegistry("ByrtZ/BurbResourcePack"),
-            dataPath.resolve("packs").createDirectories()
+            CdnPackRegistry("https://mc-rp.lucyydotp.me/burb"),
+            dataPath.resolve("packs").createDirectories(),
+            "feature/tinsel"
         )
 
         resourcePackApplier = ResourcePackApplier(resourcePackLoader)

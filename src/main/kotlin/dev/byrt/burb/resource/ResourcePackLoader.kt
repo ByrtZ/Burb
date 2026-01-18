@@ -5,6 +5,7 @@ import dev.byrt.burb.resource.registry.ResourcePackRegistry
 import dev.byrt.burb.util.BurbHttpClient
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.isSuccess
 import io.ktor.utils.io.jvm.javaio.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -23,6 +24,7 @@ import kotlin.io.path.*
 class ResourcePackLoader(
     private val registry: ResourcePackRegistry,
     private val localStorageDir: Path,
+    private var tag: String,
 ) {
 
     private companion object {
@@ -30,7 +32,6 @@ class ResourcePackLoader(
         private val tmpdir = System.getProperty("java.io.tmpdir")
     }
 
-    private var tag = "latest"
     var currentPack: LoadedPack? = null
         private set(value) {
             if (field == value) return // Don't do anything if the pack hasn't changed
@@ -82,6 +83,7 @@ class ResourcePackLoader(
             ).use { outStream ->
                 BurbHttpClient
                     .get(newPack.url)
+                    .also { require(it.status.isSuccess()) { "Failed to download pack ${newPack.id}: ${it.status}"} }
                     .bodyAsChannel()
                     .copyTo(DigestOutputStream(outStream, md))
             }
