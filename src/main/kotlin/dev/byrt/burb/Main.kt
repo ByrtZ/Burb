@@ -45,7 +45,7 @@ class Main : JavaPlugin() {
         resourcePackLoader = ResourcePackLoader(
             CdnPackRegistry("https://mc-rp.lucyydotp.me/burb"),
             dataPath.resolve("packs").createDirectories(),
-            "feature/tinsel"
+            "master"
         )
 
         resourcePackApplier = ResourcePackApplier(resourcePackLoader)
