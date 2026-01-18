@@ -67,7 +67,8 @@ class Main : JavaPlugin() {
             this,
             ExecutionCoordinator.simpleCoordinator()
         )
-        annotationParser = AnnotationParser(commandManager, CommandSender::class.java).installCoroutineSupport()
+        annotationParser = AnnotationParser(commandManager, CommandSender::class.java)
+            .installCoroutineSupport(onlyForSuspending = true)
         setupCommandConfirmation()
         annotationParser.parseContainers()
     }
