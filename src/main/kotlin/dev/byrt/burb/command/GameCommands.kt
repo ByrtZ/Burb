@@ -7,9 +7,6 @@ import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Rounds
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
-import dev.byrt.burb.plugin
-import dev.byrt.burb.util.onMainThread
-import org.bukkit.Bukkit
 
 import org.bukkit.command.CommandSender
 import org.incendo.cloud.annotations.Argument
@@ -27,7 +24,7 @@ class GameCommands {
     @CommandDescription("Starts the game.")
     @Permission("burb.cmd.game")
     @Confirmation
-    fun start(sender: CommandSender) = onMainThread {
+    fun start(sender: CommandSender) {
         if(GameManager.getGameState() == GameState.IDLE) {
             //TODO: Add team quantity check
             ChatUtility.broadcastDev("<yellow>${sender.name}<green> started a Suburbination game.", false)
@@ -39,7 +36,7 @@ class GameCommands {
     @CommandDescription("Stops the game.")
     @Permission("burb.cmd.game")
     @Confirmation
-    fun stop(sender: CommandSender) = onMainThread {
+    fun stop(sender: CommandSender) {
         if(GameManager.getGameState() != GameState.IDLE) {
             ChatUtility.broadcastDev("<yellow>${sender.name}<red> stopped the Suburbination game.", false)
             Game.stop()
@@ -49,7 +46,7 @@ class GameCommands {
     @Command("game reload")
     @CommandDescription("Reloads the game.")
     @Permission("burb.cmd.game")
-    fun reload(sender: CommandSender) = onMainThread {
+    fun reload(sender: CommandSender) {
         if(GameManager.getGameState() == GameState.GAME_END) {
             ChatUtility.broadcastDev("${sender.name} reloaded the game.", false)
             Game.reload()
