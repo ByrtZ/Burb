@@ -175,11 +175,11 @@ object PlayerVisuals {
                                     )
                                 )
                                 player.playSound(Sounds.Timer.TICK)
-                                if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOM_CHARACTER) {
+                                if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOS_REVENGE) {
                                     player.sendActionBar(Formatting.allTags.deserialize(if(timer % 2 == 0) Translation.Generic.CHARACTER_SELECTION_ACTIONBAR else Translation.Generic.CHARACTER_SELECTION_ACTIONBAR.replace(BURB_FONT_TAG, "$BURB_FONT_TAG<yellow>")))
                                 }
                             }
-                            if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOM_CHARACTER && player.isSneaking) {
+                            if(SpecialEvents.getCurrentEvent() != SpecialEvent.RANDOS_REVENGE && player.isSneaking) {
                                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
                             }
                         } else {
@@ -236,7 +236,11 @@ object PlayerVisuals {
                 )
             )
         )
-        player.playSound(Sounds.Score.RESPAWN)
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
+            player.playSound(Sounds.Score.VANQUISH_SHOWDOWN_RESPAWN)
+        } else {
+            player.playSound(Sounds.Score.RESPAWN)
+        }
     }
 
     fun postRespawn(player: Player, vehicle: ItemDisplay) {
@@ -256,11 +260,14 @@ object PlayerVisuals {
             player.inventory.remove(ServerItem.getProfileItem())
         }
 
-        if(SpecialEvents.getCurrentEvent() == SpecialEvent.RANDOM_CHARACTER) {
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.RANDOS_REVENGE) {
             player.burbPlayer().setRandomCharacter()
             player.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.ARROW_PREFIX}<rainbow>Rando's Revenge<reset> morphed you into a different character!<newline>"))
             player.playSound(Sounds.Misc.RANDO_NEW_CHARACTER)
         } else {
+            if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
+                player.playSound(Sounds.Score.VANQUISH_SHOWDOWN_POST_RESPAWN)
+            }
             ItemManager.giveCharacterItems(player)
         }
 

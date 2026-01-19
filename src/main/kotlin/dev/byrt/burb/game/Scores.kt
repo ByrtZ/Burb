@@ -27,8 +27,8 @@ object Scores {
     }
 
     fun addScore(team: Teams, score: Int) {
-        if (team == Teams.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
-        if (team == Teams.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
+        if (team == Teams.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
+        if (team == Teams.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }

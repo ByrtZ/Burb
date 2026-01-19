@@ -1,5 +1,7 @@
 package dev.byrt.burb.music
 
+import dev.byrt.burb.game.events.SpecialEvent
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
@@ -82,7 +84,7 @@ object Jukebox {
         }
     }
 
-    fun playCurrentMusicStress(player: Player) {
+    fun playCurrentMusic(player: Player) {
         for(music in Music.entries) {
             stopMusicLoop(player, music)
         }
@@ -90,7 +92,17 @@ object Jukebox {
             MusicStress.LOW -> startMusicLoop(player, Music.RANDOM_LOW)
             MusicStress.MEDIUM -> startMusicLoop(player, Music.RANDOM_MEDIUM)
             MusicStress.HIGH -> startMusicLoop(player, Music.RANDOM_HIGH)
-            else -> {}
+            else -> {
+                if(SpecialEvents.isEventRunning()) {
+                    when(SpecialEvents.getCurrentEvent()) {
+                        SpecialEvent.TREASURE_TIME -> startMusicLoop(player, Music.TREASURE_TIME_LOW)
+                        SpecialEvent.MOON_GRAVITY -> startMusicLoop(player, Music.LOBBY_UNDERWORLD)
+                        SpecialEvent.RANDOS_REVENGE -> startMusicLoop(player, Music.RANDOS_REVENGE)
+                        SpecialEvent.VANQUISH_SHOWDOWN -> startMusicLoop(player, Music.VANQUISH_SHOWDOWN)
+                        null -> {}
+                    }
+                }
+            }
         }
     }
 
@@ -101,38 +113,4 @@ object Jukebox {
     fun resetMusicStress() {
         this.musicStress = MusicStress.NULL
     }
-
-    fun getJukeboxMap(): Map<UUID, BukkitRunnable> {
-        return this.jukeboxMap
-    }
-}
-
-enum class Music(val track: Sound, val trackLengthSecs: Int) {
-    LOBBY_TITLE_SCREEN(Sounds.Music.LOBBY_TITLE_SCREEN, 139),
-    LOBBY_WAITING(Sounds.Music.LOBBY_WAITING, 59),
-    LOBBY_UNDERWORLD(Sounds.Music.LOBBY_UNDERWORLD, 66),
-    LOBBY_UNDERWORLD_CHALLENGE_LOW(Sounds.Music.LOBBY_UNDERWORLD_CHALLENGE_LOW, 8),
-    LOBBY_UNDERWORLD_CHALLENGE_MEDIUM(Sounds.Music.LOBBY_UNDERWORLD_CHALLENGE_MEDIUM, 14),
-    LOBBY_UNDERWORLD_CHALLENGE_HIGH(Sounds.Music.LOBBY_UNDERWORLD_CHALLENGE_HIGH, 14),
-    LOBBY_UNDERWORLD_CHALLENGE_INTENSE(Sounds.Music.LOBBY_UNDERWORLD_CHALLENGE_INTENSE, 19),
-    LOADING_MELODY(Sounds.Music.LOADING_MELODY, 148),
-    SUBURBINATION_PLANTS(Sounds.Music.SUBURBINATION_PLANTS, 58),
-    SUBURBINATION_ZOMBIES(Sounds.Music.SUBURBINATION_ZOMBIES, 58),
-    RANDOM_LOW(Sounds.Music.RANDOM_LOW, 60),
-    RANDOM_MEDIUM(Sounds.Music.RANDOM_MEDIUM, 60),
-    RANDOM_HIGH(Sounds.Music.RANDOM_HIGH, 60),
-    TREASURE_TIME_LOW(Sounds.Music.TREASURE_TIME_LOW, 70),
-    TREASURE_TIME_HIGH(Sounds.Music.TREASURE_TIME_HIGH, 70),
-    OVERTIME(Sounds.Music.OVERTIME_MUSIC, 60),
-    POST_GAME(Sounds.Music.POST_GAME_MUSIC, 80),
-    DOWNTIME_LOOP(Sounds.Music.DOWNTIME_LOOP, 191),
-    DOWNTIME_SUSPENSE(Sounds.Music.DOWNTIME_SUSPENSE, 219),
-    NULL(Sounds.Music.NULL, Int.MAX_VALUE)
-}
-
-enum class MusicStress {
-    NULL,
-    LOW,
-    MEDIUM,
-    HIGH
 }

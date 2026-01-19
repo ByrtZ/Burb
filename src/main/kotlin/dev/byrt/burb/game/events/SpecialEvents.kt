@@ -48,13 +48,33 @@ object SpecialEvents {
         object : BukkitRunnable() {
             var ticks = 0
             var seconds = 0
+            var transition = 0.0
+            var isTransitionReverse = false
             override fun run() {
                 if(ticks == 0 && seconds == 0) {
                     event.onStart(Bukkit.getOnlinePlayers())
                 }
                 if(ticks % 10 == 0) {
                     Bukkit.getOnlinePlayers().forEach { bossBar.addViewer(it) }
-                    bossBar.name(TextAlignment.centreBossBarText(event.bossBarString.replace("%s", "%02d:%02d".format((EVENT_DURATION - seconds) / 60, (EVENT_DURATION - seconds) % 60))))
+                }
+                if(ticks % 2 == 0) {
+                    // Calculate transition before string is updated
+                    if(event != SpecialEvent.RANDOS_REVENGE) {
+                        if(isTransitionReverse) transition -= 0.1 else transition += 0.1
+                        if(transition < 0.0) {
+                            transition = 0.0
+                            isTransitionReverse = false
+                        }
+                        if(transition > 1.0) {
+                            transition = 1.0
+                            isTransitionReverse = true
+                        }
+                    } else {
+                        transition++
+                    }
+                    bossBar.name(TextAlignment.centreBossBarText(event.bossBarString.replace("%s", "%02d:%02d".format((EVENT_DURATION - seconds) / 60, (EVENT_DURATION - seconds) % 60))
+                        .replace("%f", "${if(event == SpecialEvent.RANDOS_REVENGE) transition.toInt() else transition}")
+                    ))
                 }
 
                 event.onTick(Bukkit.getOnlinePlayers(), ticks, seconds)
@@ -85,17 +105,17 @@ enum class SpecialEvent(
     val onStart: (Collection<Player>) -> Unit = {},
     val onTick: (Collection<Player>, Int, Int) -> Unit = { _, _, _ -> }
 ) {
-    BOOSTED_SCORE_AND_REWARDS(
+    TREASURE_TIME(
         "Treasure Time",
         "<gradient:gold:yellow:gold:yellow:gold>Treasure Time ",
-        "${ChatUtility.BURB_FONT_TAG}<gradient:gold:yellow:gold:yellow:gold>TREASURE TIME<white>: %s",
+        "${ChatUtility.BURB_FONT_TAG}<transition:gold:yellow:%f>TREASURE TIME<white>: %s",
         onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.TREASURE_TIME_LOW) } },
         onTick = { players, ticks, seconds -> if(ticks == 0 && seconds == 60) players.forEach { Jukebox.startMusicLoop(it, Music.TREASURE_TIME_HIGH) } }
     ),
-    LOW_GRAVITY(
+    MOON_GRAVITY(
         "Moon Gravity",
         "<gradient:dark_purple:light_purple:dark_purple:light_purple:dark_purple>Moon Gravity ",
-        "${ChatUtility.BURB_FONT_TAG}<gradient:dark_purple:light_purple:dark_purple:light_purple:dark_purple>MOON GRAVITY<white>: %s",
+        "${ChatUtility.BURB_FONT_TAG}<transition:dark_purple:light_purple:%f>MOON GRAVITY<white>: %s",
         onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.LOBBY_UNDERWORLD) } },
         onTick = { players, ticks, _ ->
             if (ticks % 10 == 0) {
@@ -110,14 +130,16 @@ enum class SpecialEvent(
             }
         }
     ),
-    RANDOM_CHARACTER(
+    RANDOS_REVENGE(
         "Rando's Revenge",
         "<rainbow>Rando's Revenge ",
-        "${ChatUtility.BURB_FONT_TAG}<rainbow>RANDO'S REVENGE</rainbow>: %s"
+        "${ChatUtility.BURB_FONT_TAG}<rainbow:%f>RANDO'S REVENGE</rainbow>: %s",
+        onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.RANDOS_REVENGE) } },
     ),
     VANQUISH_SHOWDOWN(
         "Showdown",
         "<gradient:dark_red:red:dark_red>Showdown ",
-        "${ChatUtility.BURB_FONT_TAG}<gradient:red:dark_red:red:dark_red:red>Showdown<white>: %s"
+        "${ChatUtility.BURB_FONT_TAG}<transition:red:dark_red:%f>Showdown<white>: %s",
+        onStart = { players -> players.forEach { Jukebox.startMusicLoop(it, Music.VANQUISH_SHOWDOWN) } },
     );
 }
