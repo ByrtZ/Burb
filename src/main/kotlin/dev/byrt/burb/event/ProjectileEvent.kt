@@ -25,7 +25,7 @@ class ProjectileEvent: Listener {
                     if(shooter.burbPlayer().playerTeam == Teams.SPECTATOR) return
                     if(player.burbPlayer().playerTeam != shooter.burbPlayer().playerTeam) {
                         if(e.entity.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))) {
-                            player.damage(0.001, shooter)
+                            player.damage(0.00001, shooter)
                             val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
                             if(player.health >= damageDealt) {
                                 player.health -= damageDealt

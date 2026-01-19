@@ -25,7 +25,7 @@ object CommitIntegration {
         val commitUpdateDisplay = Bukkit.getWorlds()[0].spawn(Location(Bukkit.getWorlds()[0], -32.9375, 5.875, 0.5, -90.0f, 0.0f), TextDisplay::class.java).apply {
             alignment = TextDisplay.TextAlignment.CENTER
             billboard = Display.Billboard.FIXED
-            text(Formatting.allTags.deserialize("<burbcolour><b><font:burb:font>LATEST  UPDATES<reset><newline><i><gray>${if(commit != null) "Commit ID: <yellow>${commit.first}" else "Commit ID: <red></i>None"}<reset><newline><newline><font:burb:font><i>${commit?.second?.replace(" ", "  ") ?: "</i><red>No  commit  message."}<reset><newline><newline><font:burb:font>${if(commit != null && (plugin.pluginMeta.version.contains(commit.first))) "<green>Server  up  to  date" else "<red>Server  outdated"}"))
+            text(Formatting.allTags.deserialize("<burbcolour><b><font:burb:font>Latest Updates<reset><newline><i><gray>${if(commit != null) "Commit ID: <yellow>${commit.first}" else "Commit ID: <red></i>None"}<reset><newline><newline><font:burb:font><i>${commit?.second ?: "</i><red>No  commit  message."}<reset><newline><newline><font:burb:font>${if(commit != null && (plugin.pluginMeta.version.contains(commit.first))) "<green>Server up to date" else "<red>Server outdated"}"))
             scoreboardTags.add("burb.lobby.updates_display")
         }
     }

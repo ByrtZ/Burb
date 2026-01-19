@@ -110,7 +110,8 @@ object TeamManager {
                 refreshGlowing()
             }
         }
-        player.characterSelect()
+
+        if(team != Teams.NULL) player.characterSelect()
     }
 
     fun shuffleTeams(sender: CommandSender?, players: Set<Player>, ignoreAdmins: Boolean) {

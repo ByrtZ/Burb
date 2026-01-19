@@ -1,5 +1,6 @@
 package dev.byrt.burb.resource
 
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.util.extension.longAt
 import net.kyori.adventure.resource.ResourcePackInfo
 import net.kyori.adventure.resource.ResourcePackRequest
@@ -25,6 +26,8 @@ class ResourcePackApplier(private val loader: ResourcePackLoader) : Listener {
      */
     @OptIn(ExperimentalStdlibApi::class)
     private fun applyToPlayer(player: Player, pack: RemotePack?) {
+        PlayerVisuals.applyPack(player)
+
         val request = ResourcePackRequest.resourcePackRequest().apply {
             replace(true)
             required(true)

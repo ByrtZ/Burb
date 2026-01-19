@@ -23,6 +23,8 @@ import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
 import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.lobby.BurbNPC
+import dev.byrt.burb.lobby.fishing.FishRarity
 
 import kotlinx.coroutines.runBlocking
 
@@ -49,28 +51,44 @@ class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
                     BurbInterfaces.createTeamInterface(player, interfaceType)
                 }
             }
-
             BurbInterfaceType.CHARACTER_SELECT -> {
                 runBlocking {
                     BurbInterfaces.createCharacterInterface(player, interfaceType)
                 }
             }
-
             BurbInterfaceType.ALL_COSMETICS -> {
                 runBlocking {
                     BurbInterfaces.createAllCosmeticsInterface(player, interfaceType)
                 }
             }
-
             BurbInterfaceType.WARDROBE -> {
                 runBlocking {
                     BurbInterfaces.createWardrobeInterface(player, interfaceType)
                 }
             }
-
             BurbInterfaceType.MY_PROFILE -> {
                 runBlocking {
                     BurbInterfaces.createProfileInterface(player, interfaceType)
+                }
+            }
+            BurbInterfaceType.FISHING_SELECT -> {
+                runBlocking {
+                    BurbInterfaces.createFishingInterface(player, interfaceType)
+                }
+            }
+            BurbInterfaceType.FISHING_CATALOGUE -> {
+                runBlocking {
+                    BurbInterfaces.createFishingCatalogueInterface(player, interfaceType)
+                }
+            }
+            BurbInterfaceType.FISHING_CHANCES -> {
+                runBlocking {
+                    BurbInterfaces.createFishingChancesInterface(player, interfaceType)
+                }
+            }
+            BurbInterfaceType.FISHING_ROD_GIVER -> {
+                runBlocking {
+                    BurbInterfaces.createFishingRodGiverInterface(player, interfaceType)
                 }
             }
         }
@@ -403,14 +421,14 @@ object BurbInterfaces {
                 if(!unlockedCosmetics.contains(cosmetic.cosmeticId)) {
                     cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }
                     cosmeticItem.type = Material.GRAY_DYE
-                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><prefix:locked> Locked")) )
+                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }
                         cosmeticItem.type = Material.LIME_DYE
-                        cosmeticItem.lore(cosmeticItem.lore()?.plus(listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><burbcolour><prefix:unlocked> Click to unequip"))))
+                        cosmeticItem.lore(cosmeticItem.lore()?.plus(listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><burbcolour><unicodeprefix:unlocked> Click to unequip"))))
                     } else {
-                        cosmeticItem.lore(cosmeticItem.lore()?.plus(listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><burbcolour><prefix:unlocked> Click to equip"))))
+                        cosmeticItem.lore(cosmeticItem.lore()?.plus(listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><burbcolour><unicodeprefix:unlocked> Click to equip"))))
                     }
                 }
 
@@ -489,6 +507,161 @@ object BurbInterfaces {
                         }
                     }
                 }
+            }
+        }
+    }.open(player)
+
+    suspend fun createFishingInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 3
+
+        withTransform { pane, _ ->
+            pane[1,3] = StaticElement(drawable(ServerItem.getFishingCatalogueItem())) {
+                player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
+                runBlocking { createFishingCatalogueInterface(player, BurbInterfaceType.FISHING_CATALOGUE) }
+            }
+        }
+        withTransform { pane, _ ->
+            pane[1,5] = StaticElement(drawable(ServerItem.getFishingChancesItem())) {
+                player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
+                runBlocking { createFishingChancesInterface(player, BurbInterfaceType.FISHING_CHANCES) }
+            }
+        }
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[2,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+            }
+        }
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[2,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
+                    }
+                }
+            }
+        }
+    }.open(player)
+
+    suspend fun createFishingCatalogueInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 3
+
+        withTransform { pane, _ ->
+            pane[1,4] = StaticElement(drawable(ServerItem.getUnconfiguredItem())) {
+                player.playSound(Sounds.Misc.INTERFACE_ERROR)
+            }
+        }
+
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[2,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+            }
+        }
+
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[2,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
+                    }
+                }
+            }
+        }
+    }.open(player)
+
+    suspend fun createFishingChancesInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 3
+
+        for((col, rarity) in FishRarity.entries.filter { it != FishRarity.SPECIAL }.withIndex()) {
+            withTransform { pane, _ ->
+                pane[1,col] = StaticElement(drawable(ServerItem.getFishingChanceItem(rarity))) {
+                    player.playSound(Sounds.Fishing.FISH_FLOP)
+                }
+            }
+        }
+
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[2,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
+            }
+        }
+
+        /** Add back button **/
+        withTransform { pane, view ->
+            if(view.parent() != null) {
+                val backItem = ItemStack(Material.SPECTRAL_ARROW)
+                val backItemMeta = backItem.itemMeta
+                backItemMeta.displayName(Formatting.allTags.deserialize("<!i><burbcolour>Back"))
+                backItem.itemMeta = backItemMeta
+                pane[2,0] = StaticElement(drawable(backItem)) {
+                    player.playSound(Sounds.Misc.INTERFACE_BACK)
+                    runBlocking {
+                        view.parent()?.open()
+                    }
+                }
+            }
+        }
+    }.open(player)
+
+    suspend fun createFishingRodGiverInterface(player: Player, interfaceType: BurbInterfaceType) = buildChestInterface {
+        titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
+        rows = 3
+
+        withTransform { pane, view ->
+            pane[1,4] = StaticElement(drawable(ServerItem.getFishingRodItem())) {
+                if(player.inventory.contains(Material.FISHING_ROD)) {
+                    player.sendMessage(Formatting.allTags.deserialize("<b>${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcNameColour}${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcName}</b><white>: You've already got a rod, don't be greedy now!"))
+                    player.playSound(Sounds.Misc.INTERFACE_ERROR)
+                    player.playSound(Sounds.Misc.NPC_INTERACT)
+                    runBlocking { view.close(InventoryCloseEvent.Reason.PLUGIN, false) }
+                } else {
+                    player.sendMessage(Formatting.allTags.deserialize("<b>${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcNameColour}${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcName}</b><white>: Best of luck out there in the waters..."))
+                    player.playSound(Sounds.Misc.COMPLETE)
+                    player.playSound(Sounds.Misc.NPC_INTERACT)
+                    player.inventory.setItem(7, ServerItem.getUsableFishingRodItem())
+                    runBlocking { view.close(InventoryCloseEvent.Reason.PLUGIN, false) }
+                }
+
+            }
+        }
+
+        withTransform { pane, _ ->
+            val closeMenuItem = ItemStack(Material.BARRIER)
+            val closeMenuItemMeta = closeMenuItem.itemMeta
+            closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<!i><red>Close Menu"))
+            closeMenuItem.itemMeta = closeMenuItemMeta
+            pane[2,4] = StaticElement(drawable(closeMenuItem)) {
+                player.playSound(Sounds.Misc.INTERFACE_BACK)
+                player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
             }
         }
     }.open(player)

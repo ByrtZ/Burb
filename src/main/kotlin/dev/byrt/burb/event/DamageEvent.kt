@@ -47,8 +47,17 @@ class DamageEvent: Listener {
                     if(player.burbPlayer().isDead) {
                         e.isCancelled = true
                     } else {
-                        if(e.damage.toInt() > 0) {
-                            PlayerVisuals.damageIndicator(player, e.damage)
+                        if(e.damageSource.causingEntity != null) {
+                            if(e.damageSource.causingEntity is Player) {
+                                val damager = e.damageSource.causingEntity as Player
+                                if(!damager.burbPlayer().isDead && e.damage > 0.1) {
+                                    PlayerVisuals.damageIndicator(player, e.damage)
+                                }
+                            } else {
+                                if(e.damage > 0.1) {
+                                    PlayerVisuals.damageIndicator(player, e.damage)
+                                }
+                            }
                         }
                     }
                 }
@@ -65,7 +74,7 @@ class DamageEvent: Listener {
             if(e.damager is Player && e.entity is Player) {
                 val damager = e.damager as Player
                 val damaged = e.entity as Player
-                if(damager.burbPlayer().isDead) {
+                if(damager.burbPlayer().isDead && e.cause !in listOf(EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION)) {
                     e.isCancelled = true
                     return
                 }

@@ -11,7 +11,7 @@ object Translation {
         const val ITEM_RECEIVED_PREFIX = "<burbcolour>(\uD83D\uDCB0) "
         const val TITLE_SCREEN_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}JOIN<reset> ${BURB_FONT_TAG}THE<reset> ${BURB_FONT_TAG}FIGHT<reset>"
         const val CHARACTER_SELECTION_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}CHANGE<reset> ${BURB_FONT_TAG}CHARACTER<reset>"
-        const val DEATH_PREFIX = "<gray>[<#ff3333><prefix:skull><gray>]<reset> "
+        const val DEATH_PREFIX = "<gray>[<#ff3333><unicodeprefix:skull><gray>]<reset> "
     }
     object Tutorial {
         const val BLANK_LINE = "<newline>"
@@ -32,7 +32,7 @@ object Translation {
         const val SUNBEAM_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>50<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}SUNBEAM<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
     }
     object TabList {
-        const val SERVER_LIST_PADDING = "<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■"
+        const val SERVER_LIST_PADDING = "<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■"
         const val SERVER_LIST_TITLE = " <burbcolour><bold>SUBURBIA<reset> "
         val SERVER_LIST_VERSION = "<dark_gray>${Bukkit.getMinecraftVersion()}<reset>"
         const val SERVER_LIST_GAME = "<white> ● <yellow>The zombies are coming.<reset>"

@@ -8,7 +8,7 @@ import dev.byrt.burb.text.InfoBoardManager
 object Scores {
     private var plantsScore = 0
     private var zombiesScore = 0
-    private const val WIN_SCORE = 100000
+    private const val WIN_SCORE = 200000
 
     fun getWinningTeam(): Teams {
         if (plantsScore > zombiesScore) return Teams.PLANTS
@@ -23,36 +23,12 @@ object Scores {
     }
 
     fun getPlacementMap(): Map<Teams, Int> {
-        return mutableMapOf(Pair(Teams.PLANTS, getDisplayScore(Teams.PLANTS)), Pair(Teams.ZOMBIES, getDisplayScore(Teams.ZOMBIES))).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
+        return mutableMapOf(Pair(Teams.PLANTS, plantsScore), Pair(Teams.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
     }
 
     fun addScore(team: Teams, score: Int) {
         if (team == Teams.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
         if (team == Teams.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
-        InfoBoardManager.updateScore()
-        teamScoreWinCheck()
-    }
-
-    fun addPlantsScore(score: Int) {
-        this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
-        InfoBoardManager.updateScore()
-        teamScoreWinCheck()
-    }
-
-    fun addZombiesScore(score: Int) {
-        this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.BOOSTED_SCORE_AND_REWARDS) 2 else 1
-        InfoBoardManager.updateScore()
-        teamScoreWinCheck()
-    }
-
-    fun subPlantsScore(score: Int) {
-        this.plantsScore -= score
-        InfoBoardManager.updateScore()
-        teamScoreWinCheck()
-    }
-
-    fun subZombiesScore(score: Int) {
-        this.zombiesScore -= score
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }

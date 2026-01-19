@@ -59,7 +59,7 @@ object SpecialEvents {
 
                 event.onTick(Bukkit.getOnlinePlayers(), ticks, seconds)
 
-                if(ticks == 0 && seconds >= EVENT_DURATION || GameManager.getGameState() != GameState.IN_GAME) {
+                if(ticks == 0 && seconds >= EVENT_DURATION || GameManager.getGameState() != GameState.IN_GAME || Timer.getTimer() <= 120) {
                     Bukkit.broadcast(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}${event.eventNameFormatted}<reset>has ended."))
                     bossBar.removeViewer(Audience.audience(Bukkit.getOnlinePlayers()))
                     currentEvent = null

@@ -2,6 +2,6 @@ name: Burb
 version: "${version}"
 main: dev.byrt.burb.Main
 api-version: "1.21.11"
-authors: [Byrt, Flamey]
+authors: [Byrt, Flamey, Lucy]
 description: Doing the world a favour by providing PVZ:GW's "Suburbination" in Minecraft.
 website: https://bigrat.monster

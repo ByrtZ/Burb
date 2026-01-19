@@ -11,7 +11,6 @@ import org.bukkit.entity.Player
 
 //TODO: Dynamic system depending on capture point ownership
 object SpawnPoints {
-    //-38.5 11 76.5 0 0
     private val plantSpawns = listOf(
         Location(Bukkit.getWorlds()[0], 47.5, 2.0, 92.5, -32f, 0f),
         Location(Bukkit.getWorlds()[0], -38.5, 11.0, 76.5, 0f, 0f),
@@ -22,7 +21,7 @@ object SpawnPoints {
         Location(Bukkit.getWorlds()[0], -23.5, 2.0, 153.5, -130f, 0f),
         Location(Bukkit.getWorlds()[0], 87.5, 2.0, 136.5, 140f, 0f),
         Location(Bukkit.getWorlds()[0], 28.5, 1.0, 97.5, 90f, 0f),
-        Location(Bukkit.getWorlds()[0], -29.5, 7.0, 114.0, -90f, 0f)
+        Location(Bukkit.getWorlds()[0], -16.5, 17.0, 119.5, 180f, 0f)
     )
 
     // TODO: BOUNDING BOXES

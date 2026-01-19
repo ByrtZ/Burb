@@ -175,14 +175,12 @@ object CapturePoints {
                             if (capturePoint.zombieProgress > 0) capturePoint.zombieProgress--
                             else if (capturePoint.plantProgress < REQUIRED_CAPTURE_SCORE) {
                                 capturePoint.plantProgress++
-                                Scores.addPlantsScore(1)
                             }
                         }
                         Teams.ZOMBIES -> {
                             if (capturePoint.plantProgress > 0) capturePoint.plantProgress--
                             else if (capturePoint.zombieProgress < REQUIRED_CAPTURE_SCORE) {
                                 capturePoint.zombieProgress++
-                                Scores.addZombiesScore(1)
                             }
                         }
                         else -> {}
@@ -190,31 +188,35 @@ object CapturePoints {
                 }
 
                 // Bump capture progress back up if uncontested but team had last captured it
-                if(capturePoint.lastCapturedTeam == Teams.PLANTS && capturePoint.plantProgress >= 1 && capturePoint.plantProgress > REQUIRED_CAPTURE_SCORE && !contested && plants == 0 && zombies == 0) {
+                if(capturePoint.lastCapturedTeam == Teams.PLANTS && capturePoint.plantProgress >= 1 && capturePoint.plantProgress < REQUIRED_CAPTURE_SCORE && !contested && plants == 0 && zombies == 0) {
                     capturePoint.plantProgress++
                 }
-                // Bump capture progress back up if uncontested but team had last captured it
-                if(capturePoint.lastCapturedTeam == Teams.ZOMBIES && capturePoint.zombieProgress >= 1 && capturePoint.zombieProgress > REQUIRED_CAPTURE_SCORE  && !contested && plants == 0 && zombies == 0) {
+                if(capturePoint.lastCapturedTeam == Teams.ZOMBIES && capturePoint.zombieProgress >= 1 && capturePoint.zombieProgress < REQUIRED_CAPTURE_SCORE  && !contested && plants == 0 && zombies == 0) {
                     capturePoint.zombieProgress++
                 }
 
                 // Uncapture point
-                if(capturePoint.plantProgress == 0 && capturePoint.zombieProgress == 0) {
+                if(capturePoint.plantProgress == 0 && capturePoint.zombieProgress == 0 && capturePoint.lastCapturedTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                    Bukkit.getOnlinePlayers().forEach {
+                        it.sendMessage(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}<yellow>${capturePoint.pointName}<reset> is no longer controlled by the ${capturePoint.lastCapturedTeam.teamColourTag}${capturePoint.lastCapturedTeam.teamName}<reset>."))
+                        it.playSound(if(it.burbPlayer().playerTeam == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_UNFRIENDLY else Sounds.Score.CAPTURE_FRIENDLY)
+                    }
                     capturedPoints.remove(capturePoint)
+                    capturePoint.lastCapturedTeam = Teams.NULL
                 }
 
                 // Point text display information
-                textDisplay!!.text(
-                    Formatting.allTags.deserialize("<font:burb:font><yellow><bold>${capturePoint.pointName}<newline><newline><burbcolour>${
+                textDisplay?.text(
+                    Formatting.allTags.deserialize("<font:burb:font><yellow><b>${capturePoint.pointName}<newline><newline></b>${
                     when {
-                        capturePoint.plantProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Plants own point"
-                        capturePoint.zombieProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font>Zombies own point"
-                        capturePoint.dominatingTeam == Teams.PLANTS -> "<font:burb:font>Plants taking over"
-                        capturePoint.dominatingTeam == Teams.ZOMBIES -> "<font:burb:font>Zombies taking over"
+                        capturePoint.plantProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font><plantscolour>Plants own point"
+                        capturePoint.zombieProgress == REQUIRED_CAPTURE_SCORE -> "<font:burb:font><zombiescolour>Zombies own point"
+                        capturePoint.dominatingTeam == Teams.PLANTS -> "<font:burb:font><plantscolour>Plants taking over"
+                        capturePoint.dominatingTeam == Teams.ZOMBIES -> "<font:burb:font><zombiescolour>Zombies taking over"
                         contested -> "<reset><font:burb:font><red><b>CONTESTED"
                         else -> "<reset><font:burb:font><b>UNCONTESTED"
                     }
-                }<reset><font:burb:font><newline><newline><b>${if(capturePoint.plantProgress > capturePoint.zombieProgress) "<plantscolour>${capturePoint.plantProgress}" else if(capturePoint.zombieProgress > capturePoint.plantProgress) "<zombiescolour>${capturePoint.zombieProgress}" else "<speccolour>0"}<newline>"))
+                }<reset><font:burb:font><newline><newline>${if(capturePoint.plantProgress > capturePoint.zombieProgress) "<plantscolour>${capturePoint.plantProgress}" else if(capturePoint.zombieProgress > capturePoint.plantProgress) "<zombiescolour>${capturePoint.zombieProgress}" else "<speccolour>0"}<newline>"))
 
                 // Coloured particle ring to show point status
                 spawnCaptureParticles(location, capturePoint.dominatingTeam, capturePoint.plantProgress, capturePoint.zombieProgress, contested)
@@ -222,8 +224,6 @@ object CapturePoints {
                 // On capture point
                 if((capturePoint.plantProgress == REQUIRED_CAPTURE_SCORE || capturePoint.zombieProgress == REQUIRED_CAPTURE_SCORE) && capturePoint.lastCapturedTeam != capturePoint.dominatingTeam) {
                     if(capturePoint.dominatingTeam !in listOf(Teams.NULL, Teams.SPECTATOR)) {
-                        if(capturePoint.plantProgress >= REQUIRED_CAPTURE_SCORE) Scores.addPlantsScore(1000)
-                        if(capturePoint.zombieProgress >= REQUIRED_CAPTURE_SCORE) Scores.addZombiesScore(1000)
                         capturedPoints[capturePoint] = capturePoint.dominatingTeam
                         capturePoint.lastCapturedTeam = capturePoint.dominatingTeam
                         Bukkit.getOnlinePlayers().forEach {
@@ -233,16 +233,10 @@ object CapturePoints {
                         }
                     }
                 }
-                // Increment score if not captured
-                if(capturePoint.plantProgress != REQUIRED_CAPTURE_SCORE || capturePoint.zombieProgress != REQUIRED_CAPTURE_SCORE) {
-                    if (capturedPoints.containsKey(capturePoint) && suburbinatingTeam != capturedPoints[capturePoint]) {
-                        capturedPoints[capturePoint]?.let { Scores.addScore(it, 1) }
-                    }
-                }
 
                 // Increment score if captured
                 if(capturedPoints.containsKey(capturePoint)) {
-                    capturedPoints[capturePoint]?.let { Scores.addScore(it, 2) }
+                    capturedPoints[capturePoint]?.let { Scores.addScore(it, 1) }
                 }
 
                 // Check for suburbination
@@ -293,5 +287,5 @@ object CapturePoints {
 enum class CapturePoint(val pointName: String, var location: Location, var plantProgress: Int, var zombieProgress: Int, var dominatingTeam: Teams, var lastCapturedTeam: Teams) {
     A("Perilous Park", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
     B("Mount Burbmore", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL),
-    C("Sleepy Suburbs", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL);
+    C("Treetop Towers", Location(Bukkit.getWorlds()[0], 0.5, 30.0, 0.5), plantProgress = 0, zombieProgress = 0, Teams.NULL, Teams.NULL);
 }

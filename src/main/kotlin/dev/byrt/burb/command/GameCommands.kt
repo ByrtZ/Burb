@@ -35,7 +35,6 @@ class GameCommands {
     @Command("game stop")
     @CommandDescription("Stops the game.")
     @Permission("burb.cmd.game")
-    @Confirmation
     fun stop(sender: CommandSender) {
         if(GameManager.getGameState() != GameState.IDLE) {
             ChatUtility.broadcastDev("<yellow>${sender.name}<red> stopped the Suburbination game.", false)

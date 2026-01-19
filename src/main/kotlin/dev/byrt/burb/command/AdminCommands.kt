@@ -9,8 +9,8 @@ import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.item.SubRarity
-import dev.byrt.burb.lobby.FishRarity
-import dev.byrt.burb.lobby.LobbyFishing
+import dev.byrt.burb.lobby.fishing.FishRarity
+import dev.byrt.burb.lobby.fishing.Fishing
 import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.lobby.BurbNPC
 import dev.byrt.burb.lobby.BurbNPCs
@@ -88,7 +88,7 @@ class AdminCommands {
                 override fun run() {
                     val item = loc.world.spawn(loc, Item::class.java)
                     item.itemStack = ItemStack(Material.BEEF, 1)
-                    LobbyFishing.catchFish(player, item, item.location, rarity, subrarity)
+                    Fishing.catchFish(player, item, item.location, rarity, subrarity)
                 }
             }.runTaskLater(plugin, 100L)
         }
@@ -210,13 +210,6 @@ class AdminCommands {
         }.runTaskLater(plugin, 200L)
     }
 
-    @Command("debug actionbar <low> <lower>")
-    @CommandDescription("Shows temporary test actionbar")
-    @Permission("burb.cmd.debug")
-    fun debugActionbar(player: Player, @Argument("low") low: String, @Argument("lower") lower: String) {
-        player.sendActionBar(TextAlignment.centreActionBarText(low, lower))
-    }
-
     @Command("progression add_xp <xp>")
     @CommandDescription("Debug command for XP")
     @Permission("burb.cmd.debug")
@@ -269,7 +262,6 @@ class AdminCommands {
             )
         }
     }
-
 
     @Command("cosmetic equip <cosmetic>")
     @CommandDescription("Debug command for cosmetics")

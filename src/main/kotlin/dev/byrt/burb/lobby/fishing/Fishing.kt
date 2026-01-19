@@ -1,4 +1,4 @@
-package dev.byrt.burb.lobby
+package dev.byrt.burb.lobby.fishing
 
 import dev.byrt.burb.item.ItemRarity
 import dev.byrt.burb.item.ItemType
@@ -26,7 +26,7 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-object LobbyFishing {
+object Fishing {
     fun catchFish(
         player: Player,
         item: Item,
@@ -55,7 +55,6 @@ object LobbyFishing {
                     fishMeta.persistentDataContainer.set(FISH_IS_SHINY, PersistentDataType.BOOLEAN, true)
                     shinyEffect(item)
                 }
-
                 SubRarity.SHADOW -> {
                     lore += "<!i><#0><shadow:white>Caught by <shadow:yellow>${player.name}<shadow:white>."
                     lore += "<!i><#0><shadow:white>Fish #${fishNumber}"
@@ -63,7 +62,6 @@ object LobbyFishing {
                     fishMeta.persistentDataContainer.set(FISH_IS_SHADOW, PersistentDataType.BOOLEAN, true)
                     shadowEffect(item)
                 }
-
                 SubRarity.OBFUSCATED -> {
                     lore += "<!i><white><font:alt>Caught by <yellow>${player.name}</font:alt>."
                     lore += "<!i><white><font:alt>Fish</font:alt> #${fishNumber}"
@@ -71,8 +69,6 @@ object LobbyFishing {
                     fishMeta.persistentDataContainer.set(FISH_IS_OBFUSCATED, PersistentDataType.BOOLEAN, true)
                     obfuscatedEffect(item)
                 }
-
-                else -> {}
             }
         } else {
             if (fishRarity.props.showCatcher) {
@@ -354,7 +350,7 @@ object LobbyFishing {
                                 location.world.spawnParticle(
                                     Particle.FLASH,
                                     location.clone().add(x, 100.0, z),
-                                    1, 0.0, 0.0, 0.0, 0.0, null, true
+                                    1, 0.0, 0.0, 0.0, 0.0, Color.WHITE, true
                                 )
                             }
                             for (i in 0..39) {

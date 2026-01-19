@@ -26,6 +26,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
@@ -50,9 +51,10 @@ object PlayerVisuals {
         val damageIndicatorEntity = player.location.world.spawn(player.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
             alignment = TextDisplay.TextAlignment.CENTER
             billboard = Display.Billboard.VERTICAL
+            isShadowed = true
             isCustomNameVisible = true
             scoreboardTags.add("burb.damage_indicator")
-            customName(Formatting.allTags.deserialize("${if(damageTaken.toInt() <= 3) "<yellow>" else if(damageTaken.toInt() in 4..6) "<gold>" else if(damageTaken.toInt() >= 7) "<red>" else "<#000000>"}${damageTaken}"))
+            customName(Formatting.allTags.deserialize("${BURB_FONT_TAG}${if(damageTaken.toInt() <= 3) "<yellow>" else if(damageTaken.toInt() in 4..6) "<gold>" else if(damageTaken.toInt() >= 7) "<red>" else "<#000000>"}${damageTaken}"))
         }
         object : BukkitRunnable() {
             override fun run() {
@@ -316,5 +318,10 @@ object PlayerVisuals {
             player.teleport(Bukkit.getWorlds()[0].spawnLocation)
             player.inventory.helmet = null
         }
+    }
+
+    fun applyPack(player: Player) {
+        player.teleport(Location(Bukkit.getWorlds()[0], 0.5, -1000.0, 0.5))
+        player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0))
     }
 }

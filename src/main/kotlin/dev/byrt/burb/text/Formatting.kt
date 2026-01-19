@@ -25,14 +25,28 @@ object Formatting {
         NO_PREFIX("", ""),
         DEV_PREFIX("dev", "\uD001"),
         ADMIN_PREFIX("admin", "\uD002"),
-        SPECTATOR_PREFIX("spectator", "\uD003"),
+        SPECTATOR_PREFIX("spectator", "\uD003");
+
+        companion object {
+            fun ofName(str : String): Prefix {
+                for(p in entries) {
+                    if (p.prefixName == str) return p
+                }
+                return NO_PREFIX
+            }
+        }
+    }
+
+    /** Prefix enum for allowing MiniMessage usage of the <unicodeprefix:NAME> tag in messages. **/
+    enum class UnicodePrefix(val prefixName: String, val value: String) {
+        NO_PREFIX("", ""),
         WARNING_PREFIX("warning", "⚠"),
         SKULL_PREFIX("skull", "☠"),
         LOCK_PREFIX("locked", "\uD83D\uDD12"),
         UNLOCKED_PREFIX("unlocked", "\uD83D\uDD13");
 
         companion object {
-            fun ofName(str : String): Prefix {
+            fun ofName(str : String): UnicodePrefix {
                 for(p in entries) {
                     if (p.prefixName == str) return p
                 }
@@ -57,6 +71,7 @@ object Formatting {
                 .resolver(SPECTATOR_COLOUR)
                 .resolver(NOTIFICATION_COLOUR)
                 .resolver(prefix())
+                .resolver(unicodePrefix())
                 .build()
         )
         .build()
@@ -82,6 +97,16 @@ object Formatting {
             val prefixName = args.popOr("Name not supplied.")
             Tag.selfClosingInserting(
                 Component.text(Prefix.ofName(prefixName.toString()).value).font(GLYPH_FONT)
+            )
+        }
+    }
+
+    /** Builds a unicode prefix tag. **/
+    private fun unicodePrefix() : TagResolver {
+        return TagResolver.resolver("unicodeprefix") { args, _ ->
+            val prefixName = args.popOr("Name not supplied.")
+            Tag.selfClosingInserting(
+                Component.text(UnicodePrefix.ofName(prefixName.toString()).value)
             )
         }
     }
