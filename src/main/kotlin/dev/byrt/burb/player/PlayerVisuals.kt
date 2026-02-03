@@ -26,11 +26,14 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
+import org.bukkit.Color
+import org.bukkit.FireworkEffect
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
+import org.bukkit.entity.Firework
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.TextDisplay
@@ -38,6 +41,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.util.Vector
 
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -330,5 +334,50 @@ object PlayerVisuals {
     fun applyPack(player: Player) {
         player.teleport(Location(Bukkit.getWorlds()[0], 0.5, -1000.0, 0.5))
         player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0))
+    }
+
+    /**
+     * @param [location] Where to spawn the firework
+     * @param [flicker] Whether the firework has the flicker effect
+     * @param [trail] Whether the firework has the trail effect
+     * @param [color] What colour the firework is
+     * @param [fireworkType] What type the firework is
+     * @param [variedVelocity] Whether the firework should shoot into the sky with a random offset
+     */
+    fun firework(
+        location: Location,
+        flicker: Boolean,
+        trail: Boolean,
+        color: Color,
+        fireworkType: FireworkEffect.Type,
+        variedVelocity: Boolean
+    ) {
+        val f: Firework = location.world.spawn(
+            Location(location.world, location.x, location.y + 1.0, location.z),
+            Firework::class.java
+        )
+        val fm = f.fireworkMeta
+        fm.addEffect(
+            FireworkEffect.builder()
+                .flicker(flicker)
+                .trail(trail)
+                .with(fireworkType)
+                .withColor(color)
+                .build()
+        )
+        if (variedVelocity) {
+            fm.power = 1
+            f.fireworkMeta = fm
+            val direction = Vector(
+                Random.nextDouble(-0.005, 0.005),
+                Random.nextDouble(0.25, 0.35),
+                Random.nextDouble(-0.005, 0.005)
+            ).normalize()
+            f.velocity = direction
+        } else {
+            fm.power = 0
+            f.fireworkMeta = fm
+            f.ticksToDetonate = 0
+        }
     }
 }

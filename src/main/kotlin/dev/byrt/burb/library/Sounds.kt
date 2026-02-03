@@ -28,7 +28,7 @@ object Sounds {
         val TREASURE_TIME_LOW = sound(key("burb.game.event.treasure_low"), Source.VOICE, 0.5f, 1f)
         val TREASURE_TIME_HIGH = sound(key("burb.game.event.treasure_high"), Source.VOICE, 0.5f, 1f)
         val RANDOS_REVENGE = sound(key("burb.game.event.randos_revenge"), Source.VOICE, 0.5f, 1f)
-        val VANQUISH_SHOWDOWN = sound(key("burb.game.event.vanquish_showdown"), Source.VOICE, 0.35f, 1f)
+        val VANQUISH_SHOWDOWN = sound(key("burb.game.event.vanquish_showdown"), Source.VOICE, 0.3f, 1f)
         val DOWNTIME_LOOP = sound(key("event.downtime.loop"), Source.VOICE, 1f, 1f)
         val DOWNTIME_SUSPENSE = sound(key("event.downtime.suspense"), Source.VOICE, 1f, 1f)
         val NULL = sound(key(""), Source.VOICE, 0f, 0f)
@@ -54,8 +54,10 @@ object Sounds {
         val RESPAWN = sound(key("block.bubble_column.upwards_inside"), Source.VOICE, 2f, 0.0f)
         val VANQUISH_SHOWDOWN_RESPAWN = sound(key("burb.game.event.vanquish_showdown.respawn"), Source.VOICE, 0.5f, 1f)
         val VANQUISH_SHOWDOWN_POST_RESPAWN = sound(key("burb.game.event.vanquish_showdown.post_respawn"), Source.VOICE, 0.75f, 1f)
+        val PLANTS_WIN_MUSIC = sound(key("burb.game.win_generic.plants"), Source.VOICE, 0.5f, 1f)
         val PLANTS_WIN = sound(key("burb.game.win.plants"), Source.VOICE, 0.75f, 1f)
         val PLANTS_LOSE = sound(key("burb.game.lose.plants"), Source.VOICE, 0.75f, 1f)
+        val ZOMBIES_WIN_MUSIC = sound(key("burb.game.win_generic.zombies"), Source.VOICE, 0.5f, 1f)
         val ZOMBIES_WIN = sound(key("burb.game.win.zombies"), Source.VOICE, 0.75f, 1f)
         val ZOMBIES_LOSE = sound(key("burb.game.lose.zombies"), Source.VOICE, 0.75f, 1f)
     }
@@ -78,7 +80,11 @@ object Sounds {
         val LEVEL_UP_ZOMBIES = sound(key("burb.generic.level_up.zombies"), Source.VOICE, 1f, 1f)
         val RANDO_NEW_CHARACTER = sound(key("burb.lobby.shop.pack_jingle"), Source.VOICE, 0.5f, 1f)
         val NPC_INTERACT = sound(key("entity.villager.trade"), Source.VOICE, 1f, 1f)
+        val NPC_INTERACT_HIT = sound(key("entity.villager.hurt"), Source.VOICE, 1f, 1.25f)
+        val NPC_ALT_INTERACT = sound(key("entity.pillager.ambient"), Source.VOICE, 0.8f, 2f)
+        val NPC_ALT_INTERACT_HIT = sound(key("entity.pillager.hurt"), Source.VOICE, 0.75f, 2f)
         val COMPLETE = sound(key("burb.generic.complete"), Source.VOICE, 0.75f, 1f)
+        val TENSE = sound(key("burb.generic.tense"), Source.VOICE, 0.5f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"

@@ -6,6 +6,8 @@ import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
+import dev.byrt.burb.game.visual.GameDayTime
+import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
@@ -154,6 +156,7 @@ object GameManager {
             )
         }
         TeamManager.showTeamNametags()
+        GameVisuals.setDayTime(GameDayTime.DAY)
     }
 
     private fun roundEnd() {

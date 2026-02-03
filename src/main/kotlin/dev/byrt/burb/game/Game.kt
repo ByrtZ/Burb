@@ -4,9 +4,11 @@ import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
+import dev.byrt.burb.game.visual.GameDayTime
+import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
-import dev.byrt.burb.lobby.BurbNPCs
+import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -40,6 +42,7 @@ object Game {
         CommitIntegration.grabLatestCommit()
         LobbyBall.createLobbyBall()
         BurbNPCs.spawnAllNPCs()
+        GameVisuals.resetDayTime()
     }
 
     fun cleanup() {
@@ -50,6 +53,7 @@ object Game {
         ItemManager.destroyBullets()
         LobbyBall.cleanup()
         CommitIntegration.destroyUpdatesBoard()
+        GameVisuals.resetDayTime()
     }
 
     fun reload() {
@@ -60,6 +64,7 @@ object Game {
         Scores.setZombiesScore(0)
         CapturePoints.clearCapturePoints()
         Jukebox.resetMusicStress()
+        GameVisuals.setDayTime(GameDayTime.DAY)
         for(player in Bukkit.getOnlinePlayers()) {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.disableTeamGlowing(player)

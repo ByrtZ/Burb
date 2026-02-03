@@ -23,7 +23,7 @@ import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
 import dev.byrt.burb.item.ItemType
-import dev.byrt.burb.lobby.BurbNPC
+import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 
 import kotlinx.coroutines.runBlocking
@@ -419,9 +419,16 @@ object BurbInterfaces {
             if(cosmetic != BurbCosmetic.INVALID_COSMETIC) {
                 val cosmeticItem = BurbCosmetics.getCosmeticItem(cosmetic)
                 if(!unlockedCosmetics.contains(cosmetic.cosmeticId)) {
+                    // Remove model if not unlocked
                     cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }
                     cosmeticItem.type = Material.GRAY_DYE
-                    cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
+                    // Do not show details if hidden
+                    if(cosmetic.isHidden) {
+                        cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<red>???")) } }
+                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
+                    } else {
+                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
+                    }
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { itemModel = null } }

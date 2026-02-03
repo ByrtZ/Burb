@@ -9,8 +9,8 @@ object Translation {
     object Generic {
         const val ARROW_PREFIX = "[<yellow>▶<reset>] "
         const val ITEM_RECEIVED_PREFIX = "<burbcolour>(\uD83D\uDCB0) "
-        const val TITLE_SCREEN_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}JOIN<reset> ${BURB_FONT_TAG}THE<reset> ${BURB_FONT_TAG}FIGHT<reset>"
-        const val CHARACTER_SELECTION_ACTIONBAR = "<reset>${BURB_FONT_TAG}PRESS<reset> $BURB_FONT_TAG<burbcolour><key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}CHANGE<reset> ${BURB_FONT_TAG}CHARACTER<reset>"
+        const val TITLE_SCREEN_ACTIONBAR = "${BURB_FONT_TAG}<white>Press <burbcolour><key:key.sneak></burbcolour> <white>to join the fight."
+        const val CHARACTER_SELECTION_ACTIONBAR = "${BURB_FONT_TAG}PRESS <burbcolour><key:key.sneak></burbcolour> to change character."
         const val DEATH_PREFIX = "<gray>[<#ff3333><unicodeprefix:skull><gray>]<reset> "
     }
     object Tutorial {
@@ -28,8 +28,9 @@ object Translation {
         const val OVERTIME_REASON = "burb.game.state.overtime.prefix"
     }
     object Weapon {
-        const val GATLING_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>100<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}GATLING  CANNON<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
-        const val SUNBEAM_CONTROLS = "${BURB_FONT_TAG}HOLD<reset> <burbcolour>$BURB_FONT_TAG<key:key.sneak><reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>FIRE<reset>${BURB_FONT_TAG}<reset> <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>50<gray>] <dark_gray>- <reset>${BURB_FONT_TAG}DESELECT<reset> <burbcolour>${BURB_FONT_TAG}SUNBEAM<reset> ${BURB_FONT_TAG}TO<reset> ${BURB_FONT_TAG}<red>CANCEL<reset>${BURB_FONT_TAG}.<reset>"
+        const val GATLING_CONTROLS = "${BURB_FONT_TAG}HOLD <burbcolour><key:key.sneak></burbcolour> to <red>fire <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>100<gray>]</gray> <dark_gray>- </dark_gray>Deselect <burbcolour>Pea Gatling</burbcolour> to <red>CANCEL</red>.<reset>"
+        const val SUNBEAM_CONTROLS = "${BURB_FONT_TAG}HOLD <burbcolour><key:key.sneak></burbcolour> to <red>fire <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>50<gray>]</gray> <dark_gray>- </dark_gray>Deselect <burbcolour>Sunbeam</burbcolour> to <red>CANCEL</red>.<reset>"
+        const val CANNON_RODEO_CONTROLS = "${BURB_FONT_TAG}HOLD <burbcolour><key:key.sneak></burbcolour> to <red>fire <dark_gray>- <gray>[<yellow>%s<dark_gray>/<yellow>12<gray>]</gray> <dark_gray>- </dark_gray>Deselect <burbcolour>Cannon Rodeo</burbcolour> to <red>CANCEL</red>.<reset>"
     }
     object TabList {
         const val SERVER_LIST_PADDING = "<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■<zombiescolour>■<plantscolour>■"

@@ -37,13 +37,13 @@ object BurbLobby {
             override fun run() {
                 Jukebox.startMusicLoop(player, Music.LOBBY_TITLE_SCREEN)
             }
-        }.runTaskLater(plugin, 30L)
+        }.runTaskLater(plugin, 20L)
 
         object : BukkitRunnable() {
             var i = 0
             override fun run() {
                 if(player.vehicle == titleVehicle) {
-                    player.sendActionBar(Formatting.allTags.deserialize(if(i <= 10) Translation.Generic.TITLE_SCREEN_ACTIONBAR.replace("<reset>", "<reset><yellow>") else Translation.Generic.TITLE_SCREEN_ACTIONBAR))
+                    player.sendActionBar(Formatting.allTags.deserialize(if(i <= 10) Translation.Generic.TITLE_SCREEN_ACTIONBAR.replace("<white>", "<yellow>") else Translation.Generic.TITLE_SCREEN_ACTIONBAR))
                     i++
                     if(i >= 20) i = 0
                 } else {
@@ -65,12 +65,16 @@ object BurbLobby {
                         player.removePotionEffect(PotionEffectType.INVISIBILITY)
                         Jukebox.disconnect(player)
                         if(GameManager.getGameState() == GameState.IDLE) {
-                            player.playSound(Sounds.Music.LOBBY_INTRO)
                             object : BukkitRunnable() {
                                 override fun run() {
-                                    if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
+                                    player.playSound(Sounds.Music.LOBBY_INTRO)
+                                    object : BukkitRunnable() {
+                                        override fun run() {
+                                            if(GameManager.getGameState() == GameState.IDLE) Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
+                                        }
+                                    }.runTaskLater(plugin, 1240L)
                                 }
-                            }.runTaskLater(plugin, 1240L)
+                            }.runTaskLater(plugin, 20L)
                         } else {
                             if(GameManager.getGameState() == GameState.IN_GAME) Jukebox.playCurrentMusic(player)
                             if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(player, Music.POST_GAME)

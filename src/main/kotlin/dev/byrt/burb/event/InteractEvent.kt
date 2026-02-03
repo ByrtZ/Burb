@@ -6,7 +6,7 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemUsage
 import dev.byrt.burb.item.ServerItem
-import dev.byrt.burb.lobby.BurbNPC
+import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.util.Cooldowns
 import dev.byrt.burb.util.Keys
@@ -81,7 +81,6 @@ class InteractEvent: Listener {
                 }
             }
         }
-
         e.isCancelled = true
     }
 }

@@ -1,6 +1,8 @@
 package dev.byrt.burb.game
 
 import dev.byrt.burb.game.events.SpecialEvents
+import dev.byrt.burb.game.visual.GameDayTime
+import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.library.Sounds
@@ -172,6 +174,7 @@ object GameTask {
                                 )
                             )
                         }
+                        GameVisuals.setDayTime(GameDayTime.NIGHT)
                     }
                     if(Timer.getTimer() == 60) {
                         for(player in Bukkit.getOnlinePlayers()) {
@@ -207,7 +210,7 @@ object GameTask {
                     if(Timer.getTimer() % 60 == 0) {
                         SpecialEvents.rollSpecialEvent()
                     }
-                    if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
+                    if(Timer.getTimer() in 11..59 || Timer.getTimer() % 60 == 0) {
                         for(player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
@@ -221,6 +224,9 @@ object GameTask {
                         }
                         if(Timer.getTimer() in 121..(GameManager.GameTime.IN_GAME_TIME - 660)) {
                             Jukebox.setMusicStress(MusicStress.HIGH)
+                        }
+                        if(Timer.getTimer() <= 120) {
+                            Jukebox.setMusicStress(MusicStress.NULL)
                         }
                     } else {
                         Jukebox.setMusicStress(MusicStress.NULL)
@@ -259,9 +265,22 @@ object GameTask {
 
                 /** GAME END **/
                 if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if(Timer.getTimer() == 98) {
+                        val winningTeam = Scores.getWinningTeam()
+                        if(winningTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                            for(player in Bukkit.getOnlinePlayers()) {
+                                when(winningTeam) {
+                                    Teams.PLANTS -> player.playSound(Sounds.Score.PLANTS_WIN_MUSIC)
+                                    Teams.ZOMBIES -> player.playSound(Sounds.Score.ZOMBIES_WIN_MUSIC)
+                                    else -> {}
+                                }
+                            }
+                        }
+                    }
                     if(Timer.getTimer() == 90) {
+                        val winningTeam = Scores.getWinningTeam()
                         for(player in Bukkit.getOnlinePlayers()) {
-                            if(Scores.getWinningTeam() in listOf(Teams.NULL, Teams.SPECTATOR)) {
+                            if(winningTeam in listOf(Teams.NULL, Teams.SPECTATOR)) {
                                 if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
                                 if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
                                 if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbPlayerData.appendExperience(player, 30)
@@ -273,14 +292,14 @@ object GameTask {
                                     )
                                 )
                             } else {
-                                player.sendMessage(Formatting.allTags.deserialize("${Scores.getWinningTeam().teamColourTag}<b>${Scores.getWinningTeam().teamName.uppercase()}<reset> won the game!"))
+                                player.sendMessage(Formatting.allTags.deserialize("${winningTeam.teamColourTag}<b>${winningTeam.teamName.uppercase()}<reset> won the game!"))
                                 player.showTitle(
                                     Title.title(
-                                        Formatting.allTags.deserialize("${Scores.getWinningTeam().teamColourTag}<b>${Scores.getWinningTeam().teamName.uppercase()}"),
+                                        Formatting.allTags.deserialize("${winningTeam.teamColourTag}<b>${winningTeam.teamName.uppercase()}"),
                                         Formatting.allTags.deserialize("won the game!")
                                     )
                                 )
-                                when(Scores.getWinningTeam()) {
+                                when(winningTeam) {
                                     Teams.PLANTS -> {
                                         if (player.burbPlayer().playerTeam == Teams.PLANTS) {
                                             player.playSound(Sounds.Score.PLANTS_WIN)

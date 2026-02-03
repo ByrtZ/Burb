@@ -1,6 +1,6 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.lobby.BurbNPC
+import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.BurbCharacter

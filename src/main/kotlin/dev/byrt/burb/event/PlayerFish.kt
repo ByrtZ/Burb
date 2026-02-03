@@ -22,6 +22,9 @@ class PlayerFish: Listener {
             }
         }
 
+        // Set wait time between 3..10 seconds
+        event.hook.minWaitTime = 3 * 20
+        event.hook.maxWaitTime = 10 * 20
         event.expToDrop = 0
 
         if(event.state !== PlayerFishEvent.State.CAUGHT_FISH) return

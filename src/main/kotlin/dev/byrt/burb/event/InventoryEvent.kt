@@ -36,14 +36,19 @@ class InventoryEvent: Listener {
 
     @EventHandler
     private fun onInterfaceClose(e: InventoryCloseEvent) {
-        if(e.view.title() in listOf(Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.TEAM_SELECT.interfaceName}"), Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.CHARACTER_SELECT.interfaceName}"))) {
-            if(e.reason == InventoryCloseEvent.Reason.PLAYER) {
+        if (e.view.title() in listOf(
+                Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.TEAM_SELECT.interfaceName}"),
+                Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.CHARACTER_SELECT.interfaceName}")
+            )
+        ) {
+            if (e.reason == InventoryCloseEvent.Reason.PLAYER) {
                 object : BukkitRunnable() {
                     override fun run() {
-                        when(e.view.title()) {
+                        when (e.view.title()) {
                             Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.TEAM_SELECT.interfaceName}") -> {
                                 BurbInterface(e.player as Player, BurbInterfaceType.TEAM_SELECT)
                             }
+
                             Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${BurbInterfaceType.CHARACTER_SELECT.interfaceName}") -> {
                                 BurbInterface(e.player as Player, BurbInterfaceType.CHARACTER_SELECT)
                             }

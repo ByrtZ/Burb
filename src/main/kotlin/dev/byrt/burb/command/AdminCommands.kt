@@ -12,8 +12,8 @@ import dev.byrt.burb.item.SubRarity
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.lobby.fishing.Fishing
 import dev.byrt.burb.lobby.BurbLobby
-import dev.byrt.burb.lobby.BurbNPC
-import dev.byrt.burb.lobby.BurbNPCs
+import dev.byrt.burb.lobby.npc.BurbNPC
+import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics

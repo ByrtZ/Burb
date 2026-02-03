@@ -3,6 +3,8 @@ package dev.byrt.burb.game.events
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Timer
+import dev.byrt.burb.game.visual.GameDayTime
+import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -44,6 +46,7 @@ object SpecialEvents {
             BossBar.Color.RED,
             BossBar.Overlay.PROGRESS
         )
+        GameVisuals.setDayTime(GameDayTime.NIGHT)
 
         object : BukkitRunnable() {
             var ticks = 0
@@ -83,6 +86,7 @@ object SpecialEvents {
                     Bukkit.broadcast(Formatting.allTags.deserialize("${Translation.Generic.ARROW_PREFIX}${event.eventNameFormatted}<reset>has ended."))
                     bossBar.removeViewer(Audience.audience(Bukkit.getOnlinePlayers()))
                     currentEvent = null
+                    GameVisuals.setDayTime(GameDayTime.DAY)
                     cancel()
                 }
 

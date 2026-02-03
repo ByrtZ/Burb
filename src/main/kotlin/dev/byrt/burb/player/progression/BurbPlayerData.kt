@@ -1,6 +1,5 @@
 package dev.byrt.burb.player.progression
 
-import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Timer
@@ -8,7 +7,6 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.logger
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.music.MusicStress
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
@@ -50,8 +48,9 @@ object BurbPlayerData {
             playerData[player.uniqueId] = fileConfiguration
             logger.info("Player data fetched for player ${player.name} (${player.uniqueId})")
         } catch(e: Exception) {
-            ChatUtility.broadcastDev("<#ffff00>Something went wrong while trying to fetch player data for player ${player.name} (${player.uniqueId}).", false)
+            ChatUtility.broadcastDev("<#ff3333>Something went wrong while trying to fetch player data for player ${player.name} (${player.uniqueId}).", false)
             logger.warning("Something went wrong while trying to fetch player data for player ${player.name} (${player.uniqueId}).")
+            e.printStackTrace()
         }
     }
 
@@ -75,15 +74,16 @@ object BurbPlayerData {
                 }
                 // Level up
                 val newEvolution = BurbLevel.entries[currentLevel.ordinal + 1].levelName.endsWith("0")
+                val maxLevel = BurbLevel.entries[currentLevel.ordinal + 1] == BurbLevel.LEVEL_40
 
                 player.showTitle(
                     Title.title(
-                        Formatting.allTags.deserialize(""),
+                        Formatting.allTags.deserialize("<b>${if(maxLevel) "<rainbow>" else if(newEvolution) "<gradient:gold:yellow:gold:yellow:gold>" else "<burbcolour>"}LEVEL UP!<reset>"),
                         Formatting.allTags.deserialize("You are now ${player.burbPlayer().playerTeam.teamColourTag}${BurbLevel.entries[currentLevel.ordinal + 1].levelName}<reset>."),
                         Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(2), Duration.ofMillis(500))
                     )
                 )
-                player.sendMessage(Formatting.allTags.deserialize("<b>${if(newEvolution) "<gradient:gold:yellow:gold:yellow:gold>" else "<burbcolour>"}LEVEL UP!<reset> You are now ${player.burbPlayer().playerTeam.teamColourTag}${BurbLevel.entries[currentLevel.ordinal + 1].levelName}<reset>."))
+                player.sendMessage(Formatting.allTags.deserialize("<b>${if(maxLevel) "<rainbow>" else if(newEvolution) "<gradient:gold:yellow:gold:yellow:gold>" else "<burbcolour>"}LEVEL UP!<reset> You are now ${player.burbPlayer().playerTeam.teamColourTag}${BurbLevel.entries[currentLevel.ordinal + 1].levelName}<reset>."))
                 Jukebox.disconnect(player)
                 if(newEvolution) {
                     player.playSound(Sounds.Misc.ODE_TO_JOY)
@@ -101,15 +101,10 @@ object BurbPlayerData {
                                 Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
                             }
                             GameState.IN_GAME -> {
-                                if(Timer.getTimer() <= 90) {
+                                if(Timer.getTimer() <= 120) {
                                     Jukebox.startMusicLoop(player, Music.OVERTIME)
                                 } else {
-                                    val music = when(CapturePoints.getSuburbinatingTeam()) {
-                                        Teams.PLANTS -> Music.SUBURBINATION_PLANTS
-                                        Teams.ZOMBIES -> Music.SUBURBINATION_ZOMBIES
-                                        else -> if(Jukebox.getMusicStress() == MusicStress.LOW) Music.RANDOM_LOW else if(Jukebox.getMusicStress() == MusicStress.MEDIUM) Music.RANDOM_MEDIUM else if(Jukebox.getMusicStress() == MusicStress.HIGH) Music.RANDOM_HIGH else Music.NULL
-                                    }
-                                    Jukebox.startMusicLoop(player, music)
+                                    Jukebox.playCurrentMusic(player)
                                 }
                             }
                             GameState.GAME_END -> {

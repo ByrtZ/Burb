@@ -5,6 +5,7 @@ import dev.byrt.burb.item.ItemType
 import dev.byrt.burb.item.SubRarity
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.logger
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting.allTags
 import dev.byrt.burb.util.Keys.FISH_IS_OBFUSCATED
@@ -136,7 +137,7 @@ object Fishing {
     private fun catchAnimation(catcher: Player, item: Item, location: Location, fishRarity: FishRarity) {
         when (fishRarity) {
             FishRarity.RARE -> {
-                firework(
+                PlayerVisuals.firework(
                     location,
                     flicker = false,
                     trail = false,
@@ -148,7 +149,7 @@ object Fishing {
 
             FishRarity.EPIC -> {
                 catcher.playSound(Sounds.Fishing.EPIC_CATCH)
-                firework(
+                PlayerVisuals.firework(
                     location,
                     flicker = false,
                     trail = false,
@@ -164,7 +165,7 @@ object Fishing {
                 for (i in 0..2) {
                     object : BukkitRunnable() {
                         override fun run() {
-                            firework(
+                            PlayerVisuals.firework(
                                 location,
                                 flicker = true,
                                 trail = true,
@@ -291,7 +292,7 @@ object Fishing {
                                     true
                                 )
                             }
-                            firework(
+                            PlayerVisuals.firework(
                                 startLoc.clone().add(direction),
                                 flicker = false,
                                 trail = false,
@@ -310,7 +311,7 @@ object Fishing {
             FishRarity.CELESTIAL -> {
                 Bukkit.getServer().playSound(Sounds.Fishing.CELESTIAL_CATCH)
                 Bukkit.getServer().playSound(Sounds.Fishing.CELESTIAL_CATCH_SPAWN)
-                firework(
+                PlayerVisuals.firework(
                     location,
                     flicker = true,
                     trail = true,
@@ -322,7 +323,7 @@ object Fishing {
                 object : BukkitRunnable() {
                     override fun run() {
                         if (riseHeight < location.blockY + 100) {
-                            firework(
+                            PlayerVisuals.firework(
                                 Location(location.world, location.x, riseHeight.toDouble(), location.z),
                                 flicker = false,
                                 trail = false,
@@ -362,7 +363,7 @@ object Fishing {
                                         object : BukkitRunnable() {
                                             override fun run() {
                                                 if (descendHeight > location.blockY) {
-                                                    firework(
+                                                    PlayerVisuals.firework(
                                                         Location(
                                                             location.world,
                                                             randomX,
@@ -518,7 +519,7 @@ object Fishing {
         for (i in 0..15) {
             object : BukkitRunnable() {
                 override fun run() {
-                    firework(
+                    PlayerVisuals.firework(
                         location,
                         flicker = true,
                         trail = false,
@@ -532,7 +533,7 @@ object Fishing {
         for (i in 0..60) {
             object : BukkitRunnable() {
                 override fun run() {
-                    firework(
+                    PlayerVisuals.firework(
                         location,
                         i % 2 == 0,
                         i % 3 == 0,
@@ -584,7 +585,7 @@ object Fishing {
             override fun run() {
                 val x = radius * cos(y)
                 val z = radius * sin(y)
-                if (i % 2 == 0) firework(
+                if (i % 2 == 0) PlayerVisuals.firework(
                     Location(location.world, loc.x + x, loc.y + y, loc.z + z),
                     flicker = false,
                     trail = false,
@@ -662,43 +663,6 @@ object Fishing {
         }.runTaskTimer(plugin, 0L, 1L)
     }
 
-    fun firework(
-        location: Location,
-        flicker: Boolean,
-        trail: Boolean,
-        color: Color,
-        fireworkType: FireworkEffect.Type,
-        variedVelocity: Boolean
-    ) {
-        val f: Firework = location.world.spawn(
-            Location(location.world, location.x, location.y + 1.0, location.z),
-            Firework::class.java
-        )
-        f.addScoreboardTag("tbd.firework")
-        val fm = f.fireworkMeta
-        fm.addEffect(
-            FireworkEffect.builder()
-                .flicker(flicker)
-                .trail(trail)
-                .with(fireworkType)
-                .withColor(color)
-                .build()
-        )
-        if (variedVelocity) {
-            fm.power = 1
-            f.fireworkMeta = fm
-            val direction = Vector(
-                Random.nextDouble(-0.005, 0.005),
-                Random.nextDouble(0.25, 0.35),
-                Random.nextDouble(-0.005, 0.005)
-            ).normalize()
-            f.velocity = direction
-        } else {
-            fm.power = 0
-            f.fireworkMeta = fm
-            f.ticksToDetonate = 0
-        }
-    }
 }
 
 /**

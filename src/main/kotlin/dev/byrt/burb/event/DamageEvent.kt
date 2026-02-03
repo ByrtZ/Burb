@@ -78,8 +78,8 @@ class DamageEvent: Listener {
                     e.isCancelled = true
                     return
                 }
-                // 1.5x backstab damage for melee classes
-                if(damager.burbPlayer().playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+                // 1.5x backstab damage for melee classes: DISABLED
+                /*if(damager.burbPlayer().playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
                     val damagedYaw = if (damaged.location.yaw >= 0) damaged.location.yaw else 180 + -damaged.location.yaw
                     val damagerYaw = if (damager.location.yaw >= 0) damager.location.yaw else 180 + -damager.location.yaw
                     val angle = if (damagedYaw - damagerYaw >= 0) damagedYaw - damagerYaw else damagerYaw - damagedYaw
@@ -88,7 +88,7 @@ class DamageEvent: Listener {
                     }
                     damaged.world.playSound(damaged.location, "entity.warden.attack_impact", 0.75f, 0.75f)
                     e.isCancelled = false
-                }
+                }*/
             }
         }
     }

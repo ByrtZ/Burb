@@ -24,10 +24,6 @@ object SpawnPoints {
         Location(Bukkit.getWorlds()[0], -16.5, 17.0, 119.5, 180f, 0f)
     )
 
-    // TODO: BOUNDING BOXES
-    /*val lobbyBoundingBox = BoundingBox()
-    val inGameBoundingBox = BoundingBox()*/
-
     fun respawnLocation(player: Player) {
         player.teleport(
             if(GameManager.getGameState() in listOf(GameState.STARTING, GameState.IN_GAME, GameState.OVERTIME)) {

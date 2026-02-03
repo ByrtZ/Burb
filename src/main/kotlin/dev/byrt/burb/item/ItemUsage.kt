@@ -6,6 +6,8 @@ import dev.byrt.burb.item.ItemManager.clearItems
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
+import dev.byrt.burb.player.cosmetics.BurbCosmetic
+import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility.HEART_UNICODE
@@ -61,7 +63,7 @@ object ItemUsage {
                 val snowballVelocity = player.location.direction.multiply(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE)!!)
                 snowball.velocity = snowballVelocity
                 // Projectile bloom
-                snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.095, 0.095), Random.nextDouble(-0.075, 0.075), Random.nextDouble(-0.095, 0.095)))
+                snowball.velocity = snowball.velocity.add(Vector(Random.nextDouble(-0.08, 0.08), Random.nextDouble(-0.07, 0.07), Random.nextDouble(-0.08, 0.08)))
                 // Projectile damage
                 usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)?.let { snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, it) }
                 // Projectile trail
@@ -92,6 +94,7 @@ object ItemUsage {
         val burbPlayer = player.burbPlayer()
         // Ammo decrement
         if(usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER)!! < usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.max_ammo"), PersistentDataType.INTEGER)!!) {
+            val reloadCooldown = usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!
             object : BukkitRunnable() {
                 override fun run() {
                     val newAmmoMeta = usedItem.itemMeta
@@ -108,9 +111,9 @@ object ItemUsage {
                     newAmmoMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.max_ammo"), PersistentDataType.INTEGER)!!)
                     usedItem.itemMeta = newAmmoMeta
                 }
-            }.runTaskLater(plugin, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!.toLong())
-            player.setCooldown(Material.POPPED_CHORUS_FRUIT, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!)
-            PlayerVisuals.reloadWeapon(player, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.reload_speed"), PersistentDataType.INTEGER)!!)
+            }.runTaskLater(plugin, reloadCooldown.toLong())
+            player.setCooldown(Material.POPPED_CHORUS_FRUIT, reloadCooldown)
+            PlayerVisuals.reloadWeapon(player, reloadCooldown)
         }
     }
 
@@ -239,7 +242,7 @@ object ItemUsage {
                                 if(snowball.isDead || !player.isOnline) {
                                     this.cancel()
                                 } else {
-                                    for(nearbyPlayer in snowball.location.getNearbyPlayers(0.25)) {
+                                    for(nearbyPlayer in snowball.location.getNearbyPlayers(0.75)) {
                                         if(nearbyPlayer.burbPlayer().playerTeam == Teams.ZOMBIES) {
                                             nearbyPlayer.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 6, 3, false, false))
                                             nearbyPlayer.world.playSound(player.location, "item.glow_ink_sac.use", SoundCategory.VOICE, 1f, 1f)
@@ -474,7 +477,7 @@ object ItemUsage {
                                                 )
                                             }
                                         }
-                                    }.runTaskTimer(plugin, 1L, 1L)
+                                    }.runTaskTimer(plugin, 1L, 2L)
                                     //player.world.playSound(player.location, "burb.ability.peashooter.gatling.fire", SoundCategory.VOICE, 1f, 1f)
                                     bulletsRemaining--
                                 }
@@ -497,7 +500,7 @@ object ItemUsage {
                         player.sendActionBar(Formatting.allTags.deserialize("<red>You cannot use this ability while in the air."))
                     }
                 }
-                //TODO: HEAL FLOWER
+                //TODO: HEAL FLOWER: CHANGE TO HEALING AOE?
                 BurbAbility.PLANTS_RANGED_ABILITY_1.abilityId -> {
                     if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR) {
                         player.world.playSound(player.location, "block.gravel.break", SoundCategory.VOICE, 1f, 1f)
@@ -516,7 +519,7 @@ object ItemUsage {
                             }
                             override fun run() {
                                 if(!potatoMineEntity.isDead) {
-                                    val nearbyEnemies = potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && p.vehicle == null }
+                                    val nearbyEnemies = potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && !p.burbPlayer().isDead }
                                     if(nearbyEnemies.isNotEmpty()) {
                                         potatoMineEntity.world.createExplosion(player, potatoMineEntity.location, 2.5f, false, false)
                                         potatoMineEntity.world.playSound(potatoMineEntity.location, "block.gravel.break", 1f, 1f)
@@ -545,7 +548,30 @@ object ItemUsage {
                         player.sendActionBar(Formatting.allTags.deserialize("<red>${BurbAbility.PLANTS_RANGED_ABILITY_1.abilityName} must be placed on solid ground."))
                     }
                 }
-                //TODO: GARLIC DRONE
+                BurbAbility.PLANTS_RANGED_ABILITY_2.abilityId -> {
+                    player.world.playSound(player.location, "entity.wither.shoot", SoundCategory.VOICE, 1f, 1.25f)
+                    player.location.clone().world.spawnParticle(
+                        Particle.DUST,
+                        player.location,
+                        400, 2.5, 2.0, 2.5, 0.0,
+                        DustOptions(Color.GRAY, 8f)
+                    )
+                    player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 20 * 5, 0, false, false))
+                    player.velocity = player.velocity.add(Vector(player.location.direction.x * -1.25, 1.5, player.location.direction.z * -1.25))
+                    player.inventory.helmet = null
+                    player.inventory.boots = null
+                    player.inventory.setItemInOffHand(null)
+                    player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> player.setCooldown(ability.abilityMaterial, 20 * 5) }
+                    player.setCooldown(player.burbPlayer().playerCharacter.characterMainWeapon.weaponMaterial, 20 * 5)
+                    object: BukkitRunnable() {
+                        override fun run() {
+                            if(!player.burbPlayer().isDead) {
+                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                BurbCosmetics.equipCosmetics(player)
+                            }
+                        }
+                    }.runTaskLater(plugin, 20L * 5L)
+                }
                 BurbAbility.PLANTS_RANGED_ABILITY_3.abilityId -> {
                     val facingLocation = player.location.add(player.location.setRotation(player.yaw, 0f).direction.multiply(5).normalize()).block.location.toBlockLocation()
                     if(facingLocation.block.getRelative(BlockFace.DOWN).isSolid) {
@@ -557,7 +583,7 @@ object ItemUsage {
                                 var ticks = 0
                                 var seconds = 0
                                 override fun run() {
-                                    if(seconds >= 30) {
+                                    if(seconds >= 20 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                                         facingLocation.block.type = Material.AIR
                                         facingLocation.block.getRelative(BlockFace.UP).type = Material.AIR
                                         facingLocation.world.playSound(facingLocation, "block.anvil.break", SoundCategory.VOICE, 1f, 1f)
@@ -731,7 +757,7 @@ object ItemUsage {
                         }
                     }.runTaskTimer(plugin, 0L, 1L)
                 }
-                //TODO: TURBO TWISTER
+                //TODO: TURBO TWISTER: CHANGE TO GROUND POUND
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_3.abilityId -> {
                     player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)
                     player.velocity = player.velocity.add(Vector(player.location.direction.x * 2.25, 0.25, player.location.direction.z * 2.25))
@@ -821,10 +847,144 @@ object ItemUsage {
                     player.teleport(location)
                     player.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.75f)
                 }
-                //TODO: STICKY GRENADES
+                BurbAbility.ZOMBIES_HEALER_ABILITY_3.abilityId -> {
+                    if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR) {
+                        player.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.75f)
+                        object : BukkitRunnable() {
+                            var ticks = 0
+                            var seconds = 0
+                            val scienceMineEntity = player.world.spawn(player.location.clone().add(0.0, 0.5, 0.0).setRotation(Rotation.rotation(player.yaw + 180, 0f)), ItemDisplay::class.java).apply {
+                                val scienceMine = ItemStack(Material.PURPLE_GLAZED_TERRACOTTA)
+                                val scienceMineMeta = scienceMine.itemMeta
+                                scienceMine.itemMeta = scienceMineMeta
+                                setItemStack(scienceMine)
+                                brightness = Display.Brightness(15, 15)
+                                transformation = Transformation(transformation.translation, transformation.leftRotation, transformation.scale, transformation.rightRotation)
+                                addScoreboardTag("${player.uniqueId}.science_mine")
+                            }
+                            override fun run() {
+                                if(!scienceMineEntity.isDead) {
+                                    val nearbyEnemies = scienceMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }
+                                    if(nearbyEnemies.isNotEmpty()) {
+                                        scienceMineEntity.world.createExplosion(player, scienceMineEntity.location, 2.75f, false, false)
+                                        scienceMineEntity.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.5f)
+                                        scienceMineEntity.remove()
+                                        cancel()
+                                    }
+                                    if(seconds >= 60) {
+                                        scienceMineEntity.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.5f)
+                                        scienceMineEntity.remove()
+                                        cancel()
+                                    }
+                                } else {
+                                    scienceMineEntity.world.playSound(player.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.5f)
+                                    scienceMineEntity.remove()
+                                    cancel()
+                                }
+                                ticks++
+                                if(ticks >= 20) {
+                                    ticks = 0
+                                    seconds++
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 1L)
+                    } else {
+                        player.setCooldown(usedItem, 0)
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>${BurbAbility.ZOMBIES_HEALER_ABILITY_3.abilityName} must be placed on solid ground."))
+                    }
+                }
                 //TODO: BARREL BLAST
-                //TODO: PARROT PAL
-                //TODO: CANNON RODEO
+                BurbAbility.ZOMBIES_RANGED_ABILITY_2.abilityId -> {
+                    player.world.playSound(player.location, "entity.wither.shoot", SoundCategory.VOICE, 1f, 1.25f)
+                    player.location.clone().world.spawnParticle(
+                        Particle.DUST,
+                        player.location,
+                        400, 2.5, 2.0, 2.5, 0.0,
+                        DustOptions(Color.GRAY, 8f)
+                    )
+                    player.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 20 * 5, 0, false, false))
+                    player.velocity = player.velocity.add(Vector(player.location.direction.x * -1.25, 1.5, player.location.direction.z * -1.25))
+                    player.inventory.helmet = null
+                    player.inventory.boots = null
+                    player.inventory.setItemInOffHand(null)
+                    player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> player.setCooldown(ability.abilityMaterial, 20 * 5) }
+                    player.setCooldown(player.burbPlayer().playerCharacter.characterMainWeapon.weaponMaterial, 20 * 5)
+                    object: BukkitRunnable() {
+                        override fun run() {
+                            if(!player.burbPlayer().isDead) {
+                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                BurbCosmetics.equipCosmetics(player)
+                            }
+                        }
+                    }.runTaskLater(plugin, 20L * 5L)
+                }
+                BurbAbility.ZOMBIES_RANGED_ABILITY_3.abilityId -> {
+                    if(player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR && player.location.block.getRelative(BlockFace.DOWN).isSolid) {
+                        player.world.playSound(player.location, "entity.firework_rocket.twinkle_far", SoundCategory.VOICE, 2f, 1.75f)
+                        clearItems(player)
+                        player.inventory.setItemInMainHand(ItemStack(Material.BREEZE_ROD, 1))
+                        player.inventory.setItem(player.inventory.heldItemSlot + 1, ItemStack(Material.BREEZE_ROD, 1))
+                        player.inventory.setItem(player.inventory.heldItemSlot - 1, ItemStack(Material.BREEZE_ROD, 1))
+                        object : BukkitRunnable() {
+                            var bulletsRemaining = 12
+                            val cannonRodeoVehicle = player.location.world.spawn(player.location.clone(), ItemDisplay::class.java).apply {
+                                addScoreboardTag("${player.uniqueId}-cannon-rodeo-vehicle")
+                                player.teleport(this)
+                                addPassenger(player)
+                            }
+                            override fun run() {
+                                if(!player.isOnline) {
+                                    cannonRodeoVehicle.remove()
+                                    cancel()
+                                }
+                                if(player.vehicle == cannonRodeoVehicle) {
+                                    player.sendActionBar(Formatting.allTags.deserialize(Translation.Weapon.CANNON_RODEO_CONTROLS.replace("%s", bulletsRemaining.toString())))
+                                    cannonRodeoVehicle.setRotation(player.yaw, player.pitch)
+                                }
+                                if(player.isSneaking && player.inventory.itemInMainHand.type == Material.BREEZE_ROD) {
+                                    val snowball = player.world.spawn(player.eyeLocation.clone(), Snowball::class.java)
+                                    snowball.shooter = player
+                                    snowball.location.direction = player.location.direction
+                                    val snowballVelocity = player.location.direction.multiply(2)
+                                    snowball.velocity = snowballVelocity
+                                    snowball.persistentDataContainer.set(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE, 0.00001)
+                                    object : BukkitRunnable() {
+                                        override fun run() {
+                                            if(snowball.isDead || !player.isOnline) {
+                                                snowball.location.world.createExplosion(player, snowball.location.clone(), 1.5f, false, false)
+                                                this.cancel()
+                                            } else {
+                                                snowball.location.world.spawnParticle(
+                                                    Particle.DUST,
+                                                    snowball.location,
+                                                    1, 0.0, 0.0, 0.0,
+                                                    DustOptions(Color.PURPLE, 0.75f)
+                                                )
+                                            }
+                                        }
+                                    }.runTaskTimer(plugin, 1L, 1L)
+                                    player.world.playSound(player.location, "entity.firework_rocket.launch", SoundCategory.VOICE, 2f, 1.75f)
+                                    bulletsRemaining--
+                                }
+                                if(player.inventory.itemInMainHand.type != Material.BREEZE_ROD || player.burbPlayer().isDead || bulletsRemaining <= 0 || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
+                                    player.sendActionBar(Formatting.allTags.deserialize(""))
+                                    cannonRodeoVehicle.eject()
+                                    cannonRodeoVehicle.remove()
+                                    player.inventory.remove(Material.BREEZE_ROD)
+                                    player.velocity = player.velocity.add(Vector(0.0, 0.5, 0.0))
+                                    ItemManager.giveCharacterItems(player)
+                                    player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
+                                    if(bulletsRemaining == 8) player.setCooldown(BurbAbility.ZOMBIES_RANGED_ABILITY_3.abilityMaterial, 0)
+                                    player.world.playSound(player.location, "entity.firework_rocket.shoot", SoundCategory.VOICE, 2f, 1.5f)
+                                    cancel()
+                                }
+                            }
+                        }.runTaskTimer(plugin, 0L, 15L)
+                    } else {
+                        player.setCooldown(usedItem, 0)
+                        player.sendActionBar(Formatting.allTags.deserialize("<red>You cannot use this ability while in the air."))
+                    }
+                }
             }
         }
     }

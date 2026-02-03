@@ -5,6 +5,9 @@ import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Scores
 import dev.byrt.burb.game.Timer
 import dev.byrt.burb.game.events.SpecialEvents
+import dev.byrt.burb.game.location.BurbAreas
+import dev.byrt.burb.game.visual.GameDayTime
+import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
@@ -123,6 +126,15 @@ object CapturePoints {
                 }
                 else -> {}
             }
+            when(newSuburbinationTeam) {
+                in listOf(Teams.PLANTS, Teams.ZOMBIES) -> {
+                    GameVisuals.setDayTime(GameDayTime.NIGHT)
+                }
+                else -> {
+                    GameVisuals.setDayTime(GameDayTime.DAY)
+                }
+            }
+            BurbAreas.runSuburbinationShow(newSuburbinationTeam)
         }
     }
 

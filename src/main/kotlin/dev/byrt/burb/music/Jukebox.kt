@@ -5,6 +5,7 @@ import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.sound.Sound
 
@@ -81,6 +82,20 @@ object Jukebox {
                     }
                 } else -> {}
             }
+        } else {
+            when(CapturePoints.getSuburbinatingTeam()) {
+                Teams.PLANTS -> {
+                    for(player in Bukkit.getOnlinePlayers()) {
+                        startMusicLoop(player, Music.SUBURBINATION_PLANTS)
+                    }
+                }
+                Teams.ZOMBIES -> {
+                    for(player in Bukkit.getOnlinePlayers()) {
+                        startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
+                    }
+                }
+                else -> {}
+            }
         }
     }
 
@@ -100,6 +115,14 @@ object Jukebox {
                         SpecialEvent.RANDOS_REVENGE -> startMusicLoop(player, Music.RANDOS_REVENGE)
                         SpecialEvent.VANQUISH_SHOWDOWN -> startMusicLoop(player, Music.VANQUISH_SHOWDOWN)
                         null -> {}
+                    }
+                } else {
+                    if(CapturePoints.isSuburbinating()) {
+                        when(CapturePoints.getSuburbinatingTeam()) {
+                            Teams.PLANTS -> startMusicLoop(player, Music.SUBURBINATION_PLANTS)
+                            Teams.ZOMBIES -> startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
+                            else -> {}
+                        }
                     }
                 }
             }
