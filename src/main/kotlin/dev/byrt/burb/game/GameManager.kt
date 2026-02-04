@@ -8,6 +8,7 @@ import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.visual.GameDayTime
 import dev.byrt.burb.game.visual.GameVisuals
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
@@ -129,6 +130,7 @@ object GameManager {
             if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
                 TeamManager.enableTeamGlowing(player)
                 SpawnPoints.respawnLocation(player)
+                ItemManager.giveCharacterItems(player)
             }
             Jukebox.disconnect(player)
         }

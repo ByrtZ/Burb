@@ -2,7 +2,7 @@ package dev.byrt.burb.lobby.npc
 
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
-import dev.byrt.burb.item.ItemRarity
+import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.text.Formatting
 import org.bukkit.Bukkit
 import org.bukkit.Location

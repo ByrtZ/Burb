@@ -6,9 +6,9 @@ import dev.byrt.burb.game.Scores
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
-import dev.byrt.burb.item.ItemRarity
-import dev.byrt.burb.item.ItemType
-import dev.byrt.burb.item.SubRarity
+import dev.byrt.burb.item.rarity.ItemRarity
+import dev.byrt.burb.item.type.ItemType
+import dev.byrt.burb.item.rarity.SubRarity
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.lobby.fishing.Fishing
 import dev.byrt.burb.lobby.BurbLobby

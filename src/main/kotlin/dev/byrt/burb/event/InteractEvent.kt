@@ -4,8 +4,9 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
-import dev.byrt.burb.item.ItemUsage
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.item.ability.BurbAbilities
+import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.util.Cooldowns
@@ -34,16 +35,16 @@ class InteractEvent: Listener {
         } else {
             if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
                 if(e.player.inventory.itemInMainHand.type == Material.POPPED_CHORUS_FRUIT && e.action.isRightClick && !e.player.hasCooldown(Material.POPPED_CHORUS_FRUIT)) {
-                    ItemUsage.useProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
+                    BurbWeapons.useProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
                 }
                 if(e.player.inventory.itemInMainHand.type == Material.POPPED_CHORUS_FRUIT && e.action.isLeftClick && !e.player.hasCooldown(Material.POPPED_CHORUS_FRUIT)) {
-                    ItemUsage.reloadProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
+                    BurbWeapons.reloadProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
                 }
                 if(e.player.inventory.itemInMainHand.type == Material.WOODEN_SWORD && e.action.isLeftClick && !e.player.hasCooldown(Material.WOODEN_SWORD)) {
-                    ItemUsage.useMeleeWeapon(e.player, e.player.inventory.itemInMainHand)
+                    BurbWeapons.useMeleeWeapon(e.player, e.player.inventory.itemInMainHand)
                 }
                 if(e.player.inventory.itemInMainHand.type in listOf(Material.YELLOW_DYE, Material.ORANGE_DYE, Material.RED_DYE) && e.action.isRightClick && !e.player.hasCooldown(e.player.inventory.itemInMainHand.type)) {
-                    ItemUsage.useAbility(e.player, e.player.inventory.itemInMainHand)
+                    BurbAbilities.useAbility(e.player, e.player.inventory.itemInMainHand)
                 }
             }
             if(GameManager.getGameState() == GameState.IDLE) {

@@ -2,14 +2,15 @@ package dev.byrt.burb.item
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
-import dev.byrt.burb.logger
+import dev.byrt.burb.item.rarity.ItemRarity
+import dev.byrt.burb.item.type.ItemType
+import dev.byrt.burb.item.weapon.BurbMainWeaponType
 import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.text.GlyphLike
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -22,7 +23,6 @@ import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.persistence.PersistentDataType
-import kotlin.random.Random
 
 object ItemManager {
     fun givePlayerTeamBoots(player: Player, team: Teams) {
@@ -53,14 +53,10 @@ object ItemManager {
 
     fun giveCharacterItems(player: Player) {
         if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
-        if(player.burbPlayer().isDead) {
-            clearItems(player)
-            return
-        }
         val burbPlayer = player.burbPlayer()
         val burbPlayerCharacter = burbPlayer.playerCharacter
-
         clearItems(player)
+        if(player.burbPlayer().isDead) return
 
         val mainWeapon = ItemStack(burbPlayerCharacter.characterMainWeapon.weaponMaterial, 1)
         val mainWeaponMeta = mainWeapon.itemMeta
@@ -143,7 +139,7 @@ object ItemManager {
         if(GameManager.getGameState() != GameState.IDLE) player.inventory.remove(ServerItem.getProfileItem())
     }
 
-    fun verifyItem(item: ItemStack):  Boolean {
+    fun verifyMainWeapon(item: ItemStack):  Boolean {
         return (item.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))
                 && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.current_ammo"))
                 && item.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.max_ammo"))
@@ -167,153 +163,4 @@ object ItemManager {
             }
         }
     }
-}
-
-/**
- * @param weaponName: Display name
- * @param weaponLore: Item lore
- * @param weaponDamage: Damage dealt by weapon in half hearts
- * @param fireRate: Delay of rate of fire in ticks
- * @param reloadSpeed: Reload delay in ticks
- * @param maxAmmo: Max amount of ammunition held by the weapon
- * @param weaponMaterial: Item material
- */
-enum class BurbCharacterMainWeapon(val weaponName: String, val weaponLore: String, val weaponType: BurbMainWeaponType, val weaponDamage: Double, val fireRate: Int, val reloadSpeed: Int, val maxAmmo: Int, val projectileVelocity: Double, val weaponMaterial: Material, val useSound: String, val itemModel: String) {
-    NULL("null", "null", BurbMainWeaponType.NULL, 0.0, 0, 0,0, 0.0, Material.AIR, "null", "null"),
-    PLANTS_SCOUT_MAIN("Pea Cannon", "Shoots heavy hitting peas.", BurbMainWeaponType.RIFLE,6.25, 12, 50, 12, 3.25, Material.POPPED_CHORUS_FRUIT, "burb.weapon.peashooter.fire","pea_cannon"),
-    PLANTS_HEAVY_MAIN("Chomp", "Sharp chomper fangs.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_PICKAXE, "burb.weapon.chomper.fire","chomper_fangs"),
-    PLANTS_HEALER_MAIN("Sun Pulse", "Shoots bolts of light.", BurbMainWeaponType.RIFLE,2.25, 4, 65, 30, 2.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.sunflower.fire","sunflower_weapon"),
-    PLANTS_RANGED_MAIN("Spike Shot", "Shoots accurate cactus pines.", BurbMainWeaponType.RIFLE,8.0, 15, 60, 6, 4.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.cactus.fire","spike_shot"),
-    ZOMBIES_SCOUT_MAIN("Z-1 Assault Blaster", "Shoots Z1 pellets.", BurbMainWeaponType.RIFLE,1.5, 3, 55, 25, 2.5, Material.POPPED_CHORUS_FRUIT, "burb.weapon.foot_soldier.fire","blaster"),
-    ZOMBIES_HEAVY_MAIN("Heroic Fists", "Super Brainz' powerful fists.", BurbMainWeaponType.MELEE,4.0, 0, 0, 0, 0.0, Material.WOODEN_PICKAXE, "entity.player.attack.knockback","melee_gloves_l"),
-    ZOMBIES_HEALER_MAIN("Goo Blaster", "Shoots yucky clumps of goo.", BurbMainWeaponType.SHOTGUN,1.0, 20, 65, 8, 1.75, Material.POPPED_CHORUS_FRUIT, "burb.weapon.scientist.fire","goo_blaster"),
-    ZOMBIES_RANGED_MAIN("Spyglass Shot", "Shoots accurate glass shards.", BurbMainWeaponType.RIFLE,8.75, 25, 75, 5, 4.85, Material.POPPED_CHORUS_FRUIT, "block.glass.break","spyglass_shot")
-}
-
-enum class BurbMainWeaponType(val weaponTypeName: String) {
-    NULL("null"),
-    RIFLE("Rifle"),
-    SHOTGUN("Shotgun"),
-    MELEE("Melee")
-}
-
-enum class BurbAbility(val abilityName: String, val abilityLore: String, val abilityId: String, val abilityModel: String, val abilityMaterial: Material, val abilityCooldown: Int) {
-    NULL("null", "null", "null", "null", Material.AIR, 0),
-
-    /** Chilli Bean Bomb **/
-    PLANTS_SCOUT_ABILITY_1("Chilli Bean Bomb", "A chilli bean with a short temper.","burb.character.plants_scout.ability.1", "red_dye",  Material.RED_DYE, 500),
-    /** Pea Gatling **/
-    PLANTS_SCOUT_ABILITY_2("Pea Gatling", "Line 'em up and knock 'em down.", "burb.character.plants_scout.ability.2", "orange_dye",  Material.ORANGE_DYE, 700),
-    /** Hyper **/
-    PLANTS_SCOUT_ABILITY_3("Hyper", "ZOOMIES!", "burb.character.plants_scout.ability.3", "yellow_dye",  Material.YELLOW_DYE, 400),
-
-    /** Goop **/
-    PLANTS_HEAVY_ABILITY_1("Goop", "Sticky goop that slows enemies.", "burb.character.plants_heavy.ability.1", "red_dye",  Material.RED_DYE, 160),
-    /** Burrow **/
-    PLANTS_HEAVY_ABILITY_2("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.2", "orange_dye",  Material.ORANGE_DYE, 200),
-    /** Spikeweed **/
-    PLANTS_HEAVY_ABILITY_3("Spikeweed", "Snare the zombies.", "burb.character.plants_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 120),
-
-    /** Heal Beam **/
-    PLANTS_HEALER_ABILITY_1("Heal Beam", "Solar powered healing.", "burb.character.plants_healer.ability.1", "red_dye",  Material.RED_DYE, 40),
-    /** Sunbeam **/
-    PLANTS_HEALER_ABILITY_2("Sunbeam", "The power of the sun, in the palm of my hand.", "burb.character.plants_healer.ability.2", "orange_dye",  Material.ORANGE_DYE, 550),
-    /** Heal Flower **/
-    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 400),
-
-    /** Potato Mine **/
-    PLANTS_RANGED_ABILITY_1("Potato Mine", "So cute, yet so deadly.", "burb.character.plants_ranged.ability.1", "red_dye",  Material.RED_DYE, 200),
-    /** Escape **/
-    PLANTS_RANGED_ABILITY_2("Escape", "360 NO SCOPE!", "burb.character.plants_ranged.ability.2", "orange_dye",  Material.ORANGE_DYE, 475),
-    /** Tallnut Battlement **/
-    PLANTS_RANGED_ABILITY_3("Tallnut Battlement", "Create your own cover.", "burb.character.plants_ranged.ability.3", "yellow_dye",  Material.YELLOW_DYE, 300),
-
-    /** Zombie Stink Cloud **/
-    ZOMBIES_SCOUT_ABILITY_1("Zombie Stink Cloud", "Whoever smelt it, dealt it.", "burb.character.zombies_scout.ability.1", "footsoldier_ability_stink_cloud",  Material.RED_DYE, 350),
-    /** ZPG **/
-    ZOMBIES_SCOUT_ABILITY_2("ZPG", "Who gave this zombie a rocket?", "burb.character.zombies_scout.ability.2", "footsoldier_ability_zpg",  Material.ORANGE_DYE, 675),
-    /** Rocket Jump **/
-    ZOMBIES_SCOUT_ABILITY_3("Rocket Jump", "I have the high ground.", "burb.character.zombies_scout.ability.3", "footsoldier_ability_rocket_jump",  Material.YELLOW_DYE, 450),
-
-    /** Super Ultra Ball **/
-    ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "FUS-RO-DAH!", "burb.character.zombies_heavy.ability.1", "red_dye",  Material.RED_DYE, 450),
-    /** Turbo Twister **/
-    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", "orange_dye",  Material.ORANGE_DYE, 700),
-    /** Heroic Kick **/
-    ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 250),
-
-    /** Heal Beam of Science **/
-    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", "red_dye",  Material.RED_DYE, 40),
-    /** Warp **/
-    ZOMBIES_HEALER_ABILITY_2("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.2", "orange_dye",  Material.ORANGE_DYE, 175),
-    /** Science Mine **/
-    ZOMBIES_HEALER_ABILITY_3("Science Mine", "And now we wait...", "burb.character.zombies_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 275),
-
-    /** Barrel Blast **/
-    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", "red_dye",  Material.RED_DYE, 750),
-    /** Escape **/
-    ZOMBIES_RANGED_ABILITY_2("Escape", "360 NO SCOPE", "burb.character.zombies_ranged.ability.2", "orange_dye",  Material.ORANGE_DYE, 575),
-    /** Cannon Rodeo **/
-    ZOMBIES_RANGED_ABILITY_3("Cannon Rodeo", "YEE-HAW!", "burb.character.zombies_ranged.ability.3", "yellow_dye",  Material.YELLOW_DYE, 625)
-}
-
-enum class BurbCharacterAbilities(val abilitiesName: String, val abilitySet: Set<BurbAbility>) {
-    NULL("null", setOf(BurbAbility.NULL)),
-    PLANTS_SCOUT_ABILITIES("Peashooter Abilities", setOf(BurbAbility.PLANTS_SCOUT_ABILITY_1, BurbAbility.PLANTS_SCOUT_ABILITY_2, BurbAbility.PLANTS_SCOUT_ABILITY_3)),
-    PLANTS_HEAVY_ABILITIES("Chomper Abilities", setOf(BurbAbility.PLANTS_HEAVY_ABILITY_1, BurbAbility.PLANTS_HEAVY_ABILITY_2, BurbAbility.PLANTS_HEAVY_ABILITY_3)),
-    PLANTS_HEALER_ABILITIES("Sunflower Abilities", setOf(BurbAbility.PLANTS_HEALER_ABILITY_1, BurbAbility.PLANTS_HEALER_ABILITY_2, BurbAbility.PLANTS_HEALER_ABILITY_3)),
-    PLANTS_RANGED_ABILITIES("Cactus Abilities", setOf(BurbAbility.PLANTS_RANGED_ABILITY_1, BurbAbility.PLANTS_RANGED_ABILITY_2, BurbAbility.PLANTS_RANGED_ABILITY_3)),
-    ZOMBIES_SCOUT_ABILITIES("Foot Soldier Abilities", setOf(BurbAbility.ZOMBIES_SCOUT_ABILITY_1, BurbAbility.ZOMBIES_SCOUT_ABILITY_2, BurbAbility.ZOMBIES_SCOUT_ABILITY_3)),
-    ZOMBIES_HEAVY_ABILITIES("Super Brainz Abilities", setOf(BurbAbility.ZOMBIES_HEAVY_ABILITY_1, BurbAbility.ZOMBIES_HEAVY_ABILITY_2, BurbAbility.ZOMBIES_HEAVY_ABILITY_3)),
-    ZOMBIES_HEALER_ABILITIES("Scientist Abilities", setOf(BurbAbility.ZOMBIES_HEALER_ABILITY_1, BurbAbility.ZOMBIES_HEALER_ABILITY_2, BurbAbility.ZOMBIES_HEALER_ABILITY_3)),
-    ZOMBIES_RANGED_ABILITIES("Deadbeard Abilities", setOf(BurbAbility.ZOMBIES_RANGED_ABILITY_1, BurbAbility.ZOMBIES_RANGED_ABILITY_2, BurbAbility.ZOMBIES_RANGED_ABILITY_3))
-}
-
-enum class ItemRarity(val rarityName : String, override val rawGlyph : String, val colour: Color, val rarityColour : String) : GlyphLike {
-    COMMON("Common", "\uF001", Color.fromRGB(255, 255, 255), "#ffffff"),
-    UNCOMMON("Uncommon", "\uF002", Color.fromRGB(14, 209, 69), "#0ed145"),
-    RARE("Rare", "\uF003", Color.fromRGB(0, 168, 243), "#00a8f3"),
-    EPIC("Epic", "\uF004", Color.fromRGB(184, 61, 186), "#b83dba"),
-    LEGENDARY("Legendary", "\uF005", Color.fromRGB(255, 127, 39), "#ff7f27"),
-    MYTHIC("Mythic", "\uF006", Color.fromRGB(255, 51, 116), "#ff3374"),
-    SPECIAL("Special", "\uF007", Color.fromRGB(236, 28, 36), "#ec1c24"),
-    UNREAL("Unreal", "\uF008", Color.fromRGB(134, 102, 230), "#8666e6"),
-    TRANSCENDENT("Transcendent", "\uE004", Color.fromRGB(199, 10, 23), "#c70a17"),
-    CELESTIAL("Celestial", "\uE005", Color.fromRGB(245, 186, 10), "#f5ba0a");
-}
-
-enum class SubRarity(val weight : Double, override val rawGlyph : String) : GlyphLike {
-    NONE(99.95,""),
-    SHINY(0.025, "\uE000"),
-    SHADOW(0.015, "\uE001"),
-    OBFUSCATED(0.01, "\uE002");
-
-    companion object {
-        fun getRandomSubRarity(): SubRarity {
-            val totalWeight = SubRarity.entries.sumOf { it.weight }
-            val randomValue = Random.nextDouble(totalWeight)
-
-            var cumulativeWeight = 0.0
-            for (rarity in SubRarity.entries) {
-                cumulativeWeight += rarity.weight
-                if (randomValue < cumulativeWeight) {
-                    return rarity
-                }
-            }
-
-            logger.warning("Unreachable code hit! No sub rarity selected")
-            return NONE // Should be unreachable but default to null in case of issue
-        }
-    }
-}
-
-enum class ItemType(val typeName : String, override val rawGlyph: String) : GlyphLike {
-    ARMOUR("Armour", "\uF009"),
-    CONSUMABLE("Consumable", "\uF010"),
-    TOOL("Tool", "\uF011"),
-    UTILITY("Utility", "\uF012"),
-    WEAPON("Weapon", "\uF013"),
-    HAT("Hat", "\uF015"),
-    ACCESSORY("Accessory", "\uF014"),
-    FISH("Fish", "\uF016")
 }

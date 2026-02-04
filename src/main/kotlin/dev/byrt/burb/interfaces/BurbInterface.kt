@@ -22,7 +22,7 @@ import com.noxcrew.interfaces.interfaces.buildChestInterface
 import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
-import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 

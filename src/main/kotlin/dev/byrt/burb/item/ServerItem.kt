@@ -1,5 +1,7 @@
 package dev.byrt.burb.item
 
+import dev.byrt.burb.item.rarity.SubRarity
+import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.text.Formatting

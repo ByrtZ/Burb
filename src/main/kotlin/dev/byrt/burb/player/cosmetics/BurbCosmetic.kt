@@ -1,7 +1,7 @@
 package dev.byrt.burb.player.cosmetics
 
-import dev.byrt.burb.item.ItemRarity
-import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.item.rarity.ItemRarity
+import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.text.Formatting
 import net.kyori.adventure.text.Component
 

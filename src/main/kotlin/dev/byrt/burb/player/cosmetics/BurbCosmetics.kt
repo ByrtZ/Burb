@@ -1,6 +1,6 @@
 package dev.byrt.burb.player.cosmetics
 
-import dev.byrt.burb.item.ItemType
+import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.progression.BurbPlayerData

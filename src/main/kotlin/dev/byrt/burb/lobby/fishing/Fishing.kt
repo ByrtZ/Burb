@@ -1,8 +1,8 @@
 package dev.byrt.burb.lobby.fishing
 
-import dev.byrt.burb.item.ItemRarity
-import dev.byrt.burb.item.ItemType
-import dev.byrt.burb.item.SubRarity
+import dev.byrt.burb.item.rarity.ItemRarity
+import dev.byrt.burb.item.type.ItemType
+import dev.byrt.burb.item.rarity.SubRarity
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.PlayerVisuals
