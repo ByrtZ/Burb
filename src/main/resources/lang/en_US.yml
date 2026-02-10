@@ -2,8 +2,8 @@ tags:
   arrow_prefix: [ <yellow>▶<reset> ]
   death_prefix: <gray>[<#ff3333><unicodeprefix:skull><gray>]<reset>
 
-
-messages.burb:
+message_prefix: burb
+messages:
   death.killed_by: <death_prefix><arg:0><reset> was vanquished by <arg:1><reset>.
   death.died: <death_prefix><arg:0><reset> was vanquished.
 
