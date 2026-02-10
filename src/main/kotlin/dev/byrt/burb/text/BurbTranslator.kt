@@ -16,7 +16,7 @@ private data class LangFile(
     val messages: Map<String, String>
 )
 
-private data class RawLangFile(
+data class RawLangFile(
     val tags: Map<String, String>,
     val messages: Map<String, String>
 )

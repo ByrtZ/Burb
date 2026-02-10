@@ -78,7 +78,7 @@ object BurbLobby {
                         } else {
                             if(GameManager.getGameState() == GameState.IN_GAME) Jukebox.playCurrentMusic(player)
                             if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(player, Music.POST_GAME)
-                            if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                            if(!GameManager.teams.isParticipating(player.uniqueId)) {
                                 player.gameMode = GameMode.SPECTATOR
                             }
                         }

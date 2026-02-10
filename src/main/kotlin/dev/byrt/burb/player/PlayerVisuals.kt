@@ -18,11 +18,11 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.TeamManager.areTeamMatesDead
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
+import dev.byrt.burb.text.Formatting.sendTranslated
 
 import io.papermc.paper.entity.TeleportFlag
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
 
 import org.bukkit.Bukkit
@@ -127,15 +127,15 @@ object PlayerVisuals {
         /** TEAM WIPE SPECIAL EVENT **/
         if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
             // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
-            if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
+            val playerTeam = GameManager.teams.getTeam(player.uniqueId) ?: return
+            val members = GameManager.teams.teamMembers(playerTeam)
+            if(members.all(BurbPlayer::isDead) && !isTeamWipe) {
                 deathVehicle.remove()
-                for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
-                    death(teamMember.getBukkitPlayer(), null, false, true)
+                members.forEach { member ->
+                    death(member.getBukkitPlayer(), null, false, true)
                 }
-                for(online in Bukkit.getOnlinePlayers()) {
-                    online.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.DEATH_PREFIX}The ${player.burbPlayer().playerTeam.teamColourTag}${player.burbPlayer().playerTeam.teamName}<reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>"))
-                    online.playSound(Sounds.Score.TEAM_WIPE)
-                }
+                Bukkit.getServer().playSound(Sounds.Score.TEAM_WIPE)
+                Bukkit.getServer().sendTranslated("burb.special_event.vanquish_showdown.wipe", playerTeam)
             }
         }
 
@@ -263,7 +263,7 @@ object PlayerVisuals {
         player.health = 20.0
         player.inventory.helmet = null
         SpawnPoints.respawnLocation(player)
-        ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+        ItemManager.givePlayerTeamBoots(player)
 
         // Add hub item
         if(GameManager.getGameState() == GameState.IDLE) {

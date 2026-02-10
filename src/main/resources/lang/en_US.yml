@@ -1,19 +1,28 @@
 tags:
-  arrow_prefix: [<yellow>▶<reset>]
-  death: <gray>[<#ff3333><unicodeprefix:skull><gray>]<reset>
+  arrow_prefix: [ <yellow>▶<reset> ]
+  death_prefix: <gray>[<#ff3333><unicodeprefix:skull><gray>]<reset>
 
 
 messages.burb:
-  death.killed_by: <death><arg:0><reset> was vanquished by <arg:1><reset>.
-  death.died: <death><arg:0><reset> was vanquished.
+  death.killed_by: <death_prefix><arg:0><reset> was vanquished by <arg:1><reset>.
+  death.died: <death_prefix><arg:0><reset> was vanquished.
+
+  bossbar:
+    winners: "WINNERS: <arg:0>"
+    suburbination: SUBURBINATION
 
   capture_point:
     captured: <arrow_prefix><yellow><arg:0><reset> is now controlled by the <arg:1><reset>.
     lost: <arrow_prefix><yellow><arg:0><reset> is no longer controlled by the <arg:1><reset>.
 
   team:
-    plants: <plantscolour>Plants
-    zombies: <zombiescolour>Zombies
+    normal:
+      plants: <plantscolour>Plants
+      zombies: <zombiescolour>Zombies
+    uppercase:
+      plants: <plantscolour>PLANTS
+      zombies: <zombiescolour>ZOMBIES
+      none: <gray>NONE
 
   win_game:
     plants:
@@ -28,3 +37,13 @@ messages.burb:
       main: <yellow><b>DRAW
       sub: It was a tie, do better next time.
       chat: Nobody won, what a disappointment!
+
+  special_event:
+    vanquish_showdown.wipe: <newline><death_prefix>>The <arg:0><reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>
+
+  level_up:
+    prefix:
+      max_level: <b><rainbow>LEVEL UP!<reset>
+      new_evolution: <b><gradient:gold:yellow:gold:yellow:gold>LEVEL UP!<reset>
+      normal: <b><burbcolour>LEVEL UP!<reset>
+    new_level_text: You are now <arg:0><reset>.

@@ -23,7 +23,6 @@ object PlayerManager {
     }
 
     fun unregisterPlayer(burbPlayer: BurbPlayer) {
-        burbPlayer.setTeam(Teams.NULL)
         burbPlayer.setType(PlayerType.INVALID)
         burbPlayer.setCharacter(BurbCharacter.NULL)
         burbPlayers.remove(burbPlayer.uuid)

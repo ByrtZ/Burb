@@ -79,7 +79,7 @@ object TeamManager {
                 player.setType(PlayerType.INVALID)
             }
         }
-        ItemManager.givePlayerTeamBoots(player.getBukkitPlayer(), team)
+        ItemManager.givePlayerTeamBoots(player.getBukkitPlayer())
         when(team) {
             in listOf(Teams.PLANTS, Teams.ZOMBIES) -> {
                 player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
@@ -115,15 +115,17 @@ object TeamManager {
         if(team != Teams.NULL) player.characterSelect()
     }
 
+    @Deprecated("Use TeamManagerV2")
     fun shuffleTeams(sender: CommandSender?, players: Set<Player>, ignoreAdmins: Boolean) {
-        for((i, player) in players.withIndex()) {
-            if(i % 2 == 0) {
-                player.burbPlayer().setTeam(Teams.ZOMBIES)
-            } else {
-                player.burbPlayer().setTeam(Teams.PLANTS)
-            }
-        }
-        ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${sender?.name ?: "the game"} ${if(ignoreAdmins) "<italic>[Non-Admins]</italic>." else "."}", false)
+        throw NotImplementedError("Terminally deprecated")
+//        for((i, player) in players.withIndex()) {
+//            if(i % 2 == 0) {
+//                player.burbPlayer().setTeam(Teams.ZOMBIES)
+//            } else {
+//                player.burbPlayer().setTeam(Teams.PLANTS)
+//            }
+//        }
+//        ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${sender?.name ?: "the game"} ${if(ignoreAdmins) "<italic>[Non-Admins]</italic>." else "."}", false)
     }
 
     fun getTeam(team: Teams): Set<BurbPlayer> {

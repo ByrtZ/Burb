@@ -1,5 +1,6 @@
 package dev.byrt.burb.game.objective
 
+import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Scores
@@ -81,13 +82,8 @@ object CapturePoints {
         }
     }
 
-    fun getCapturePointData(capturePoint: CapturePoint): Pair<Int, BurbTeam> {
-        return if (capturePointScores[capturePoint] != null) {
-            capturePointScores[capturePoint]!!
-        } else {
-            Pair(0, null)
-        }
-    }
+    fun getCapturePointData(capturePoint: CapturePoint): Pair<Int, BurbTeam>? = capturePointScores[capturePoint]
+
 
     fun updateSuburbination() {
         val teamCounts = capturedPoints.values.groupingBy { it }.eachCount()
@@ -97,7 +93,7 @@ object CapturePoints {
             else -> null
         }
 
-        Scores.addScore(suburbinatingTeam, 3)
+        suburbinatingTeam?.let { Scores.addScore(it, 3) }
 
         if (newSuburbinationTeam != suburbinatingTeam) {
             suburbinatingTeam = newSuburbinationTeam
@@ -131,16 +127,13 @@ object CapturePoints {
 
                 else -> {}
             }
-            when (newSuburbinationTeam) {
-                in listOf(BurbTeam.PLANTS, BurbTeam.ZOMBIES) -> {
-                    GameVisuals.setDayTime(GameDayTime.NIGHT)
-                }
 
-                else -> {
-                    GameVisuals.setDayTime(GameDayTime.DAY)
-                }
+            if (newSuburbinationTeam != null) {
+                GameVisuals.setDayTime(GameDayTime.NIGHT)
+                BurbAreas.runSuburbinationShow(newSuburbinationTeam)
+            } else {
+                GameVisuals.setDayTime(GameDayTime.DAY)
             }
-            BurbAreas.runSuburbinationShow(newSuburbinationTeam)
         }
     }
 
@@ -157,12 +150,18 @@ object CapturePoints {
                 }
                 if (GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
 
-                capturePointScores[capturePoint] = if (capturePoint.plantProgress > capturePoint.zombieProgress)
+                val newScore =  if (capturePoint.plantProgress > capturePoint.zombieProgress)
                     Pair(capturePoint.plantProgress, BurbTeam.PLANTS)
                 else if (capturePoint.zombieProgress > capturePoint.plantProgress)
                     Pair(
                         capturePoint.zombieProgress, BurbTeam.ZOMBIES
-                    ) else Pair(0, null)
+                    ) else null
+
+                if (newScore != null) {
+                    capturePointScores[capturePoint] = newScore
+                } else {
+                    capturePointScores -= capturePoint
+                }
 
                 val location = capturePoint.location
                 if (textDisplay == null || textDisplay!!.isDead) {

@@ -46,6 +46,11 @@ class TeamManagerV2<T> @PublishedApi internal constructor(
     fun allParticipants(): Set<BurbPlayer> = playerTeams.keys.mapTo(mutableSetOf()) { it.burbPlayer() }
 
     /**
+     * Gets all the players on a team.
+     */
+    fun teamMembers(team: T) : Set<BurbPlayer> = playerTeams.filterValues { it == team }.keys.mapTo(mutableSetOf()) { it.burbPlayer() }
+
+    /**
      * Gets the team the player is on.
      */
     fun getTeam(player: UUID): T? = playerTeams[player]

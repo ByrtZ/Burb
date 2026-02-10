@@ -16,7 +16,6 @@ import java.util.UUID
 
 class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerCharacter: BurbCharacter, var isDead: Boolean) {
     init {
-        setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
         logger.info("Player Manager: Registered player ${this.playerName} as BurbPlayer.")
     }
@@ -31,11 +30,13 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     val playerTeam: BurbTeam?
         get() = GameManager.teams.getTeam(uuid)
 
+    @Deprecated("Use TeamManagerV2 directly", level = DeprecationLevel.ERROR)
     fun setTeam(newTeam: Teams) {
-        if(newTeam == this.playerTeam) return
-        this.playerTeam = newTeam
-        TeamManager.setTeam(this, this.playerTeam)
-        logger.info("Teams: ${this.playerName} now has value ${this.playerTeam}.")
+        throw NotImplementedError("Terminally deprecated")
+//        if(newTeam == this.playerTeam) return
+//        this.playerTeam = newTeam
+//        TeamManager.setTeam(this, this.playerTeam)
+//        logger.info("Teams: ${this.playerName} now has value ${this.playerTeam}.")
     }
 
     fun setCharacter(newCharacter: BurbCharacter) {

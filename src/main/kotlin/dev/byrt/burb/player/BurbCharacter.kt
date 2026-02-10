@@ -1,5 +1,6 @@
 package dev.byrt.burb.player
 
+import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
@@ -8,6 +9,7 @@ import dev.byrt.burb.item.ability.BurbCharacterAbilities
 import dev.byrt.burb.item.weapon.BurbMainWeapon
 import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.Teams
 
 import org.bukkit.scheduler.BukkitRunnable
@@ -26,12 +28,12 @@ enum class BurbCharacter(val characterName: String, val characterMainWeapon: Bur
 
 fun BurbPlayer.setRandomCharacter() {
     when(this.playerTeam) {
-        Teams.PLANTS -> {
+        BurbTeam.PLANTS -> {
             val charactersList = mutableListOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_HEAVY, BurbCharacter.PLANTS_HEALER, BurbCharacter.PLANTS_RANGED)
             charactersList.remove(this.playerCharacter)
             this.setCharacter(charactersList.random())
         }
-        Teams.ZOMBIES -> {
+        BurbTeam.ZOMBIES -> {
             val charactersList = mutableListOf(BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_HEAVY, BurbCharacter.ZOMBIES_HEALER, BurbCharacter.ZOMBIES_RANGED)
             charactersList.remove(this.playerCharacter)
             this.setCharacter(charactersList.random())
@@ -44,7 +46,7 @@ fun BurbPlayer.characterSelect() {
     setCharacter(BurbCharacter.NULL)
     object : BukkitRunnable() {
         override fun run() {
-            if(playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+            if(GameManager.teams.isParticipating(uuid)) {
                 BurbInterface(getBukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
             }
             if(GameManager.getGameState() == GameState.IDLE) {

@@ -6,6 +6,7 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.TeamManager.getPlayerNames
 import dev.byrt.burb.team.Teams
@@ -23,9 +24,9 @@ class TeamsCommands {
     @Command("teams set <player> <team>")
     @CommandDescription("Puts the specified player on the specified team.")
     @Permission("burb.cmd.teams")
-    fun setTeam(sender: CommandSender, @Argument("player") player : Player, @Argument("team") team : Teams) {
+    fun setTeam(sender: CommandSender, @Argument("player") player : Player, @Argument("team") team : BurbTeam) {
         if(GameManager.getGameState() == GameState.IDLE) {
-            player.burbPlayer().setTeam(team)
+            GameManager.teams.setTeam(player, team)
         } else {
             sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
         }
