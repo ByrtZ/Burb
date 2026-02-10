@@ -27,19 +27,25 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i><light_purple>Abilities:")
         )
 
+
         for(ability in character.characterAbilities.abilitySet) {
-            val comboClicks = mutableListOf<String>()
-            for(combo in BurbAbilityComboClicks.entries) {
-                if(character in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+            if(character in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("MELEE") }) {
+                    val comboClicks = mutableListOf<String>()
                     if(combo.name.removePrefix("MELEE_").contains(ability.name.removePrefix("${character.name}_"))) {
                         combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
-                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName} <gray>- <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        comboClicks.clear()
                     }
                 }
-                if(character in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
+            }
+            if(character in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
+                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("RANGED") }) {
+                    val comboClicks = mutableListOf<String>()
                     if(combo.name.removePrefix("RANGED_").contains(ability.name.removePrefix("${character.name}_"))) {
                         combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
-                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName} <gray>- <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        comboClicks.clear()
                     }
                 }
             }
