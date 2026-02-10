@@ -57,7 +57,7 @@ object BurbAbilities {
             }
             // Set cooldown on use
             player.setCooldown(usedItem, usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
-            // Run ability from ID
+            // Run ability
             when(ability) {
                 BurbAbility.PLANTS_SCOUT_ABILITY_1 -> {
                     player.world.playSound(player.location, "burb.ability.peashooter.explosive.fire", SoundCategory.VOICE, 1f, 1f)

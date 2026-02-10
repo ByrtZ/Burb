@@ -1,5 +1,6 @@
 package dev.byrt.burb.item.ability.combo
 
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ability.BurbAbilities
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.player.BurbCharacter
@@ -8,9 +9,6 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.util.Cooldowns
 
-import org.bukkit.NamespacedKey
-import org.bukkit.inventory.ItemStack
-import org.bukkit.persistence.PersistentDataType
 import org.bukkit.scheduler.BukkitRunnable
 
 object BurbAbilityComboManager {
@@ -74,10 +72,7 @@ object BurbAbilityComboManager {
                 if(burbPlayer.playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
                     for(ability in abilitySet) {
                         if(combo.name.removePrefix("MELEE_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
-                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemStack(ability.abilityMaterial).apply { itemMeta = itemMeta.apply {
-                                this.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
-                                this.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown) }
-                            })
+                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
                             resetCombo(burbPlayer)
                             return
                         }
@@ -88,10 +83,7 @@ object BurbAbilityComboManager {
                     val abilitySet = burbPlayer.playerCharacter.characterAbilities.abilitySet
                     for(ability in abilitySet) {
                         if(combo.name.removePrefix("RANGED_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
-                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemStack(ability.abilityMaterial).apply { itemMeta = itemMeta.apply {
-                                this.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
-                                this.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown) }
-                            })
+                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
                             resetCombo(burbPlayer)
                             return
                         }

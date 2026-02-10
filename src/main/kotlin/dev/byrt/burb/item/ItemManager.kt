@@ -2,6 +2,7 @@ package dev.byrt.burb.item
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.item.ability.BurbAbility
 import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.item.weapon.BurbMainWeaponType
@@ -114,8 +115,32 @@ object ItemManager {
             }
         }
 
+        var abilityHotbarSlot = 6
+        for(ability in burbPlayerCharacter.characterAbilities.abilitySet) {
+            val abilityItem = getAbilityItem(ability)
+            burbPlayer.bukkitPlayer().inventory.setItem(abilityHotbarSlot, abilityItem)
+            if(abilityHotbarSlot >= 8) abilityHotbarSlot = 0 else abilityHotbarSlot++
+        }
+
         // Give profile item if game is IDLE
         if(GameManager.getGameState() == GameState.IDLE) player.inventory.setItem(8, ServerItem.getProfileItem())
+    }
+
+    fun getAbilityItem(ability: BurbAbility): ItemStack {
+        val abilityItem = ItemStack(ability.abilityMaterial, 1)
+        val abilityItemMeta = abilityItem.itemMeta
+        abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
+        abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
+        abilityItemMeta.displayName(Formatting.allTags.deserialize("<!i><${ItemRarity.COMMON.rarityColour}>${ability.abilityName.ifEmpty { ability.abilityId + ".name" }}"))
+        abilityItemMeta.lore(listOf(
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.UTILITY.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>${ability.abilityLore.ifEmpty { ability.abilityId + ".lore" }}")
+            )
+        )
+        abilityItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
+        abilityItemMeta.itemModel = NamespacedKey("minecraft", ability.abilityModel)
+        abilityItem.itemMeta = abilityItemMeta
+        return abilityItem
     }
 
     fun clearItems(player: Player) {
