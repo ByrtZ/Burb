@@ -14,7 +14,9 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
+import dev.byrt.burb.team.TeamManagerV2
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.Formatting
 
@@ -31,6 +33,7 @@ import org.bukkit.potion.PotionEffectType
 import java.time.Duration
 
 object GameManager {
+    public val teams = TeamManagerV2<BurbTeam>()
     private var gameState = GameState.IDLE
     private var overtimeActive = false
 
@@ -117,7 +120,8 @@ object GameManager {
 
     private fun starting() {
         InfoBoardManager.updateRound()
-        TeamManager.hideTeamNametags()
+        // TODO(lucy)
+//        TeamManager.hideTeamNametags()
         CapturePoints.initializeCapturePoints()
         if(Rounds.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
@@ -127,8 +131,9 @@ object GameManager {
             }
         }
         for(player in Bukkit.getOnlinePlayers()) {
-            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-                TeamManager.enableTeamGlowing(player)
+            if(teams.isParticipating(player.uniqueId)) {
+                // TODO(lucy)
+//                TeamManager.enableTeamGlowing(player)
                 SpawnPoints.respawnLocation(player)
                 ItemManager.giveCharacterItems(player)
             }
@@ -157,7 +162,7 @@ object GameManager {
                 )
             )
         }
-        TeamManager.showTeamNametags()
+//        TeamManager.showTeamNametags()
         GameVisuals.setDayTime(GameDayTime.DAY)
     }
 
@@ -177,7 +182,7 @@ object GameManager {
                 )
             )
         }
-        TeamManager.showTeamNametags()
+//        TeamManager.showTeamNametags()
         Rounds.nextRound()
     }
 

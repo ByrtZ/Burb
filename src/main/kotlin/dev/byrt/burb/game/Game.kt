@@ -38,7 +38,7 @@ object Game {
 
     fun setup() {
         InfoBoardManager.buildScoreboard()
-        TeamManager.buildDisplayTeams()
+//        TeamManager.buildDisplayTeams()
         CommitIntegration.grabLatestCommit()
         LobbyBall.createLobbyBall()
         BurbNPCs.spawnAllNPCs()
@@ -47,7 +47,7 @@ object Game {
 
     fun cleanup() {
         BurbNPCs.clearNPCs()
-        TeamManager.destroyDisplayTeams()
+//        TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
         CapturePoints.clearCapturePoints()
         ItemManager.destroyBullets()
@@ -66,9 +66,10 @@ object Game {
         Jukebox.resetMusicStress()
         GameVisuals.setDayTime(GameDayTime.DAY)
         for(player in Bukkit.getOnlinePlayers()) {
-            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-                TeamManager.disableTeamGlowing(player)
-            }
+            // TODO(lucy)
+//            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
+//                TeamManager.disableTeamGlowing(player)
+//            }
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)

@@ -1,7 +1,9 @@
 package dev.byrt.burb.player
 
+import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.Teams
 
@@ -12,7 +14,7 @@ import org.bukkit.potion.PotionEffectType
 
 import java.util.UUID
 
-class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerTeam: Teams, var playerCharacter: BurbCharacter, var isDead: Boolean) {
+class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerCharacter: BurbCharacter, var isDead: Boolean) {
     init {
         setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
@@ -24,6 +26,10 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         this.playerType = newType
         logger.info("Type: ${this.playerName} now has value ${this.playerType}.")
     }
+
+    @Deprecated("Prefer checking against GameManager.teams directly")
+    val playerTeam: BurbTeam?
+        get() = GameManager.teams.getTeam(uuid)
 
     fun setTeam(newTeam: Teams) {
         if(newTeam == this.playerTeam) return

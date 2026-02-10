@@ -48,7 +48,7 @@ class PlayerCommands {
     @Permission("burb.cmd.player")
     fun setCharacter(player: Player) {
         if (GameManager.getGameState() == GameState.IDLE || player.isOp) {
-            if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+            if (GameManager.teams.isParticipating(player.uniqueId)) {
                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
             }
         }

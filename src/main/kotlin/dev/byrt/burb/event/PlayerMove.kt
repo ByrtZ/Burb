@@ -28,7 +28,7 @@ class PlayerMove: Listener {
             }
         }
         if(GameManager.getGameState() == GameState.STARTING) {
-            for(player in Bukkit.getOnlinePlayers().filter { online -> online.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES) }) {
+            for(player in Bukkit.getOnlinePlayers().filter { online -> GameManager.teams.isParticipating(online.uniqueId) }) {
                 val to = e.from
                 to.pitch = e.to.pitch
                 to.yaw = e.to.yaw

@@ -27,6 +27,7 @@ import org.bukkit.scoreboard.Team
 
 import java.time.Duration
 
+@Deprecated("See TeamManagerV2")
 object TeamManager {
     private val spectators = mutableSetOf<BurbPlayer>()
     private val plants = mutableSetOf<BurbPlayer>()
@@ -106,7 +107,7 @@ object TeamManager {
         }
 
         if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-            if(player.playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+            if (GameManager.teams.isParticipating(player.uuid)) {
                 refreshGlowing()
             }
         }
@@ -237,19 +238,20 @@ object TeamManager {
         }
     }
 
+    // TODO(lucy): reimplement
     fun enableTeamGlowing(player: Player) {
-        val teamMates = player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())
-        if(player.burbPlayer().playerTeam.getTeammates(player.burbPlayer()).isNotEmpty()) {
-            for(teamMate in teamMates) {
-                GlowingEntities.setGlowing(teamMate, player)
-            }
-        }
+//        val teamMates = player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())
+//        if(player.burbPlayer().playerTeam.getTeammates(player.burbPlayer()).isNotEmpty()) {
+//            for(teamMate in teamMates) {
+//                GlowingEntities.setGlowing(teamMate, player)
+//            }
+//        }
     }
 
     fun disableTeamGlowing(player: Player) {
-        for(teamMate in player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())) {
-            GlowingEntities.unsetGlowing(teamMate, player)
-        }
+//        for(teamMate in player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())) {
+//            GlowingEntities.unsetGlowing(teamMate, player)
+//        }
     }
 
     fun cancelAllGlowing(player: Player) {
@@ -314,6 +316,7 @@ object TeamManager {
     }
 }
 
+@Deprecated("Use BurbTeam as part of TeamManagerV2")
 enum class Teams(val teamName: String, val teamHexColour: TextColor, val teamColour: Color, val teamColourTag: String) {
     SPECTATOR("Spectator", TextColor.fromHexString("#aaaaaa")!!, Color.GRAY, "<speccolour>"),
     PLANTS("Plants", TextColor.color(21, 237, 50), Color.LIME, "<plantscolour>"),

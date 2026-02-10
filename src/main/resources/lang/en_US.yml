@@ -1,0 +1,30 @@
+tags:
+  arrow_prefix: [<yellow>▶<reset>]
+  death: <gray>[<#ff3333><unicodeprefix:skull><gray>]<reset>
+
+
+messages.burb:
+  death.killed_by: <death><arg:0><reset> was vanquished by <arg:1><reset>.
+  death.died: <death><arg:0><reset> was vanquished.
+
+  capture_point:
+    captured: <arrow_prefix><yellow><arg:0><reset> is now controlled by the <arg:1><reset>.
+    lost: <arrow_prefix><yellow><arg:0><reset> is no longer controlled by the <arg:1><reset>.
+
+  team:
+    plants: <plantscolour>Plants
+    zombies: <zombiescolour>Zombies
+
+  win_game:
+    plants:
+      main: <plantscolour><b>Plants
+      sub: won the game!
+      chat: <plantscolour><b>Plants<reset> won the game!
+    zombies:
+      main: <zombiescolour><b>Zombies
+      sub: won the game!
+      chat: <zombiescolour><b>Zombies<reset> won the game!
+    null:
+      main: <yellow><b>DRAW
+      sub: It was a tie, do better next time.
+      chat: Nobody won, what a disappointment!

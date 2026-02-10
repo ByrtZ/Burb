@@ -26,6 +26,10 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.time.Duration
 
 object GameTask {
+    private const val WIN_XP = 200
+    private const val DRAW_XP = 30
+    private const val LOSE_XP = 50
+
     private var gameRunnables = mutableMapOf<Int, BukkitRunnable>()
     private var currentGameTaskId = 0
     fun startGameLoop() {
@@ -33,76 +37,92 @@ object GameTask {
             override fun run() {
                 InfoBoardManager.updateTimer()
                 /** STARTING **/
-                if(GameManager.getGameState() == GameState.STARTING && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 80) {
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            player.showTitle(Title.title(
-                                Formatting.glyph("\uD000"),
-                                Component.text(""),
-                                Title.Times.times(
-                                    Duration.ofSeconds(0),
-                                    Duration.ofSeconds(3),
-                                    Duration.ofSeconds(1)
+                if (GameManager.getGameState() == GameState.STARTING && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if (Timer.getTimer() == 80) {
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(
+                                Title.title(
+                                    Formatting.glyph("\uD000"),
+                                    Component.text(""),
+                                    Title.Times.times(
+                                        Duration.ofSeconds(0),
+                                        Duration.ofSeconds(3),
+                                        Duration.ofSeconds(1)
                                     )
                                 )
                             )
                             player.playSound(Sounds.Music.GAME_INTRO_JINGLE)
                         }
                     }
-                    if(Timer.getTimer() == 75) {
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            player.showTitle(Title.title(
-                                Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
-                                Component.text(""),
-                                Title.Times.times(
-                                    Duration.ofSeconds(1),
-                                    Duration.ofSeconds(4),
-                                    Duration.ofSeconds(1)
+                    if (Timer.getTimer() == 75) {
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(
+                                Title.title(
+                                    Formatting.allTags.deserialize("<burbcolour><font:burb:font>SUBURBINATION"),
+                                    Component.text(""),
+                                    Title.Times.times(
+                                        Duration.ofSeconds(1),
+                                        Duration.ofSeconds(4),
+                                        Duration.ofSeconds(1)
                                     )
                                 )
                             )
                         }
                     }
-                    if(Timer.getTimer() == 25) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 25) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(player.location, Sounds.Tutorial.TUTORIAL_POP, 1f, 1f)
-                            player.sendMessage(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true)
-                                .append(Component.text(" Starting soon:\n\n").color(NamedTextColor.WHITE).decoration(TextDecoration.BOLD, true).decoration(TextDecoration.STRIKETHROUGH, false)
-                                    .append(Component.text("      I don't have anything funny to say, this just needs replacing.\n\n").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, false).decoration(TextDecoration.ITALIC, true)
-                                        .append(Component.text("\n\n\n")
-                                            .append(Component.text("-----------------------------------------------------").color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true).decoration(TextDecoration.ITALIC, false)
+                            player.sendMessage(
+                                Component.text("-----------------------------------------------------")
+                                    .color(NamedTextColor.GREEN).decoration(TextDecoration.STRIKETHROUGH, true)
+                                    .append(
+                                        Component.text(" Starting soon:\n\n").color(NamedTextColor.WHITE)
+                                            .decoration(TextDecoration.BOLD, true)
+                                            .decoration(TextDecoration.STRIKETHROUGH, false)
+                                            .append(
+                                                Component.text("      I don't have anything funny to say, this just needs replacing.\n\n")
+                                                    .color(NamedTextColor.RED).decoration(TextDecoration.BOLD, false)
+                                                    .decoration(TextDecoration.ITALIC, true)
+                                                    .append(
+                                                        Component.text("\n\n\n")
+                                                            .append(
+                                                                Component.text("-----------------------------------------------------")
+                                                                    .color(NamedTextColor.GREEN)
+                                                                    .decoration(TextDecoration.STRIKETHROUGH, true)
+                                                                    .decoration(TextDecoration.ITALIC, false)
+                                                            )
+                                                    )
                                             )
-                                        )
                                     )
-                                )
                             )
                         }
                     }
-                    if(Timer.getTimer() == 70) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 70) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.LOADING_MELODY)
                         }
                     }
-                    if(Timer.getTimer() <= 15) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() <= 15) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.removePotionEffect(PotionEffectType.BLINDNESS)
                         }
                     }
-                    if(Timer.getTimer() in 4..10) {
-                        if(Timer.getTimer() == 10) {
-                            for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() in 4..10) {
+                        if (Timer.getTimer() == 10) {
+                            for (player in Bukkit.getOnlinePlayers()) {
                                 player.playSound(Sounds.Alert.ALARM)
                                 Jukebox.stopMusicLoop(player, Music.LOADING_MELODY)
                             }
                         }
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            player.showTitle(Title.title(
-                                Component.text("Starting in").color(NamedTextColor.AQUA),
-                                Component.text("►${Timer.getTimer()}◄").decoration(TextDecoration.BOLD, true),
-                                Title.Times.times(
-                                    Duration.ofSeconds(0),
-                                    Duration.ofSeconds(5),
-                                    Duration.ofSeconds(0)
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(
+                                Title.title(
+                                    Component.text("Starting in").color(NamedTextColor.AQUA),
+                                    Component.text("►${Timer.getTimer()}◄").decoration(TextDecoration.BOLD, true),
+                                    Title.Times.times(
+                                        Duration.ofSeconds(0),
+                                        Duration.ofSeconds(5),
+                                        Duration.ofSeconds(0)
                                     )
                                 )
                             )
@@ -110,60 +130,67 @@ object GameTask {
                             player.playSound(Sounds.Timer.TICK)
                         }
                     }
-                    if(Timer.getTimer() in 1..3) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() in 1..3) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                             player.playSound(Sounds.Timer.TICK)
-                            if(Timer.getTimer() == 3) {
-                                player.showTitle(Title.title(
-                                    Component.text("Starting in").color(NamedTextColor.AQUA),
-                                    Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.GREEN).decoration(TextDecoration.BOLD, true),
-                                    Title.Times.times(
-                                        Duration.ofSeconds(0),
-                                        Duration.ofSeconds(5),
-                                        Duration.ofSeconds(0)
+                            if (Timer.getTimer() == 3) {
+                                player.showTitle(
+                                    Title.title(
+                                        Component.text("Starting in").color(NamedTextColor.AQUA),
+                                        Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.GREEN)
+                                            .decoration(TextDecoration.BOLD, true),
+                                        Title.Times.times(
+                                            Duration.ofSeconds(0),
+                                            Duration.ofSeconds(5),
+                                            Duration.ofSeconds(0)
                                         )
                                     )
                                 )
                             }
-                            if(Timer.getTimer() == 2) {
-                                player.showTitle(Title.title(
-                                    Component.text("Starting in").color(NamedTextColor.AQUA),
-                                    Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.YELLOW).decoration(TextDecoration.BOLD, true),
-                                    Title.Times.times(
-                                        Duration.ofSeconds(0),
-                                        Duration.ofSeconds(5),
-                                        Duration.ofSeconds(0)
+                            if (Timer.getTimer() == 2) {
+                                player.showTitle(
+                                    Title.title(
+                                        Component.text("Starting in").color(NamedTextColor.AQUA),
+                                        Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.YELLOW)
+                                            .decoration(TextDecoration.BOLD, true),
+                                        Title.Times.times(
+                                            Duration.ofSeconds(0),
+                                            Duration.ofSeconds(5),
+                                            Duration.ofSeconds(0)
                                         )
                                     )
                                 )
                             }
-                            if(Timer.getTimer() == 1) {
-                                player.showTitle(Title.title(
-                                    Component.text("Starting in").color(NamedTextColor.AQUA),
-                                    Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.RED).decoration(TextDecoration.BOLD, true),
-                                    Title.Times.times(
-                                        Duration.ofSeconds(0),
-                                        Duration.ofSeconds(5),
-                                        Duration.ofSeconds(0)
+                            if (Timer.getTimer() == 1) {
+                                player.showTitle(
+                                    Title.title(
+                                        Component.text("Starting in").color(NamedTextColor.AQUA),
+                                        Component.text("►${Timer.getTimer()}◄").color(NamedTextColor.RED)
+                                            .decoration(TextDecoration.BOLD, true),
+                                        Title.Times.times(
+                                            Duration.ofSeconds(0),
+                                            Duration.ofSeconds(5),
+                                            Duration.ofSeconds(0)
                                         )
                                     )
                                 )
                             }
                         }
                     }
-                    if(Timer.getTimer() <= 0) {
+                    if (Timer.getTimer() <= 0) {
                         GameManager.nextState()
                     }
                 }
 
                 /** IN GAME **/
-                if(GameManager.getGameState() == GameState.IN_GAME && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 120) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                if (GameManager.getGameState() == GameState.IN_GAME && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if (Timer.getTimer() == 120) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.OVERTIME)
                             player.playSound(Sounds.Alert.ALARM)
-                            player.showTitle(Title.title(
+                            player.showTitle(
+                                Title.title(
                                     Formatting.allTags.deserialize(""),
                                     Formatting.allTags.deserialize("<red>2 minutes remain!"),
                                     Title.Times.times(
@@ -176,169 +203,143 @@ object GameTask {
                         }
                         GameVisuals.setDayTime(GameDayTime.NIGHT)
                     }
-                    if(Timer.getTimer() == 60) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 60) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_LOW)
                             player.playSound(Sounds.Alert.ALARM)
-                            player.showTitle(Title.title(
-                                Formatting.allTags.deserialize(""),
-                                Formatting.allTags.deserialize("<red>1 minute remains!"),
-                                Title.Times.times(
-                                    Duration.ofMillis(250),
-                                    Duration.ofSeconds(3),
-                                    Duration.ofMillis(750)
+                            player.showTitle(
+                                Title.title(
+                                    Formatting.allTags.deserialize(""),
+                                    Formatting.allTags.deserialize("<red>1 minute remains!"),
+                                    Title.Times.times(
+                                        Duration.ofMillis(250),
+                                        Duration.ofSeconds(3),
+                                        Duration.ofMillis(750)
                                     )
                                 )
                             )
                         }
                     }
-                    if(Timer.getTimer() == 50) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 50) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_MEDIUM)
                         }
                     }
-                    if(Timer.getTimer() == 35) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 35) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_HIGH)
                         }
                     }
-                    if(Timer.getTimer() == 20) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() == 20) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.LOBBY_UNDERWORLD_CHALLENGE_INTENSE)
                         }
                     }
-                    if(Timer.getTimer() % 60 == 0) {
+                    if (Timer.getTimer() % 60 == 0) {
                         SpecialEvents.rollSpecialEvent()
                     }
-                    if(Timer.getTimer() in 11..59 || Timer.getTimer() % 60 == 0) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() in 11..59 || Timer.getTimer() % 60 == 0) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
-                    if(!SpecialEvents.isEventRunning()) {
-                        if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 240)..GameManager.GameTime.IN_GAME_TIME) {
+                    if (!SpecialEvents.isEventRunning()) {
+                        if (Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 240)..GameManager.GameTime.IN_GAME_TIME) {
                             Jukebox.setMusicStress(MusicStress.LOW)
                         }
-                        if(Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
+                        if (Timer.getTimer() in (GameManager.GameTime.IN_GAME_TIME - 660)..(GameManager.GameTime.IN_GAME_TIME - 240)) {
                             Jukebox.setMusicStress(MusicStress.MEDIUM)
                         }
-                        if(Timer.getTimer() in 121..(GameManager.GameTime.IN_GAME_TIME - 660)) {
+                        if (Timer.getTimer() in 121..(GameManager.GameTime.IN_GAME_TIME - 660)) {
                             Jukebox.setMusicStress(MusicStress.HIGH)
                         }
-                        if(Timer.getTimer() <= 120) {
+                        if (Timer.getTimer() <= 120) {
                             Jukebox.setMusicStress(MusicStress.NULL)
                         }
                     } else {
                         Jukebox.setMusicStress(MusicStress.NULL)
                     }
-                    if(Timer.getTimer() in 0..10) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() in 0..10) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK_HIGH)
                         }
                     }
-                    if(Timer.getTimer() <= 0) {
+                    if (Timer.getTimer() <= 0) {
                         GameManager.nextState()
                     }
                 }
 
                 /** OVERTIME **/
-                if(GameManager.getGameState() == GameState.OVERTIME && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                if (GameManager.getGameState() == GameState.OVERTIME && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if (Timer.getTimer() in 11..30 || Timer.getTimer() % 60 == 0) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK)
                         }
                     }
-                    if(Timer.getTimer() in 0..10) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+                    if (Timer.getTimer() in 0..10) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             player.playSound(Sounds.Timer.CLOCK_TICK_HIGH)
                         }
                     }
-                    if(Timer.getTimer() <= 0) {
+                    if (Timer.getTimer() <= 0) {
                         GameManager.nextState()
                     }
                 }
 
                 /** ROUND END **/
-                if(Timer.getTimer() <= 0 && GameManager.getGameState() == GameState.ROUND_END && Timer.getTimerState() == TimerState.ACTIVE) {
+                if (Timer.getTimer() <= 0 && GameManager.getGameState() == GameState.ROUND_END && Timer.getTimerState() == TimerState.ACTIVE) {
                     GameManager.nextState()
                 }
 
                 /** GAME END **/
-                if(GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
-                    if(Timer.getTimer() == 98) {
-                        val winningTeam = Scores.getWinningTeam()
-                        if(winningTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
-                            for(player in Bukkit.getOnlinePlayers()) {
-                                when(winningTeam) {
-                                    Teams.PLANTS -> player.playSound(Sounds.Score.PLANTS_WIN_MUSIC)
-                                    Teams.ZOMBIES -> player.playSound(Sounds.Score.ZOMBIES_WIN_MUSIC)
-                                    else -> {}
-                                }
-                            }
+                if (GameManager.getGameState() == GameState.GAME_END && Timer.getTimerState() == TimerState.ACTIVE) {
+                    if (Timer.getTimer() == 98) {
+                        Scores.getWinningTeam()?.let {
+                            Bukkit.getServer().playSound(it.winMusic)
                         }
                     }
-                    if(Timer.getTimer() == 90) {
+                    if (Timer.getTimer() == 90) {
                         val winningTeam = Scores.getWinningTeam()
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            if(winningTeam in listOf(Teams.NULL, Teams.SPECTATOR)) {
-                                if (player.burbPlayer().playerTeam == Teams.PLANTS) player.playSound(Sounds.Score.PLANTS_LOSE)
-                                if (player.burbPlayer().playerTeam == Teams.ZOMBIES) player.playSound(Sounds.Score.ZOMBIES_LOSE)
-                                if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) BurbPlayerData.appendExperience(player, 30)
-                                player.sendMessage(Formatting.allTags.deserialize("Nobody won, what a disappointment!"))
-                                player.showTitle(
-                                    Title.title(
-                                        Formatting.allTags.deserialize("<yellow><b>DRAW"),
-                                        Formatting.allTags.deserialize("It was a tie, do better next time.")
-                                    )
-                                )
+
+                        Bukkit.getServer().showTitle(
+                            Title.title(
+                                Component.translatable("burb.title.win_game.${winningTeam?.name?.lowercase()}.main"),
+                                Component.translatable("burb.title.win_game.${winningTeam?.name?.lowercase()}.sub"),
+                            )
+                        )
+                        Bukkit.getServer().sendMessage(Component.translatable("burb.message.win_game.${winningTeam?.name?.lowercase()}.chat"))
+
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            val playerTeam = GameManager.teams.getTeam(player.uniqueId) ?: continue
+
+                            if (winningTeam == null) {
+                                player.playSound(playerTeam.loseSound)
+                                BurbPlayerData.appendExperience(player, DRAW_XP)
+                            } else if (winningTeam == playerTeam) {
+                                player.playSound(playerTeam.winSound)
+                                BurbPlayerData.appendExperience(player, WIN_XP)
                             } else {
-                                player.sendMessage(Formatting.allTags.deserialize("${winningTeam.teamColourTag}<b>${winningTeam.teamName.uppercase()}<reset> won the game!"))
-                                player.showTitle(
-                                    Title.title(
-                                        Formatting.allTags.deserialize("${winningTeam.teamColourTag}<b>${winningTeam.teamName.uppercase()}"),
-                                        Formatting.allTags.deserialize("won the game!")
-                                    )
-                                )
-                                when(winningTeam) {
-                                    Teams.PLANTS -> {
-                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) {
-                                            player.playSound(Sounds.Score.PLANTS_WIN)
-                                            BurbPlayerData.appendExperience(player, 200)
-                                        }
-                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
-                                            player.playSound(Sounds.Score.ZOMBIES_LOSE)
-                                            BurbPlayerData.appendExperience(player, 50)
-                                        }
-                                    }
-                                    Teams.ZOMBIES -> {
-                                        if (player.burbPlayer().playerTeam == Teams.PLANTS) {
-                                            player.playSound(Sounds.Score.PLANTS_LOSE)
-                                            BurbPlayerData.appendExperience(player, 50)
-                                        }
-                                        if (player.burbPlayer().playerTeam == Teams.ZOMBIES) {
-                                            player.playSound(Sounds.Score.ZOMBIES_WIN)
-                                            BurbPlayerData.appendExperience(player, 200)
-                                        }
-                                    }
-                                    else -> {}
-                                }
+                                player.playSound(playerTeam.loseSound)
+                                BurbPlayerData.appendExperience(player, LOSE_XP)
                             }
                         }
                     }
-                    if(Timer.getTimer() == 85) {
-                        for(player in Bukkit.getOnlinePlayers()) {
+
+                    if (Timer.getTimer() == 85) {
+                        for (player in Bukkit.getOnlinePlayers()) {
                             Jukebox.startMusicLoop(player, Music.POST_GAME)
                         }
                     }
-                    if(Timer.getTimer() <= 0) {
-                        for(player in Bukkit.getOnlinePlayers()) {
-                            player.showTitle(Title.title(
-                                Formatting.glyph("\uD000"),
-                                Formatting.allTags.deserialize(""),
-                                Title.Times.times(
-                                    Duration.ofMillis(250),
-                                    Duration.ofSeconds(1),
-                                    Duration.ofMillis(250)
+                    if (Timer.getTimer() <= 0) {
+                        for (player in Bukkit.getOnlinePlayers()) {
+                            player.showTitle(
+                                Title.title(
+                                    Formatting.glyph("\uD000"),
+                                    Formatting.allTags.deserialize(""),
+                                    Title.Times.times(
+                                        Duration.ofMillis(250),
+                                        Duration.ofSeconds(1),
+                                        Duration.ofMillis(250)
                                     )
                                 )
                             )
@@ -349,7 +350,7 @@ object GameTask {
                 }
 
                 /** TIMER DECREMENTS IF ACTIVE **/
-                if(Timer.getTimerState() == TimerState.ACTIVE) {
+                if (Timer.getTimerState() == TimerState.ACTIVE) {
                     Timer.decrement()
                 }
             }

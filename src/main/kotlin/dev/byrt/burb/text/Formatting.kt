@@ -1,9 +1,11 @@
 package dev.byrt.burb.text
 
 import dev.byrt.burb.team.Teams
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -109,5 +111,9 @@ object Formatting {
                 Component.text(UnicodePrefix.ofName(prefixName.toString()).value)
             )
         }
+    }
+
+    public fun Audience.sendTranslated(key: String, vararg args: ComponentLike) {
+        sendMessage(Component.translatable(key, *args))
     }
 }

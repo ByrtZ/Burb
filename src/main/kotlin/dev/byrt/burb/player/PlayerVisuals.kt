@@ -67,7 +67,7 @@ object PlayerVisuals {
         }.runTaskLater(plugin, 30L)
     }
 
-    fun death(player: Player, killer: Player?, deathMessage: Component, isTeamWipe: Boolean = false) {
+    fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
@@ -88,11 +88,19 @@ object PlayerVisuals {
             addPassenger(player)
         }
 
+        val deathMessage = if (showDeathMessage) {
+            if (killer != null) {
+                Component.translatable("burb.death.killed_by", player.displayName(), killer.displayName())
+            } else {
+                Component.translatable("burb.death.died", player.displayName())
+            }
+        } else Component.empty()
+
         if(!isTeamWipe) {
             player.showTitle(
                 Title.title(
                     Formatting.allTags.deserialize("<#ff3333>You died!"),
-                    Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
+                    deathMessage,
                     Title.Times.times(
                         Duration.ofMillis(250),
                         Duration.ofSeconds(8),
@@ -101,7 +109,7 @@ object PlayerVisuals {
                 )
             )
             player.playSound(Sounds.Score.DEATH)
-            for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
+            deathMessage?.let(Bukkit::broadcast)
         } else {
             player.showTitle(
                 Title.title(
@@ -122,7 +130,7 @@ object PlayerVisuals {
             if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
                 deathVehicle.remove()
                 for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
-                    death(teamMember.getBukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
+                    death(teamMember.getBukkitPlayer(), null, false, true)
                 }
                 for(online in Bukkit.getOnlinePlayers()) {
                     online.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.DEATH_PREFIX}The ${player.burbPlayer().playerTeam.teamColourTag}${player.burbPlayer().playerTeam.teamName}<reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>"))
