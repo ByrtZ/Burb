@@ -48,7 +48,7 @@ fun BurbPlayer.characterSelect() {
                 BurbInterface(bukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
             }
             if(GameManager.getGameState() == GameState.IDLE) {
-                bukkitPlayer().inventory.setItem(8, ServerItem.getProfileItem())
+                bukkitPlayer().inventory.setItem(0, ServerItem.getProfileItem())
             } else {
                 bukkitPlayer().inventory.remove(ServerItem.getProfileItem())
             }

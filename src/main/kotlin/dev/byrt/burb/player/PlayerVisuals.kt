@@ -267,7 +267,7 @@ object PlayerVisuals {
 
         // Add hub item
         if(GameManager.getGameState() == GameState.IDLE) {
-            player.inventory.setItem(8, ServerItem.getProfileItem())
+            player.inventory.setItem(0, ServerItem.getProfileItem())
         } else {
             player.inventory.remove(ServerItem.getProfileItem())
         }

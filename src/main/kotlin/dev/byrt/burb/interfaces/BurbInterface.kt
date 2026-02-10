@@ -654,7 +654,7 @@ object BurbInterfaces {
                     player.sendMessage(Formatting.allTags.deserialize("<b>${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcNameColour}${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcName}</b><white>: Best of luck out there in the waters..."))
                     player.playSound(Sounds.Misc.COMPLETE)
                     player.playSound(Sounds.Misc.NPC_INTERACT)
-                    player.inventory.setItem(7, ServerItem.getUsableFishingRodItem())
+                    player.inventory.setItem(1, ServerItem.getUsableFishingRodItem())
                     runBlocking { view.close(InventoryCloseEvent.Reason.PLUGIN, false) }
                 }
 

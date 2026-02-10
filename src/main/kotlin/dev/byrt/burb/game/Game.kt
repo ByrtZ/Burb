@@ -74,7 +74,7 @@ object Game {
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
             player.gameMode = GameMode.ADVENTURE
-            if(!player.inventory.contains(ServerItem.getProfileItem())) player.inventory.setItem(8, ServerItem.getProfileItem())
+            if(!player.inventory.contains(ServerItem.getProfileItem())) player.inventory.setItem(0, ServerItem.getProfileItem())
         }
         LobbyBall.createLobbyBall()
     }

@@ -123,7 +123,7 @@ object ItemManager {
         }
 
         // Give profile item if game is IDLE
-        if(GameManager.getGameState() == GameState.IDLE) player.inventory.setItem(8, ServerItem.getProfileItem())
+        if(GameManager.getGameState() == GameState.IDLE) player.inventory.setItem(0, ServerItem.getProfileItem())
     }
 
     fun getAbilityItem(ability: BurbAbility): ItemStack {
