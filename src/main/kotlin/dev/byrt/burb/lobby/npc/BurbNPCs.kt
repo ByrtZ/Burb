@@ -39,7 +39,14 @@ object BurbNPCs {
 
     fun spawnAllNPCs() {
         for(npc in BurbNPC.entries) {
-            spawnNPC(npc)
+            // 10% chance to spawn this easter egg
+            if(npc == BurbNPC.LOBBY_FRUMAN_INQUISITOR) {
+                if(Random.nextInt(0, 9) == 0) {
+                    spawnNPC(npc)
+                }
+            } else {
+                spawnNPC(npc)
+            }
         }
     }
 

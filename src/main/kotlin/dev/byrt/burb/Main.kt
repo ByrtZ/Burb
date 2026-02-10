@@ -7,9 +7,8 @@ import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.CdnPackRegistry
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.TextAlignment
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.event.Listener
@@ -86,18 +85,11 @@ class Main : JavaPlugin() {
             ))
             .noPendingCommandNotifier { sender ->
                 sender.sendMessage(
-                    Component.text(
-                        "You do not have any pending commands.",
-                        NamedTextColor.RED
-                    )
+                    Formatting.allTags.deserialize("<red>You do not have any pending commands.")
                 ) }
             .confirmationRequiredNotifier { sender, ctx ->
                 sender.sendMessage(
-                    Component.text("Confirm command ", NamedTextColor.RED).append(
-                        Component.text("'/${ctx.commandContext().rawInput().input()}' ", NamedTextColor.GREEN)
-                    ).append(Component.text("by running ", NamedTextColor.RED)).append(
-                        Component.text("'/confirm' ", NamedTextColor.YELLOW)
-                    ).append(Component.text("to execute.", NamedTextColor.RED))
+                    Formatting.allTags.deserialize("<red><b><unicodeprefix:warning></b> This action is potentially disruptive!<newline>Confirm command <green>'/${ctx.commandContext().rawInput().input()}' <red>by running <yellow>'/confirm' <red>to execute.")
                 ) }
             .expiration(Duration.ofSeconds(30))
             .build()

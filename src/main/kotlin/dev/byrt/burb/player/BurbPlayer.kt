@@ -35,14 +35,14 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     fun setCharacter(newCharacter: BurbCharacter) {
         if(newCharacter == this.playerCharacter) return
         this.playerCharacter = newCharacter
-        if(this.playerCharacter != BurbCharacter.NULL && this.getBukkitPlayer().vehicle == null) {
-            ItemManager.giveCharacterItems(this.getBukkitPlayer())
+        if(this.playerCharacter != BurbCharacter.NULL && this.bukkitPlayer().vehicle == null) {
+            ItemManager.giveCharacterItems(this.bukkitPlayer())
         } else {
-            ItemManager.clearItems(this.getBukkitPlayer())
+            ItemManager.clearItems(this.bukkitPlayer())
         }
-        this.getBukkitPlayer().activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) this.getBukkitPlayer().removePotionEffect(e.type)}
+        this.bukkitPlayer().activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) this.bukkitPlayer().removePotionEffect(e.type)}
         if(this.playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
-            this.getBukkitPlayer().addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
+            this.bukkitPlayer().addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
         }
         logger.info("Character: ${this.playerName} now has value ${this.playerCharacter}.")
     }
@@ -53,7 +53,7 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         logger.info("Dead State: ${this.playerName} now has value ${this.isDead}")
     }
 
-    fun getBukkitPlayer(): Player {
+    fun bukkitPlayer(): Player {
         return Bukkit.getPlayer(this.uuid)!!
     }
 }

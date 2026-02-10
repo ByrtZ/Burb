@@ -40,7 +40,7 @@ object TeamManager {
     private val GlowingEntities = GlowingEntities(plugin)
 
     fun setTeam(player: BurbPlayer, team: Teams) {
-        cancelAllGlowing(player.getBukkitPlayer())
+        cancelAllGlowing(player.bukkitPlayer())
         if(spectators.contains(player)) {
             spectators.remove(player)
             spectatorDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
@@ -58,7 +58,7 @@ object TeamManager {
             Teams.SPECTATOR -> {
                 spectators.add(player)
                 player.setType(PlayerType.SPECTATOR)
-                if(player.getBukkitPlayer().isOp) {
+                if(player.bukkitPlayer().isOp) {
                     adminDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
                 } else {
                     spectatorDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
@@ -78,11 +78,11 @@ object TeamManager {
                 player.setType(PlayerType.INVALID)
             }
         }
-        ItemManager.givePlayerTeamBoots(player.getBukkitPlayer(), team)
+        ItemManager.givePlayerTeamBoots(player.bukkitPlayer(), team)
         when(team) {
             in listOf(Teams.PLANTS, Teams.ZOMBIES) -> {
-                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
-                player.getBukkitPlayer().showTitle(
+                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
+                player.bukkitPlayer().showTitle(
                     Title.title(
                         Formatting.allTags.deserialize(""),
                         Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)),
@@ -91,8 +91,8 @@ object TeamManager {
                 )
             }
             Teams.SPECTATOR -> {
-                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR))
-                player.getBukkitPlayer().showTitle(
+                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR))
+                player.bukkitPlayer().showTitle(
                     Title.title(
                         Formatting.allTags.deserialize(""),
                         Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR),
@@ -101,7 +101,7 @@ object TeamManager {
                 )
             }
             else -> {
-                player.getBukkitPlayer().sendMessage(Formatting.allTags.deserialize("<red>Something went wrong setting your team, please contact an admin if you see this message."))
+                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize("<red>Something went wrong setting your team, please contact an admin if you see this message."))
             }
         }
 
@@ -164,14 +164,14 @@ object TeamManager {
             Teams.PLANTS -> {
                 for(teamMate in plants) {
                     if(teamMate != burbPlayer) {
-                        teamMates.add(teamMate.getBukkitPlayer())
+                        teamMates.add(teamMate.bukkitPlayer())
                     }
                 }
             }
             Teams.ZOMBIES -> {
                 for(teamMate in zombies) {
                     if(teamMate != burbPlayer) {
-                        teamMates.add(teamMate.getBukkitPlayer())
+                        teamMates.add(teamMate.bukkitPlayer())
                     }
                 }
             }

@@ -26,7 +26,7 @@ class PlayerCommands {
     fun getPlayer(sender: CommandSender, @Argument("player") player: Player) {
         val abilityNames = mutableSetOf<String>()
         player.burbPlayer().playerCharacter.characterAbilities.abilitySet.forEach { ability -> abilityNames.add(ability.abilityName) }
-        sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}<speccolour>\nDead: <yellow>${player.burbPlayer().isDead}"))
+        sender.sendMessage(Formatting.allTags.deserialize("<burbcolour><bold>Player ${player.name}'s Info:<reset>\n<speccolour>Name: <yellow>${player.burbPlayer().playerName}<speccolour>\nUUID: <yellow>${player.burbPlayer().uuid}<speccolour>\nClient: <yellow>${player.clientBrandName}<speccolour>\nType: <yellow>${player.burbPlayer().playerType}<speccolour>\nTeam: <yellow>${player.burbPlayer().playerTeam}<speccolour>\nCharacter: <yellow>${player.burbPlayer().playerCharacter.characterName}<speccolour>\nCharacter Weapon: <yellow>${player.burbPlayer().playerCharacter.characterMainWeapon.weaponName}<speccolour>\nCharacter Abilites: <yellow>${abilityNames}<speccolour>\nDead: <yellow>${player.burbPlayer().isDead}"))
     }
 
     @Command("player <player> type")

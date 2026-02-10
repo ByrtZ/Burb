@@ -35,6 +35,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
 import org.bukkit.entity.Firework
 import org.bukkit.entity.ItemDisplay
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.TextDisplay
 import org.bukkit.inventory.ItemStack
@@ -50,9 +51,9 @@ import java.time.Duration
 import kotlin.random.Random
 
 object PlayerVisuals {
-    fun damageIndicator(player: Player, damage: Double) {
+    fun damageIndicator(entity: LivingEntity, damage: Double) {
         val damageTaken = BigDecimal(damage).setScale(2, RoundingMode.HALF_EVEN)
-        val damageIndicatorEntity = player.location.world.spawn(player.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
+        val damageIndicatorEntity = entity.location.world.spawn(entity.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
             alignment = TextDisplay.TextAlignment.CENTER
             billboard = Display.Billboard.VERTICAL
             isShadowed = true
@@ -67,7 +68,14 @@ object PlayerVisuals {
         }.runTaskLater(plugin, 30L)
     }
 
-    fun death(player: Player, killer: Player?, deathMessage: Component, isTeamWipe: Boolean = false) {
+    /**
+     * @param [player] Player to die
+     * @param [killer] Player who killed the [player], nullable
+     * @param [deathMessage] Death message
+     * @param [isTeamWipe] Should the whole team be eliminated with extended timer, only applies to vanquish showdown event and should only be called under this circumstance
+     * @param [forcedTeamWipe] Debug parameter, forces a team wipe and only runs if receiving team has more than one player
+     */
+    fun death(player: Player, killer: Player?, deathMessage: Component, isTeamWipe: Boolean = false, forcedTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
@@ -117,12 +125,12 @@ object PlayerVisuals {
         }
 
         /** TEAM WIPE SPECIAL EVENT **/
-        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN || forcedTeamWipe) {
             // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
             if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
                 deathVehicle.remove()
                 for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
-                    death(teamMember.getBukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
+                    death(teamMember.bukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
                 }
                 for(online in Bukkit.getOnlinePlayers()) {
                     online.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.DEATH_PREFIX}The ${player.burbPlayer().playerTeam.teamColourTag}${player.burbPlayer().playerTeam.teamName}<reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>"))
@@ -288,11 +296,7 @@ object PlayerVisuals {
             override fun run() {
                 if(!player.isOnline) cancel()
                 if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) cancel()
-                if(player.vehicle != null) {
-                    if(player.burbPlayer().isDead) {
-                        cancel()
-                    }
-                }
+                if(player.burbPlayer().isDead) cancel()
                 if(timer < reloadTime) {
                     if(timer % 2 == 0) {
                         player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.3f, pitch)

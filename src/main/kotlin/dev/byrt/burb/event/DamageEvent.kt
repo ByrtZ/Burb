@@ -4,11 +4,11 @@ import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
-import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 
 import io.papermc.paper.event.entity.EntityKnockbackEvent
+import org.bukkit.entity.Explosive
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -20,10 +20,12 @@ import org.bukkit.event.entity.EntityDamageEvent
 class DamageEvent: Listener {
     @EventHandler
     private fun onDamage(e: EntityDamageEvent) {
+        // Cancel ALL damage when not in the following game states
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
             e.isCancelled = true
             return
         } else {
+            // Cancel the following types of damage
             if(e.cause == EntityDamageEvent.DamageCause.HOT_FLOOR
                 || e.cause == EntityDamageEvent.DamageCause.DROWNING
                 || e.cause == EntityDamageEvent.DamageCause.CRAMMING
@@ -44,6 +46,7 @@ class DamageEvent: Listener {
             } else {
                 if(e.entity is Player) {
                     val player = e.entity as Player
+                    // Cancel if player is dead
                     if(player.burbPlayer().isDead) {
                         e.isCancelled = true
                     } else {
@@ -71,6 +74,20 @@ class DamageEvent: Listener {
             e.isCancelled = true
             return
         } else {
+            // Apply damage manually for explosions to bypass invulnerability
+            if(e.entity is Player && e.damager is Explosive) {
+                val player = e.entity as Player
+                if(player.burbPlayer().isDead) {
+                    e.isCancelled = true
+                    return
+                } else {
+                    player.health -= e.damage
+                    player.damage(0.00001, e.damager)
+                    PlayerVisuals.damageIndicator(player, e.damage)
+                    e.isCancelled = true
+                }
+            }
+            // Cancel all damage if the damager is dead unless it's an explosion
             if(e.damager is Player && e.entity is Player) {
                 val damager = e.damager as Player
                 val damaged = e.entity as Player
@@ -78,17 +95,6 @@ class DamageEvent: Listener {
                     e.isCancelled = true
                     return
                 }
-                // 1.5x backstab damage for melee classes: DISABLED
-                /*if(damager.burbPlayer().playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
-                    val damagedYaw = if (damaged.location.yaw >= 0) damaged.location.yaw else 180 + -damaged.location.yaw
-                    val damagerYaw = if (damager.location.yaw >= 0) damager.location.yaw else 180 + -damager.location.yaw
-                    val angle = if (damagedYaw - damagerYaw >= 0) damagedYaw - damagerYaw else damagerYaw - damagedYaw
-                    if(angle <= 45) {
-                        e.damage *= 1.5
-                    }
-                    damaged.world.playSound(damaged.location, "entity.warden.attack_impact", 0.75f, 0.75f)
-                    e.isCancelled = false
-                }*/
             }
         }
     }

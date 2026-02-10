@@ -24,10 +24,10 @@ import org.bukkit.scheduler.BukkitRunnable
 
 object SpecialEvents {
     private var currentEvent: SpecialEvent? = null
-    private const val EVENT_DURATION = 120
+    private const val EVENT_DURATION = 180
 
     fun rollSpecialEvent() {
-        if(currentEvent == null && GameManager.getGameState() == GameState.IN_GAME && Timer.getTimer() >= 4 * 60 && (0..9).random() == 0 && Timer.getTimer() != GameManager.GameTime.IN_GAME_TIME) {
+        if(currentEvent == null && GameManager.getGameState() == GameState.IN_GAME && Timer.getTimer() >= 5 * 60 && (0..9).random() == 0 && Timer.getTimer() != GameManager.GameTime.IN_GAME_TIME) {
             startEvent(SpecialEvent.entries.random())
         }
     }

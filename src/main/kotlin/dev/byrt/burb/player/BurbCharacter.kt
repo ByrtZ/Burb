@@ -45,12 +45,12 @@ fun BurbPlayer.characterSelect() {
     object : BukkitRunnable() {
         override fun run() {
             if(playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
-                BurbInterface(getBukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
+                BurbInterface(bukkitPlayer(), BurbInterfaceType.CHARACTER_SELECT)
             }
             if(GameManager.getGameState() == GameState.IDLE) {
-                getBukkitPlayer().inventory.setItem(8, ServerItem.getProfileItem())
+                bukkitPlayer().inventory.setItem(8, ServerItem.getProfileItem())
             } else {
-                getBukkitPlayer().inventory.remove(ServerItem.getProfileItem())
+                bukkitPlayer().inventory.remove(ServerItem.getProfileItem())
             }
         }
     }.runTaskLater(plugin, 2 * 20L)

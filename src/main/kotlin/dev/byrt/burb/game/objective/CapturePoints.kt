@@ -94,7 +94,7 @@ object CapturePoints {
             else -> Teams.NULL
         }
 
-        Scores.addScore(suburbinatingTeam, 3)
+        Scores.addScore(suburbinatingTeam, 2)
 
         if (newSuburbinationTeam != suburbinatingTeam) {
             suburbinatingTeam = newSuburbinationTeam
@@ -168,7 +168,7 @@ object CapturePoints {
                 }
 
                 val playersInRange = TeamManager.getParticipants().filter {
-                    it.getBukkitPlayer().location.distanceSquared(location) <= 25.0 && !it.isDead
+                    it.bukkitPlayer().location.distanceSquared(location) <= 25.0 && !it.isDead
                 }
                 val plants = playersInRange.count { it.playerTeam == Teams.PLANTS }
                 val zombies = playersInRange.count { it.playerTeam == Teams.ZOMBIES }

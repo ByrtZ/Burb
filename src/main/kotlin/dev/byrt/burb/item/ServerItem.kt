@@ -168,6 +168,8 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i>")
         )
         rodItemMeta.lore(loreList)
+        rodItemMeta.isUnbreakable = true
+        rodItemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
         rodItem.itemMeta = rodItemMeta
         return rodItem
     }
@@ -185,5 +187,27 @@ object ServerItem {
         unconfiguredItemMeta.lore(loreList)
         unconfiguredItem.itemMeta = unconfiguredItemMeta
         return unconfiguredItem
+    }
+
+    fun getFrumaItem(): ItemStack {
+        val frumaItem = ItemStack(Material.PAPER, 1)
+        val frumaItemMeta = frumaItem.itemMeta
+        frumaItemMeta.displayName(Formatting.allTags.deserialize("<!i><gold>Royal Report XII"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><white><underlined>Report IA-120.-39, \"SUBURBIA\""),
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><gray>- Multiverse traversal attempt: #4."),
+            Formatting.allTags.deserialize("<!i><gray>- War over the past 2 years: Steady."),
+            Formatting.allTags.deserialize("<!i><gray>- Zombie to Plant ratio down by 21%."),
+            Formatting.allTags.deserialize("<!i><gray>- No sign of elevated invasion levels."),
+            Formatting.allTags.deserialize("<!i><gray>- Observation complete, returning to Fruma."),
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><gray>Conclusion: <b>STABLE"),
+            Formatting.allTags.deserialize("<!i>")
+        )
+        frumaItemMeta.lore(loreList)
+        frumaItem.itemMeta = frumaItemMeta
+        return frumaItem
     }
 }

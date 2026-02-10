@@ -26,7 +26,6 @@ class GameCommands {
     @Confirmation
     fun start(sender: CommandSender) {
         if(GameManager.getGameState() == GameState.IDLE) {
-            //TODO: Add team quantity check
             ChatUtility.broadcastDev("<yellow>${sender.name}<green> started a Suburbination game.", false)
             Game.start()
         }
@@ -52,7 +51,27 @@ class GameCommands {
         }
     }
 
-    @Command("rounds set <amount>")
+    @Command("game next_phase")
+    @CommandDescription("Pushes the game to it's next phase.")
+    @Permission("burb.cmd.game")
+    @Confirmation
+    fun nextPhase(sender: CommandSender) {
+        if(GameManager.getGameState() == GameState.IDLE) return
+        ChatUtility.broadcastDev("<yellow>${sender.name} <gold>pushed the game into its next state.", false)
+        GameManager.nextState()
+    }
+
+    @Command("game force_state <state>")
+    @CommandDescription("Pushes the game to it's next phase.")
+    @Permission("burb.cmd.game")
+    @Confirmation
+    fun nextPhase(sender: CommandSender, @Argument(value = "state") state: GameState) {
+        if(GameManager.getGameState() == GameState.IDLE) return
+        ChatUtility.broadcastDev("<yellow>${sender.name} <red>forced the game into $state state.", false)
+        GameManager.forceState(state)
+    }
+
+    @Command("game set_rounds <amount>")
     @CommandDescription("Sets the total number of rounds.")
     @Permission("burb.cmd.game")
     fun setRounds(sender: CommandSender, @Argument amount: Int) {
@@ -65,7 +84,7 @@ class GameCommands {
         }
     }
 
-    @Command("event start <event>")
+    @Command("game start_event <event>")
     @CommandDescription("Starts the specified event.")
     @Permission("burb.cmd.game")
     fun startEvent(sender: CommandSender, @Argument("event") newEvent: SpecialEvent) {
