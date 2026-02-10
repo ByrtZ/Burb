@@ -33,7 +33,7 @@ enum class BurbTeam(
     ),
     ;
 
-    override fun asComponent() = Component.translatable("burb.team.${name.lowercase()}.normal")
+    override fun asComponent() = Component.translatable("burb.team.normal.${name.lowercase()}")
 
-    fun uppercaseName() = Component.translatable("burb.team.${name.lowercase()}.uppercase")
+    fun uppercaseName() = Component.translatable("burb.team.uppercase.${name.lowercase()}")
 }

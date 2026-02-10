@@ -303,11 +303,11 @@ object GameTask {
 
                         Bukkit.getServer().showTitle(
                             Title.title(
-                                Component.translatable("burb.title.win_game.${winningTeam?.name?.lowercase()}.main"),
-                                Component.translatable("burb.title.win_game.${winningTeam?.name?.lowercase()}.sub"),
+                                Component.translatable("burb.win_game.${winningTeam?.name?.lowercase()}.main"),
+                                Component.translatable("burb.win_game.${winningTeam?.name?.lowercase()}.sub"),
                             )
                         )
-                        Bukkit.getServer().sendMessage(Component.translatable("burb.message.win_game.${winningTeam?.name?.lowercase()}.chat"))
+                        Bukkit.getServer().sendMessage(Component.translatable("burb.win_game.${winningTeam?.name?.lowercase()}.chat"))
 
                         for (player in Bukkit.getOnlinePlayers()) {
                             val playerTeam = GameManager.teams.getTeam(player.uniqueId) ?: continue
