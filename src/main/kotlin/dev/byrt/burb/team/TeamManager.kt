@@ -12,8 +12,6 @@ import dev.byrt.burb.player.PlayerType
 import dev.byrt.burb.player.characterSelect
 import dev.byrt.burb.plugin
 
-import fr.skytasul.glowingentities.GlowingEntities
-
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
@@ -37,8 +35,6 @@ object TeamManager {
     private var zombiesDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("c_zombies")
     private var spectatorDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("z_spectator")
     private var adminDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("a_admin")
-
-    private val GlowingEntities = GlowingEntities(plugin)
 
     fun setTeam(player: BurbPlayer, team: Teams) {
         cancelAllGlowing(player.getBukkitPlayer())
@@ -258,7 +254,7 @@ object TeamManager {
 
     fun cancelAllGlowing(player: Player) {
         for(otherPlayer in Bukkit.getOnlinePlayers()) {
-            GlowingEntities.unsetGlowing(otherPlayer, player)
+//            GlowingEntities.unsetGlowing(otherPlayer, player)
         }
     }
 

@@ -13,7 +13,7 @@ enum class BurbTeam(
     val winSound: Sound,
     val loseSound: Sound,
     val teamColour: Color,
-    val textColour: TextColor,
+    override val textColour: TextColor,
 ) : GameTeam, ComponentLike {
     PLANTS(
         "Plants",

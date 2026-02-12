@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
+import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.CdnPackRegistry
@@ -45,6 +46,7 @@ class Main : JavaPlugin() {
         logger.info("Starting Burb plugin...")
         GlobalTranslator.translator().addSource(BurbTranslator())
         server.pluginManager.registerEvents(TextAlignment, this)
+        server.pluginManager.registerEvents(PlayerGlowing, this)
         resourcePackLoader = ResourcePackLoader(
             CdnPackRegistry("https://mc-rp.lucyydotp.me/burb"),
             dataPath.resolve("packs").createDirectories(),

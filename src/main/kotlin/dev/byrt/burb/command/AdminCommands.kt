@@ -15,6 +15,7 @@ import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.logger
+import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.progression.BurbLevel
@@ -318,5 +319,19 @@ class AdminCommands {
         SpawnPoints.getZombieSpawns()
             .forEach { spawn -> player.sendMessage(Formatting.allTags.deserialize("<burbcolour>Spawn at ${spawn.x}, ${spawn.y}, ${spawn.z} <#ffff00><click:run_command:'/tp @s ${spawn.x} ${spawn.y} ${spawn.z} ${spawn.yaw} ${spawn.pitch}'>[Click to teleport]</click>")) }
 
+    }
+
+    @Command("debug glow on")
+    @CommandDescription("Adds all online players to a glowing group")
+    @Permission("burb.cmd.debug")
+    fun glowOn() {
+        Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.addToGlowingGroup("all", player) }
+    }
+
+    @Command("debug glow off")
+    @CommandDescription("Removes all online players from a glowing group")
+    @Permission("burb.cmd.debug")
+    fun glowOff() {
+        Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.removeFromGlowingGroup("all", player) }
     }
 }

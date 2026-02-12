@@ -4,6 +4,7 @@ import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.characterSelect
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Team
@@ -33,6 +34,7 @@ class TeamManagerV2<T> @PublishedApi internal constructor(
             displayName(Component.text(it.name))
             prefix(Component.text(it.name + " ")) // temp, to be replaced by another system
             setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
+            color(NamedTextColor.nearestTo(it.textColour))
         }
     }
 
