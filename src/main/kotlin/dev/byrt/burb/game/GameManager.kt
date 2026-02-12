@@ -130,6 +130,9 @@ object GameManager {
                 SpawnPoints.respawnLocation(player)
                 ItemManager.giveCharacterItems(player)
             }
+            if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
+                player.gameMode = GameMode.SPECTATOR
+            }
             Jukebox.disconnect(player)
         }
     }

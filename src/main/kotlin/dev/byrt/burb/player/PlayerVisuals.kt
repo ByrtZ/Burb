@@ -12,6 +12,8 @@ import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.character.BurbCharacter
+import dev.byrt.burb.player.character.setRandomCharacter
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
@@ -22,7 +24,12 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.*
+import org.bukkit.entity.Display
+import org.bukkit.entity.Firework
+import org.bukkit.entity.ItemDisplay
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
+import org.bukkit.entity.TextDisplay
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -34,9 +41,9 @@ import java.time.Duration
 import kotlin.random.Random
 
 object PlayerVisuals {
-    fun damageIndicator(player: Player, damage: Double) {
+    fun damageIndicator(entity: LivingEntity, damage: Double) {
         val damageTaken = BigDecimal(damage).setScale(2, RoundingMode.HALF_EVEN)
-        val damageIndicatorEntity = player.location.world.spawn(player.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
+        val damageIndicatorEntity = entity.location.world.spawn(entity.location.clone().add(Random.nextDouble(-0.25, 0.35), Random.nextDouble(0.5, 2.5), Random.nextDouble(-0.25, 0.35)), TextDisplay::class.java).apply {
             alignment = TextDisplay.TextAlignment.CENTER
             billboard = Display.Billboard.VERTICAL
             isShadowed = true
@@ -51,6 +58,13 @@ object PlayerVisuals {
         }.runTaskLater(plugin, 30L)
     }
 
+    /**
+     * @param [player] Player to die
+     * @param [killer] Player who killed the [player], nullable
+     * @param [showDeathMessage] Should the death message be shown
+     * @param [isTeamWipe] Should the whole team be eliminated with extended timer, only applies to vanquish showdown event and should only be called under this circumstance
+     * @param [forcedTeamWipe] Debug parameter, forces a team wipe and only runs if receiving team has more than one player
+     */
     fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
@@ -109,14 +123,14 @@ object PlayerVisuals {
         }
 
         /** TEAM WIPE SPECIAL EVENT **/
-        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN) {
+        if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN || forcedTeamWipe) {
             // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
             val playerTeam = GameManager.teams.getTeam(player.uniqueId) ?: return
             val members = GameManager.teams.teamMembers(playerTeam)
             if(members.all(BurbPlayer::isDead) && !isTeamWipe) {
                 deathVehicle.remove()
                 members.forEach { member ->
-                    death(member.getBukkitPlayer(), null, false, true)
+                    death(member.bukkitPlayer(), null, false, true)
                 }
                 Bukkit.getServer().playSound(Sounds.Score.TEAM_WIPE)
                 Bukkit.getServer().sendTranslated("burb.special_event.vanquish_showdown.wipe", playerTeam)
@@ -251,7 +265,7 @@ object PlayerVisuals {
 
         // Add hub item
         if(GameManager.getGameState() == GameState.IDLE) {
-            player.inventory.setItem(8, ServerItem.getProfileItem())
+            player.inventory.setItem(0, ServerItem.getProfileItem())
         } else {
             player.inventory.remove(ServerItem.getProfileItem())
         }
@@ -280,11 +294,7 @@ object PlayerVisuals {
             override fun run() {
                 if(!player.isOnline) cancel()
                 if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) cancel()
-                if(player.vehicle != null) {
-                    if(player.burbPlayer().isDead) {
-                        cancel()
-                    }
-                }
+                if(player.burbPlayer().isDead) cancel()
                 if(timer < reloadTime) {
                     if(timer % 2 == 0) {
                         player.playSound(player.location, Sounds.Weapon.RELOAD_TICK, 0.3f, pitch)

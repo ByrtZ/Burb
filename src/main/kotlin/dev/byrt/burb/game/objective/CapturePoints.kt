@@ -93,7 +93,7 @@ object CapturePoints {
             else -> null
         }
 
-        suburbinatingTeam?.let { Scores.addScore(it, 3) }
+        suburbinatingTeam?.let { Scores.addScore(it, 2) }
 
         if (newSuburbinationTeam != suburbinatingTeam) {
             suburbinatingTeam = newSuburbinationTeam
@@ -180,7 +180,7 @@ object CapturePoints {
                 }
 
                 val playersInRange = GameManager.teams.allParticipants()
-                    .filter { !it.isDead && it.getBukkitPlayer().location.distanceSquared(location) <= 25.0 }
+                    .filter { !it.isDead && it.bukkitPlayer().location.distanceSquared(location) <= 25.0 }
                     .groupingBy { it.playerTeam }
                     .eachCount()
 

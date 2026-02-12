@@ -8,7 +8,7 @@ import dev.byrt.burb.text.InfoBoardManager
 object Scores {
     private var plantsScore = 0
     private var zombiesScore = 0
-    private const val WIN_SCORE = 200000
+    const val WIN_SCORE = 100000
 
     fun getWinningTeam(): BurbTeam? = when {
         plantsScore > zombiesScore -> BurbTeam.PLANTS
@@ -48,10 +48,10 @@ object Scores {
     fun getDisplayScore(teams: BurbTeam): Int {
         return when(teams) {
             BurbTeam.PLANTS -> {
-                this.plantsScore.floorDiv(1000)
+                plantsScore.floorDiv(1000)
             }
             BurbTeam.ZOMBIES -> {
-                this.zombiesScore.floorDiv(1000)
+                zombiesScore.floorDiv(1000)
             }
         }
     }

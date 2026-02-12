@@ -1,11 +1,14 @@
 package dev.byrt.burb.command
 
+import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.game.GameState
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.Scores
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
+import dev.byrt.burb.item.ability.combo.BurbAbilityComboManager
 import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.item.rarity.SubRarity
@@ -16,6 +19,8 @@ import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.PlayerGlowing
+import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.progression.BurbLevel
@@ -319,6 +324,26 @@ class AdminCommands {
         SpawnPoints.getZombieSpawns()
             .forEach { spawn -> player.sendMessage(Formatting.allTags.deserialize("<burbcolour>Spawn at ${spawn.x}, ${spawn.y}, ${spawn.z} <#ffff00><click:run_command:'/tp @s ${spawn.x} ${spawn.y} ${spawn.z} ${spawn.yaw} ${spawn.pitch}'>[Click to teleport]</click>")) }
 
+    }
+
+    @Command("debug team_wipe <team>")
+    @CommandDescription("Debug command for team wipes")
+    @Permission("burb.cmd.debug")
+    fun debugTeamWipe(sender: CommandSender, @Argument("team") team: BurbTeam) {
+        if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
+        val players = GameManager.teams.getPlayers(team)
+        for(player in players) {
+            PlayerVisuals.death(player.bukkitPlayer(), null, Formatting.allTags.deserialize("${player.playerTeam.teamColourTag}${player.playerName}<reset> was vanquished."), false, player == players.last())
+        }
+    }
+
+    @Command("debug reset_combo")
+    @CommandDescription("Debug command for combos")
+    @Permission("burb.cmd.debug")
+    fun debugTeamWipeList(player: Player) {
+        if(player.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+        if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
+        BurbAbilityComboManager.resetCombo(player.burbPlayer())
     }
 
     @Command("debug glow on")

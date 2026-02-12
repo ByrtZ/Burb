@@ -81,14 +81,19 @@ object Sounds {
         val RANDO_NEW_CHARACTER = sound(key("burb.lobby.shop.pack_jingle"), Source.VOICE, 0.5f, 1f)
         val NPC_INTERACT = sound(key("entity.villager.trade"), Source.VOICE, 1f, 1f)
         val NPC_INTERACT_HIT = sound(key("entity.villager.hurt"), Source.VOICE, 1f, 1.25f)
-        val NPC_ALT_INTERACT = sound(key("entity.pillager.ambient"), Source.VOICE, 0.8f, 2f)
+        val NPC_ALT_INTERACT = sound(key("entity.pillager.ambient"), Source.VOICE, 0.75f, 2f)
         val NPC_ALT_INTERACT_HIT = sound(key("entity.pillager.hurt"), Source.VOICE, 0.75f, 2f)
+        val NPC_DEEP_INTERACT = sound(key("entity.illusioner.ambient"), Source.VOICE, 0.75f, 0.75f)
+        val NPC_DEEP_INTERACT_HIT = sound(key("entity.illusioner.hurt"), Source.VOICE, 0.75f, 0.5f)
         val COMPLETE = sound(key("burb.generic.complete"), Source.VOICE, 0.75f, 1f)
         val TENSE = sound(key("burb.generic.tense"), Source.VOICE, 0.5f, 1f)
     }
     object Weapon {
         const val RELOAD_TICK = "block.note_block.hat"
-        val RELOAD_SUCCESS = sound(key("block.note_block.pling"), Source.MASTER, 1f, 1.5f)
+        val RELOAD_SUCCESS = sound(key("block.note_block.pling"), Source.VOICE, 1f, 1.5f)
+        val ABILITY_COMBO_LEFT = sound(key("block.stone_pressure_plate.click_off"), Source.VOICE, 1f, 1.25f)
+        val ABILITY_COMBO_RIGHT = sound(key("block.stone_pressure_plate.click_off"), Source.VOICE, 1f, 1.75f)
+        val ABILITY_COMBO_CAST = sound(key("entity.experience_orb.pickup"), Source.VOICE, 0.75f, 0.5f)
     }
     object Fishing {
         val FISH_FLOP = sound(key("entity.cod.flop"), Source.VOICE, 1f, 1f)

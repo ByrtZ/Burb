@@ -1,11 +1,12 @@
 package dev.byrt.burb.item
 
+import dev.byrt.burb.item.ability.combo.BurbAbilityComboClicks
 import dev.byrt.burb.item.rarity.SubRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.util.extension.fullDecimal
 
 import org.bukkit.Material
@@ -25,7 +26,30 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i>"),
             Formatting.allTags.deserialize("<!i><light_purple>Abilities:")
         )
-        character.characterAbilities.abilitySet.forEach { ability -> loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}")) }
+
+
+        for(ability in character.characterAbilities.abilitySet) {
+            if(character in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("MELEE") }) {
+                    val comboClicks = mutableListOf<String>()
+                    if(combo.name.removePrefix("MELEE_").contains(ability.name.removePrefix("${character.name}_"))) {
+                        combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
+                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        comboClicks.clear()
+                    }
+                }
+            }
+            if(character in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
+                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("RANGED") }) {
+                    val comboClicks = mutableListOf<String>()
+                    if(combo.name.removePrefix("RANGED_").contains(ability.name.removePrefix("${character.name}_"))) {
+                        combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
+                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
+                        comboClicks.clear()
+                    }
+                }
+            }
+        }
         characterItemMeta.lore(loreList)
         characterItem.itemMeta = characterItemMeta
         return characterItem
@@ -168,6 +192,8 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i>")
         )
         rodItemMeta.lore(loreList)
+        rodItemMeta.isUnbreakable = true
+        rodItemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE)
         rodItem.itemMeta = rodItemMeta
         return rodItem
     }
@@ -185,5 +211,27 @@ object ServerItem {
         unconfiguredItemMeta.lore(loreList)
         unconfiguredItem.itemMeta = unconfiguredItemMeta
         return unconfiguredItem
+    }
+
+    fun getFrumaItem(): ItemStack {
+        val frumaItem = ItemStack(Material.PAPER, 1)
+        val frumaItemMeta = frumaItem.itemMeta
+        frumaItemMeta.displayName(Formatting.allTags.deserialize("<!i><gold>Royal Report XII"))
+        val loreList = mutableListOf(
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><white><underlined>Report IA-120.-39, \"SUBURBIA\""),
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><gray>- Multiverse traversal attempt: #4."),
+            Formatting.allTags.deserialize("<!i><gray>- War over the past 2 years: Steady."),
+            Formatting.allTags.deserialize("<!i><gray>- Zombie to Plant ratio down by 21%."),
+            Formatting.allTags.deserialize("<!i><gray>- No sign of elevated invasion levels."),
+            Formatting.allTags.deserialize("<!i><gray>- Observation complete, returning to Fruma."),
+            Formatting.allTags.deserialize("<!i>"),
+            Formatting.allTags.deserialize("<!i><gray>Conclusion: <b>STABLE"),
+            Formatting.allTags.deserialize("<!i>")
+        )
+        frumaItemMeta.lore(loreList)
+        frumaItem.itemMeta = frumaItemMeta
+        return frumaItem
     }
 }

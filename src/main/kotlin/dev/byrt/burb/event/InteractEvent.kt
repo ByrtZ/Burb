@@ -4,20 +4,28 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
+import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.item.ability.BurbAbilities
+import dev.byrt.burb.item.ability.combo.BurbAbilityComboClick
+import dev.byrt.burb.item.ability.combo.BurbAbilityComboManager
+import dev.byrt.burb.item.ability.getAbilityByID
 import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.lobby.npc.BurbNPC
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.plugin
 import dev.byrt.burb.util.Cooldowns
 import dev.byrt.burb.util.Keys
 
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.block.data.*
 import org.bukkit.entity.Mannequin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
@@ -34,17 +42,72 @@ class InteractEvent: Listener {
             }
         } else {
             if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-                if(e.player.inventory.itemInMainHand.type == Material.POPPED_CHORUS_FRUIT && e.action.isRightClick && !e.player.hasCooldown(Material.POPPED_CHORUS_FRUIT)) {
-                    BurbWeapons.useProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
+                /** VERIFY MAIN WEAPON BEFORE DOING ANYTHING **/
+                if(ItemManager.verifyMainWeapon(e.player.inventory.itemInMainHand)) {
+                    val mainWeapon = e.player.inventory.itemInMainHand
+                    val burbPlayer = e.player.burbPlayer()
+                    /** CHECK COOLDOWN, NONE OF THE FOLLOWING ACTIONS SHOULD BE USABLE UNDER COOLDOWN **/
+                    if(!burbPlayer.bukkitPlayer().hasCooldown(mainWeapon)) {
+                        /** ABILITY COMBOS **/
+                        if(BurbAbilityComboManager.hasCombo(burbPlayer)) { /** APPEND TO EXISTING COMBO **/
+                            when(e.action) {
+                                Action.LEFT_CLICK_BLOCK -> BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.LEFT)
+                                Action.LEFT_CLICK_AIR -> BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.LEFT)
+                                Action.RIGHT_CLICK_BLOCK -> BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.RIGHT)
+                                Action.RIGHT_CLICK_AIR -> BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.RIGHT)
+                                else -> {}
+                            }
+                        } else { /** CREATE NEW COMBO **/
+                            if(burbPlayer.playerCharacter in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
+                                when(e.action) {
+                                    /** RELOAD IF SNEAKING AND NO COMBO ACTIVE OR CREATE NEW COMBO **/
+                                    in listOf(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK) -> {
+                                        if (burbPlayer.bukkitPlayer().isSneaking) {
+                                            BurbWeapons.reloadProjectileWeapon(burbPlayer.bukkitPlayer(), mainWeapon)
+                                        } else {
+                                            BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.LEFT)
+                                        }
+                                    }
+                                    /** USE WEAPON REGULARLY IF NO COMBO ACTIVE **/
+                                    in listOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK) -> {
+                                        BurbWeapons.useProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
+                                    }
+                                    else -> {} // Nothing
+                                }
+                            }
+                            if(e.action.isRightClick && burbPlayer.playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
+                                when(e.action) {
+                                    /** CREATE NEW COMBO **/
+                                    in listOf(Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK) -> {
+                                        BurbAbilityComboManager.abilityCombo(burbPlayer, BurbAbilityComboClick.RIGHT)
+                                    }
+                                    /** USE WEAPON REGULARLY IF NO COMBO ACTIVE **/
+                                    in listOf(Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK) -> {
+                                        BurbWeapons.useMeleeWeapon(e.player, e.player.inventory.itemInMainHand)
+                                    }
+                                    else -> {} // Nothing
+                                }
+                            }
+                        }
+                    }
                 }
-                if(e.player.inventory.itemInMainHand.type == Material.POPPED_CHORUS_FRUIT && e.action.isLeftClick && !e.player.hasCooldown(Material.POPPED_CHORUS_FRUIT)) {
-                    BurbWeapons.reloadProjectileWeapon(e.player, e.player.inventory.itemInMainHand)
-                }
-                if(e.player.inventory.itemInMainHand.type == Material.WOODEN_SWORD && e.action.isLeftClick && !e.player.hasCooldown(Material.WOODEN_SWORD)) {
-                    BurbWeapons.useMeleeWeapon(e.player, e.player.inventory.itemInMainHand)
-                }
-                if(e.player.inventory.itemInMainHand.type in listOf(Material.YELLOW_DYE, Material.ORANGE_DYE, Material.RED_DYE) && e.action.isRightClick && !e.player.hasCooldown(e.player.inventory.itemInMainHand.type)) {
-                    BurbAbilities.useAbility(e.player, e.player.inventory.itemInMainHand)
+                /** VERIFY ABILITY **/
+                if(ItemManager.verifyAbility(e.player.inventory.itemInMainHand) && e.action.isRightClick) {
+                    val ability = e.player.inventory.itemInMainHand
+                    val burbPlayer = e.player.burbPlayer()
+                    /** CHECK ABILITY NOT ON COOLDOWN **/
+                    if(!burbPlayer.bukkitPlayer().hasCooldown(ability)) {
+                        /** GET PDC FOR THE ABILITY **/
+                        val abilityID = ability.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING)
+                        if(abilityID != null) {
+                            /** RUN ABILITY IF ID MATCHES **/
+                            BurbAbilities.useAbility(
+                                player = burbPlayer.bukkitPlayer(),
+                                ability = abilityID.getAbilityByID(burbPlayer.playerCharacter),
+                                usedItem = ability
+                            )
+                        }
+                    }
                 }
             }
             if(GameManager.getGameState() == GameState.IDLE) {
@@ -74,10 +137,11 @@ class InteractEvent: Listener {
         if(GameManager.getGameState() == GameState.IDLE) {
             if(e.player.inventory.itemInMainHand.type == Material.AIR && e.rightClicked is Mannequin && e.player.gameMode  in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
                 val npcPdcString = e.rightClicked.persistentDataContainer.get(Keys.LOBBY_NPC, PersistentDataType.STRING)
+                val mannequin = e.rightClicked as Mannequin
                 if(npcPdcString != null) {
                     val burbNPC = BurbNPC.valueOf(npcPdcString.uppercase(getDefault()))
                     if(Cooldowns.attemptNpcInteraction(e.player)) {
-                        burbNPC.onInteract(e.player, burbNPC.npcName, burbNPC.npcNameColour)
+                        burbNPC.onInteract(e.player, burbNPC, mannequin)
                     }
                 }
             }

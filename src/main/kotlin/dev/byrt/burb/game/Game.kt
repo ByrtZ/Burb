@@ -15,6 +15,7 @@ import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 
 object Game {
     fun start() {
@@ -67,7 +68,8 @@ object Game {
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)
-            if(!player.inventory.contains(ServerItem.getProfileItem())) player.inventory.setItem(8, ServerItem.getProfileItem())
+            player.gameMode = GameMode.ADVENTURE
+            if(!player.inventory.contains(ServerItem.getProfileItem())) player.inventory.setItem(0, ServerItem.getProfileItem())
         }
         LobbyBall.createLobbyBall()
     }

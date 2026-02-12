@@ -16,19 +16,19 @@ object GameVisuals {
             override fun run() {
                 when(gameDayTime) {
                     GameDayTime.DAY -> {
-                        if(gameDayTime.dayTime != Bukkit.getWorlds()[0].time) {
+                        if(gameDayTime.dayTime < Bukkit.getWorlds()[0].time) {
                             Bukkit.getWorlds()[0].time -= 25
                         } else {
                             Bukkit.getWorlds()[0].time = gameDayTime.dayTime
-                            this.cancel()
+                            cancel()
                         }
                     }
                     GameDayTime.NIGHT -> {
-                        if(gameDayTime.dayTime != Bukkit.getWorlds()[0].time) {
+                        if(gameDayTime.dayTime > Bukkit.getWorlds()[0].time) {
                             Bukkit.getWorlds()[0].time += 25
                         } else {
                             Bukkit.getWorlds()[0].time = gameDayTime.dayTime
-                            this.cancel()
+                            cancel()
                         }
                     }
                 }

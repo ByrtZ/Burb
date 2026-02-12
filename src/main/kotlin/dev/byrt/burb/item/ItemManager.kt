@@ -2,15 +2,16 @@ package dev.byrt.burb.item
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.item.ability.BurbAbility
 import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.item.weapon.BurbMainWeaponType
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
-import net.kyori.adventure.text.format.TextDecoration
+
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
@@ -31,10 +32,10 @@ object ItemManager {
         val teamBootsRarity = if(player.isOp) ItemRarity.SPECIAL else ItemRarity.COMMON
         val teamBootsType = ItemType.ARMOUR
         // FIXME(lucy): format these properly
-        teamBootsMeta.displayName(Formatting.allTags.deserialize("<reset><${teamBootsRarity.rarityColour}>${team?.name?.capitalize()} Team Boots").decoration(TextDecoration.ITALIC, false))
+        teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team?.name?.capitalize()} Team Boots").decoration(TextDecoration.ITALIC, false))
         val teamBootsLore = listOf(
-            Formatting.allTags.deserialize("<reset><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
-            Formatting.allTags.deserialize("<reset><white>A snazzy pair of ${team?.name?.capitalize()} team's boots.").decoration(TextDecoration.ITALIC, false)
+            Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
+            Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team?.name?.capitalize()} team's boots.").decoration(TextDecoration.ITALIC, false)
         )
         teamBootsMeta.lore(teamBootsLore)
         teamBootsMeta.isUnbreakable = true
@@ -56,43 +57,49 @@ object ItemManager {
         clearItems(player)
         if(player.burbPlayer().isDead) return
 
-        val mainWeapon = ItemStack(burbPlayerCharacter.characterMainWeapon.weaponMaterial, 1)
+        val mainWeapon = ItemStack(burbPlayerCharacter.characterMainWeapon.material, 1)
         val mainWeaponMeta = mainWeapon.itemMeta
-        mainWeaponMeta.displayName(Formatting.allTags.deserialize("<${ItemRarity.COMMON.rarityColour}>${burbPlayerCharacter.characterMainWeapon.weaponName}").decoration(TextDecoration.ITALIC, false))
+        mainWeaponMeta.displayName(Formatting.allTags.deserialize("<!i><${ItemRarity.COMMON.rarityColour}>${burbPlayerCharacter.characterMainWeapon.weaponName}"))
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>${burbPlayerCharacter.characterMainWeapon.weaponLore}").decoration(TextDecoration.ITALIC, false)
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
+                Formatting.allTags.deserialize("<!i><white>${burbPlayerCharacter.characterMainWeapon.weaponLore}")
             ))
             mainWeaponMeta.isUnbreakable = true
         } else {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>Ammo: <green>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<gray>/<yellow>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<reset>").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>Fire Rate: <yellow>${burbPlayerCharacter.characterMainWeapon.fireRate}t<reset>").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>Reload Speed: <yellow>${burbPlayerCharacter.characterMainWeapon.reloadSpeed}t<reset>").decoration(TextDecoration.ITALIC, false),
-                Formatting.allTags.deserialize("<white>${burbPlayerCharacter.characterMainWeapon.weaponLore}").decoration(TextDecoration.ITALIC, false)
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
+                Formatting.allTags.deserialize("<!i><white>Ammo: <green>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<gray>/<yellow>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<reset>"),
+                Formatting.allTags.deserialize("<!i><white>Fire Rate: <yellow>${burbPlayerCharacter.characterMainWeapon.fireRate}t<reset>"),
+                Formatting.allTags.deserialize("<!i><white>Reload Speed: <yellow>${burbPlayerCharacter.characterMainWeapon.reloadSpeed}t<reset>"),
+                Formatting.allTags.deserialize("<!i><white>${burbPlayerCharacter.characterMainWeapon.weaponLore}")
             ))
         }
         mainWeaponMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
 
         mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.damage"), PersistentDataType.DOUBLE, burbPlayerCharacter.characterMainWeapon.weaponDamage)
-        mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.sound"), PersistentDataType.STRING, burbPlayerCharacter.characterMainWeapon.useSound)
+        mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.sound"), PersistentDataType.STRING, burbPlayerCharacter.characterMainWeapon.sound)
 
         if(burbPlayerCharacter.characterMainWeapon.weaponType !in listOf(BurbMainWeaponType.MELEE, BurbMainWeaponType.NULL)) {
             mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.current_ammo"), PersistentDataType.INTEGER, burbPlayerCharacter.characterMainWeapon.maxAmmo)
             mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.max_ammo"), PersistentDataType.INTEGER, burbPlayerCharacter.characterMainWeapon.maxAmmo)
             mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.fire_rate"), PersistentDataType.INTEGER, burbPlayerCharacter.characterMainWeapon.fireRate)
             mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.reload_speed"), PersistentDataType.INTEGER, burbPlayerCharacter.characterMainWeapon.reloadSpeed)
-            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE, burbPlayerCharacter.characterMainWeapon.projectileVelocity)
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE, burbPlayerCharacter.characterMainWeapon.velocity)
+        } else {
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.current_ammo"), PersistentDataType.INTEGER, 0)
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.max_ammo"), PersistentDataType.INTEGER, 0)
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.fire_rate"), PersistentDataType.INTEGER, 0)
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.reload_speed"), PersistentDataType.INTEGER, 0)
+            mainWeaponMeta.persistentDataContainer.set(NamespacedKey(plugin,"burb.weapon.projectile_velocity"), PersistentDataType.DOUBLE, 0.0)
         }
 
-        mainWeaponMeta.itemModel = NamespacedKey("minecraft", burbPlayerCharacter.characterMainWeapon.itemModel)
+        mainWeaponMeta.itemModel = NamespacedKey("minecraft", burbPlayerCharacter.characterMainWeapon.model)
 
         mainWeapon.itemMeta = mainWeaponMeta
-        burbPlayer.getBukkitPlayer().inventory.addItem(mainWeapon)
+        burbPlayer.bukkitPlayer().inventory.setItem(3, mainWeapon)
 
         // If melee main weapon, add opposing hand display weapon.
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
@@ -100,41 +107,52 @@ object ItemManager {
                 val offhandItemMeta = mainWeapon.itemMeta
                 offhandItemMeta.itemModel = NamespacedKey("minecraft", "melee_gloves_r")
                 mainWeapon.itemMeta = offhandItemMeta
-                burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
+                burbPlayer.bukkitPlayer().inventory.setItemInOffHand(mainWeapon)
             } else {
-                burbPlayer.getBukkitPlayer().inventory.setItemInOffHand(mainWeapon)
+                burbPlayer.bukkitPlayer().inventory.setItemInOffHand(mainWeapon)
             }
         }
 
+        // Set ability items
+        var abilityHotbarSlot = 5
         for(ability in burbPlayerCharacter.characterAbilities.abilitySet) {
-            val abilityItem = ItemStack(ability.abilityMaterial, 1)
-            val abilityItemMeta = abilityItem.itemMeta
-            abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
-            abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
-            abilityItemMeta.displayName(Formatting.allTags.deserialize("<${ItemRarity.COMMON.rarityColour}>${if(ability.abilityName == "") ability.abilityId + ".name" else ability.abilityName}").decoration(TextDecoration.ITALIC, false))
-            abilityItemMeta.lore(listOf(
-                    Formatting.allTags.deserialize("<white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.UTILITY.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
-                    Formatting.allTags.deserialize("<white>${if(ability.abilityLore == "") ability.abilityId + ".lore" else ability.abilityLore}").decoration(TextDecoration.ITALIC, false)
-                )
-            )
-            abilityItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
-            abilityItemMeta.itemModel = NamespacedKey("minecraft", ability.abilityModel)
-            abilityItem.itemMeta = abilityItemMeta
-            burbPlayer.getBukkitPlayer().inventory.addItem(abilityItem)
+            val abilityItem = getAbilityItem(ability)
+            burbPlayer.bukkitPlayer().inventory.setItem(abilityHotbarSlot, abilityItem)
+            if(abilityHotbarSlot >= 8) abilityHotbarSlot = 0 else abilityHotbarSlot++
         }
+
+        // Give profile item if game is IDLE
+        if(GameManager.getGameState() == GameState.IDLE) player.inventory.setItem(0, ServerItem.getProfileItem())
+    }
+
+    fun getAbilityItem(ability: BurbAbility): ItemStack {
+        val abilityItem = ItemStack(ability.abilityMaterial, 1)
+        val abilityItemMeta = abilityItem.itemMeta
+        abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING, ability.abilityId)
+        abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
+        abilityItemMeta.displayName(Formatting.allTags.deserialize("<!i><${ItemRarity.COMMON.rarityColour}>${ability.abilityName.ifEmpty { ability.abilityId + ".name" }}"))
+        abilityItemMeta.lore(listOf(
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.UTILITY.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>${ability.abilityLore.ifEmpty { ability.abilityId + ".lore" }}")
+            )
+        )
+        abilityItemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
+        abilityItemMeta.itemModel = NamespacedKey("minecraft", ability.abilityModel)
+        abilityItem.itemMeta = abilityItemMeta
+        return abilityItem
     }
 
     fun clearItems(player: Player) {
         player.inventory.setItemInMainHand(null)
         player.inventory.setItemInOffHand(null)
+        player.inventory.remove(Material.POPPED_CHORUS_FRUIT)
         player.inventory.remove(Material.RED_DYE)
         player.inventory.remove(Material.ORANGE_DYE)
         player.inventory.remove(Material.YELLOW_DYE)
-        player.inventory.remove(Material.POPPED_CHORUS_FRUIT)
         player.inventory.remove(Material.WOODEN_SWORD)
         player.inventory.remove(Material.BREEZE_ROD)
         player.inventory.remove(Material.FISHING_ROD)
-        if(GameManager.getGameState() != GameState.IDLE) player.inventory.remove(ServerItem.getProfileItem())
+        player.inventory.remove(ServerItem.getProfileItem())
     }
 
     fun verifyMainWeapon(item: ItemStack):  Boolean {

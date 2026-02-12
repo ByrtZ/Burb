@@ -1,9 +1,9 @@
 package dev.byrt.burb.interfaces
 
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.getCharacter
+import dev.byrt.burb.player.character.getCharacter
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.item.ServerItem
@@ -655,7 +655,7 @@ object BurbInterfaces {
                     player.sendMessage(Formatting.allTags.deserialize("<b>${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcNameColour}${BurbNPC.LOBBY_FISHING_ROD_GIVER.npcName}</b><white>: Best of luck out there in the waters..."))
                     player.playSound(Sounds.Misc.COMPLETE)
                     player.playSound(Sounds.Misc.NPC_INTERACT)
-                    player.inventory.setItem(7, ServerItem.getUsableFishingRodItem())
+                    player.inventory.setItem(1, ServerItem.getUsableFishingRodItem())
                     runBlocking { view.close(InventoryCloseEvent.Reason.PLUGIN, false) }
                 }
 
