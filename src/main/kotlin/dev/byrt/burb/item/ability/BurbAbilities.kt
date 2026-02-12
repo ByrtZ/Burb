@@ -8,11 +8,13 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 
 import io.papermc.paper.math.Rotation
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 
 import org.bukkit.Color
 import org.bukkit.Location
@@ -52,7 +54,9 @@ object BurbAbilities {
                 player.playSound(Sounds.Misc.INTERFACE_ERROR)
                 return
             } else {
-                player.sendActionBar(Formatting.allTags.deserialize("<white>You used ${player.burbPlayer().playerTeam.teamColourTag}${ability.abilityName}<white>!"))
+                player.sendActionBar(
+                    Component.translatable("burb.ability.use", Component.text(ability.abilityName, GameManager.teams.getTeam(player.uniqueId)?.textColour ?: NamedTextColor.WHITE))
+                )
                 player.playSound(Sounds.Weapon.ABILITY_COMBO_CAST)
             }
             // Set cooldown on use
@@ -192,7 +196,7 @@ object BurbAbilities {
                                     this.cancel()
                                 } else {
                                     for(nearbyPlayer in snowball.location.getNearbyPlayers(0.75)) {
-                                        if(nearbyPlayer.burbPlayer().playerTeam == Teams.ZOMBIES) {
+                                        if(nearbyPlayer.burbPlayer().playerTeam == BurbTeam.ZOMBIES) {
                                             nearbyPlayer.addPotionEffect(
                                                 PotionEffect(
                                                     PotionEffectType.SLOWNESS,
@@ -237,7 +241,7 @@ object BurbAbilities {
                         override fun run() {
                             if(!spikeweedEntity.isDead) {
                                 if(spikeweedEntity.passengers.isEmpty()) {
-                                    for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && !p.burbPlayer().isDead}) {
+                                    for(nearbyEnemy in spikeweedEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == BurbTeam.ZOMBIES && !p.burbPlayer().isDead}) {
                                         spikeweedEntity.addPassenger(nearbyEnemy)
                                         object : BukkitRunnable() {
                                             var damageTimer = 0
@@ -314,7 +318,7 @@ object BurbAbilities {
                                 player.removePotionEffect(PotionEffectType.INVISIBILITY)
                                 player.getAttribute(Attribute.SCALE)?.baseValue = 1.0
                                 ItemManager.giveCharacterItems(player)
-                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                ItemManager.givePlayerTeamBoots(player)
                                 player.setCooldown(usedItem.type, usedItem.persistentDataContainer.get(
                                     NamespacedKey(
                                         plugin,
@@ -329,7 +333,7 @@ object BurbAbilities {
                 }
                 // Sunflower
                 BurbAbility.PLANTS_HEALER_ABILITY_1 -> {
-                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }.sortedBy { p -> player.location.distanceSquared(p.location) }
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == BurbTeam.PLANTS }.sortedBy { p -> player.location.distanceSquared(p.location) }
                     if(nearbyTeammates.isNotEmpty()) {
                         val healingTeammate = nearbyTeammates[0]
                         player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))
@@ -517,7 +521,7 @@ object BurbAbilities {
                                                 potatoMineEntity.world.playSound(potatoMineEntity.location, "block.gravel.break", SoundCategory.VOICE, 1f, 1f)
                                             }
                                             if(!potatoMineEntity.isDead) {
-                                                val nearbyEnemies = potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES && !p.burbPlayer().isDead }
+                                                val nearbyEnemies = potatoMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == BurbTeam.ZOMBIES && !p.burbPlayer().isDead }
                                                 if(nearbyEnemies.isNotEmpty()) {
                                                     potatoMineEntity.world.createExplosion(player, potatoMineEntity.location, 2.5f, false, false)
                                                     potatoMineEntity.world.playSound(potatoMineEntity.location, "block.gravel.break", 1f, 1f)
@@ -608,7 +612,7 @@ object BurbAbilities {
                     object: BukkitRunnable() {
                         override fun run() {
                             if(!player.burbPlayer().isDead) {
-                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                ItemManager.givePlayerTeamBoots(player)
                                 BurbCosmetics.equipCosmetics(player)
                             }
                         }
@@ -639,7 +643,7 @@ object BurbAbilities {
                                         )
                                         smokeGrenadeLocation.world.playSound(smokeGrenadeLocation, "block.lava.extinguish", SoundCategory.VOICE, 1f, 1f)
                                         for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
-                                            if(nearbyPlayer.burbPlayer().playerTeam == Teams.PLANTS) {
+                                            if(nearbyPlayer.burbPlayer().playerTeam == BurbTeam.PLANTS) {
                                                 if(!nearbyPlayer.burbPlayer().isDead) {
                                                     nearbyPlayer.damage(0.001, player)
                                                     if(nearbyPlayer.health >= 1.0) {
@@ -690,7 +694,7 @@ object BurbAbilities {
                                             cancel()
                                         }
                                         zpgEntity.teleport(zpgEntity.location.add(direction))
-                                        val nearbyEntities = zpgEntity.location.getNearbyPlayers(0.1).filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS }
+                                        val nearbyEntities = zpgEntity.location.getNearbyPlayers(0.1).filter { p -> p.burbPlayer().playerTeam == BurbTeam.PLANTS }
                                         if(nearbyEntities.isNotEmpty()) {
                                             zpgEntity.world.createExplosion(player,zpgEntity.location, 2.5f, false, false)
                                             zpgEntity.remove()
@@ -781,7 +785,7 @@ object BurbAbilities {
                 }
                 // Scientist
                 BurbAbility.ZOMBIES_HEALER_ABILITY_1 -> {
-                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.ZOMBIES }.sortedBy { p -> player.location.distanceSquared(p.location) }
+                    val nearbyTeammates = player.getNearbyEntities(4.0, 4.0, 4.0).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == BurbTeam.ZOMBIES }.sortedBy { p -> player.location.distanceSquared(p.location) }
                     if(nearbyTeammates.isNotEmpty()) {
                         val healingTeammate = nearbyTeammates[0]
                         player.sendActionBar(Formatting.allTags.deserialize("<yellow>Healing attached to ${healingTeammate.name}"))
@@ -900,7 +904,7 @@ object BurbAbilities {
                                             scienceMineEntity.world.playSound(scienceMineEntity.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.5f)
                                         }
                                         if(!scienceMineEntity.isDead) {
-                                            val nearbyEnemies = scienceMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }
+                                            val nearbyEnemies = scienceMineEntity.location.getNearbyPlayers(0.9).filter { p -> p.burbPlayer().playerTeam == BurbTeam.PLANTS && !p.burbPlayer().isDead }
                                             if(nearbyEnemies.isNotEmpty()) {
                                                 scienceMineEntity.world.createExplosion(player, scienceMineEntity.location, 2.75f, false, false)
                                                 scienceMineEntity.world.playSound(scienceMineEntity.location, "entity.enderman.teleport", SoundCategory.VOICE, 1f, 0.5f)
@@ -1043,7 +1047,7 @@ object BurbAbilities {
                     object: BukkitRunnable() {
                         override fun run() {
                             if(!player.burbPlayer().isDead) {
-                                ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+                                ItemManager.givePlayerTeamBoots(player)
                                 BurbCosmetics.equipCosmetics(player)
                             }
                         }

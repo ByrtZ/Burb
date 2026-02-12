@@ -7,10 +7,8 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -78,7 +76,7 @@ object BurbLobby {
                         } else {
                             if(GameManager.getGameState() == GameState.IN_GAME) Jukebox.playCurrentMusic(player)
                             if(GameManager.getGameState() == GameState.GAME_END) Jukebox.startMusicLoop(player, Music.POST_GAME)
-                            if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+                            if(!GameManager.teams.isParticipating(player.uniqueId)) {
                                 player.gameMode = GameMode.SPECTATOR
                             }
                         }

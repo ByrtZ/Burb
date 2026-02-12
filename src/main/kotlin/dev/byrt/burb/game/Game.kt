@@ -1,22 +1,19 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.visual.GameDayTime
 import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
-import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.lobby.LobbyBall
+import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
-
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 
@@ -39,7 +36,7 @@ object Game {
 
     fun setup() {
         InfoBoardManager.buildScoreboard()
-        TeamManager.buildDisplayTeams()
+//        TeamManager.buildDisplayTeams()
         CommitIntegration.grabLatestCommit()
         LobbyBall.createLobbyBall()
         BurbNPCs.spawnAllNPCs()
@@ -48,7 +45,7 @@ object Game {
 
     fun cleanup() {
         BurbNPCs.clearNPCs()
-        TeamManager.destroyDisplayTeams()
+//        TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
         CapturePoints.clearCapturePoints()
         ItemManager.destroyBullets()
@@ -66,10 +63,8 @@ object Game {
         CapturePoints.clearCapturePoints()
         Jukebox.resetMusicStress()
         GameVisuals.setDayTime(GameDayTime.DAY)
+        GameManager.teams.teamGlowingEnabled = false
         for(player in Bukkit.getOnlinePlayers()) {
-            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-                TeamManager.disableTeamGlowing(player)
-            }
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)

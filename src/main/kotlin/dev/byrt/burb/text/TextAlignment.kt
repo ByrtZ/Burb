@@ -11,9 +11,10 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.ShadowColor
 import net.kyori.adventure.text.format.Style
+import net.kyori.adventure.translation.GlobalTranslator
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import kotlin.collections.set
+import java.util.*
 
 object TextAlignment : Listener {
     private const val BACKGROUND_WIDTH = 133
@@ -49,8 +50,10 @@ object TextAlignment : Listener {
         }
     }
 
-    fun centreBossBarText(text: String): Component = tinsel.draw(BACKGROUND_WIDTH, Style.empty()) {
+    fun centreBossBarText(component: Component): Component = tinsel.draw(BACKGROUND_WIDTH, Style.empty()) {
         it.drawAligned(Formatting.glyph(BACKGROUND_GLYPH).shadowColor(ShadowColor.none()), 0.5f)
-        it.drawAligned(Formatting.allTags.deserialize(text).font(BURB_FONT), 0.5f)
+        it.drawAligned(GlobalTranslator.renderer().render(component, Locale.ENGLISH).font(BURB_FONT), 0.5f)
     }
+
+    fun centreBossBarText(text: String): Component = centreBossBarText(Formatting.allTags.deserialize(text))
 }

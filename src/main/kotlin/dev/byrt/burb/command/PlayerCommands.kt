@@ -6,7 +6,6 @@ import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -48,7 +47,7 @@ class PlayerCommands {
     @Permission("burb.cmd.player")
     fun setCharacter(player: Player) {
         if (GameManager.getGameState() == GameState.IDLE || player.isOp) {
-            if (player.burbPlayer().playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
+            if (GameManager.teams.isParticipating(player.uniqueId)) {
                 BurbInterface(player, BurbInterfaceType.CHARACTER_SELECT)
             }
         }

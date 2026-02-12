@@ -5,7 +5,7 @@ import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 
 import net.kyori.adventure.sound.Sound
 
@@ -84,12 +84,12 @@ object Jukebox {
             }
         } else {
             when(CapturePoints.getSuburbinatingTeam()) {
-                Teams.PLANTS -> {
+                BurbTeam.PLANTS -> {
                     for(player in Bukkit.getOnlinePlayers()) {
                         startMusicLoop(player, Music.SUBURBINATION_PLANTS)
                     }
                 }
-                Teams.ZOMBIES -> {
+                BurbTeam.ZOMBIES -> {
                     for(player in Bukkit.getOnlinePlayers()) {
                         startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
                     }
@@ -119,8 +119,8 @@ object Jukebox {
                 } else {
                     if(CapturePoints.isSuburbinating()) {
                         when(CapturePoints.getSuburbinatingTeam()) {
-                            Teams.PLANTS -> startMusicLoop(player, Music.SUBURBINATION_PLANTS)
-                            Teams.ZOMBIES -> startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
+                            BurbTeam.PLANTS -> startMusicLoop(player, Music.SUBURBINATION_PLANTS)
+                            BurbTeam.ZOMBIES -> startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
                             else -> {}
                         }
                     }

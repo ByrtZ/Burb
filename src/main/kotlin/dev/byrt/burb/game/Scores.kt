@@ -2,7 +2,7 @@ package dev.byrt.burb.game
 
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.InfoBoardManager
 
 object Scores {
@@ -10,10 +10,10 @@ object Scores {
     private var zombiesScore = 0
     const val WIN_SCORE = 100000
 
-    fun getWinningTeam(): Teams {
-        if (plantsScore > zombiesScore) return Teams.PLANTS
-        if (zombiesScore > plantsScore) return Teams.ZOMBIES
-        return Teams.NULL
+    fun getWinningTeam(): BurbTeam? = when {
+        plantsScore > zombiesScore -> BurbTeam.PLANTS
+        zombiesScore > plantsScore -> BurbTeam.ZOMBIES
+        else -> null
     }
 
     private fun teamScoreWinCheck() {
@@ -22,13 +22,13 @@ object Scores {
         }
     }
 
-    fun getPlacementMap(): Map<Teams, Int> {
-        return mutableMapOf(Pair(Teams.PLANTS, plantsScore), Pair(Teams.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
+    fun getPlacementMap(): Map<BurbTeam, Int> {
+        return mutableMapOf(Pair(BurbTeam.PLANTS, plantsScore), Pair(BurbTeam.ZOMBIES, zombiesScore)).toList().sortedBy { (_, scores) -> scores }.reversed().toMap()
     }
 
-    fun addScore(team: Teams, score: Int) {
-        if (team == Teams.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
-        if (team == Teams.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
+    fun addScore(team: BurbTeam, score: Int) {
+        if (team == BurbTeam.PLANTS) this.plantsScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
+        if (team == BurbTeam.ZOMBIES) this.zombiesScore += score * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
         InfoBoardManager.updateScore()
         teamScoreWinCheck()
     }
@@ -45,14 +45,14 @@ object Scores {
         teamScoreWinCheck()
     }
 
-    fun getDisplayScore(teams: Teams): Int {
+    fun getDisplayScore(teams: BurbTeam): Int {
         return when(teams) {
-            Teams.PLANTS -> {
+            BurbTeam.PLANTS -> {
                 plantsScore.floorDiv(1000)
             }
-            Teams.ZOMBIES -> {
+            BurbTeam.ZOMBIES -> {
                 zombiesScore.floorDiv(1000)
-            } else -> -1
+            }
         }
     }
 

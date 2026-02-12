@@ -1,10 +1,11 @@
 package dev.byrt.burb.player
 
+import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -13,9 +14,8 @@ import org.bukkit.potion.PotionEffectType
 
 import java.util.UUID
 
-class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerTeam: Teams, var playerCharacter: BurbCharacter, var isDead: Boolean) {
+class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerCharacter: BurbCharacter, var isDead: Boolean) {
     init {
-        setTeam(Teams.SPECTATOR)
         setCharacter(BurbCharacter.NULL)
         logger.info("Player Manager: Registered player ${this.playerName} as BurbPlayer.")
     }
@@ -26,12 +26,9 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         logger.info("Type: ${this.playerName} now has value ${this.playerType}.")
     }
 
-    fun setTeam(newTeam: Teams) {
-        if(newTeam == this.playerTeam) return
-        this.playerTeam = newTeam
-        TeamManager.setTeam(this, this.playerTeam)
-        logger.info("Teams: ${this.playerName} now has value ${this.playerTeam}.")
-    }
+    @Deprecated("Prefer checking against GameManager.teams directly")
+    val playerTeam: BurbTeam?
+        get() = GameManager.teams.getTeam(uuid)
 
     fun setCharacter(newCharacter: BurbCharacter) {
         if(newCharacter == this.playerCharacter) return

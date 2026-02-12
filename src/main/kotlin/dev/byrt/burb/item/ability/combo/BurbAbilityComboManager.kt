@@ -7,8 +7,12 @@ import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.util.Cooldowns
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.format.NamedTextColor
 
 import org.bukkit.scheduler.BukkitRunnable
+import javax.naming.Name
 
 object BurbAbilityComboManager {
     private val abilityComboMap = mutableMapOf<BurbPlayer, BurbAbilityCombo>()
@@ -25,9 +29,11 @@ object BurbAbilityComboManager {
                 abilityComboMap[burbPlayer]?.addClick(burbAbilityComboClick)
             }
 
-            val comboString = mutableListOf<String>()
-            abilityComboMap[burbPlayer]?.combo?.forEach { click -> comboString.add("${burbPlayer.playerTeam.teamColourTag}${click.comboAbbreviation}") }
-            burbPlayer.bukkitPlayer().sendActionBar(Formatting.allTags.deserialize(comboString.joinToString(" <gray>- ").trim()))
+            val teamColour = burbPlayer.playerTeam?.textColour ?: NamedTextColor.WHITE
+            Component.join(
+                JoinConfiguration.separator(Component.text(" - ", NamedTextColor.GRAY)),
+                abilityComboMap[burbPlayer]?.combo?.map { click -> Component.text(click.comboAbbreviation, teamColour) } ?: emptyList()
+            ).let(burbPlayer.bukkitPlayer()::sendActionBar)
 
             when(burbAbilityComboClick) {
                 BurbAbilityComboClick.LEFT -> burbPlayer.bukkitPlayer().playSound(Sounds.Weapon.ABILITY_COMBO_LEFT)

@@ -1,18 +1,15 @@
 package dev.byrt.burb.text
 
+import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.text.Formatting.allTags
 import dev.byrt.burb.text.Formatting.restrictedTags
-import dev.byrt.burb.library.Sounds
-import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.team.Teams
-
 import io.papermc.paper.chat.ChatRenderer
-
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.`object`.ObjectContents
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -64,14 +61,14 @@ object ChatUtility {
 
 object GlobalRenderer : ChatRenderer {
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience): Component {
-        val playerHead = allTags.deserialize("<!i><white><head:${source.uniqueId}> ")
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(message)
-        return if(source.hasPermission("burb.group.admin") && source.burbPlayer().playerTeam == Teams.SPECTATOR) {
-            playerHead
-                .append(allTags.deserialize("<prefix:admin> <dark_red>${source.name}<reset>: $plainMessage"))
-        } else {
-            playerHead
-                .append(allTags.deserialize("${if (source.burbPlayer().playerTeam == Teams.SPECTATOR) "<prefix:spectator> <white>" else if (source.burbPlayer().playerTeam == Teams.PLANTS) "<plantscolour>"  else if (source.burbPlayer().playerTeam == Teams.ZOMBIES) "<zombiescolour>" else ""}${source.name}<reset>: $plainMessage"))
-        }
+
+        return Component.text()
+            .append(Component.`object`(ObjectContents.playerHead(source.uniqueId)))
+            .appendSpace()
+            .append(source.displayName())
+            .append(Component.text(": ").color(NamedTextColor.WHITE))
+            .append(allTags.deserialize(plainMessage))
+            .build()
     }
 }
