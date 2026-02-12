@@ -12,7 +12,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.TeamManagerV2
+import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.InfoBoardManager
@@ -27,7 +27,7 @@ import org.bukkit.potion.PotionEffectType
 import java.time.Duration
 
 object GameManager {
-    public val teams = TeamManagerV2<BurbTeam>()
+    public val teams = TeamManager<BurbTeam>()
     private var gameState = GameState.IDLE
     private var overtimeActive = false
 

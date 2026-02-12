@@ -16,14 +16,14 @@ import kotlin.reflect.KClass
 /**
  * Manages the team a player is assigned to.
  */
-class TeamManagerV2<T> @PublishedApi internal constructor(
+class TeamManager<T> @PublishedApi internal constructor(
     private val teamClazz: KClass<T>,
     private val allTeams: EnumEntries<T>
 ) where T : GameTeam, T : Enum<T> {
 
     companion object {
         inline operator fun <reified T> invoke() where T : GameTeam, T : Enum<T> =
-            TeamManagerV2(T::class, enumEntries<T>())
+            TeamManager(T::class, enumEntries<T>())
     }
 
     private val playerTeams = mutableMapOf<UUID, T>()
