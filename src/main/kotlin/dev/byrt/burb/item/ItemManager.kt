@@ -11,6 +11,7 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
+import net.kyori.adventure.text.format.TextDecoration
 
 import org.bukkit.Bukkit
 import org.bukkit.Color

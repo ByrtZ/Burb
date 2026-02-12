@@ -331,9 +331,9 @@ class AdminCommands {
     @Permission("burb.cmd.debug")
     fun debugTeamWipe(sender: CommandSender, @Argument("team") team: BurbTeam) {
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
-        val players = GameManager.teams.getPlayers(team)
+        val players = GameManager.teams.teamMembers(team)
         for(player in players) {
-            PlayerVisuals.death(player.bukkitPlayer(), null, Formatting.allTags.deserialize("${player.playerTeam.teamColourTag}${player.playerName}<reset> was vanquished."), false, player == players.last())
+            PlayerVisuals.death(player.bukkitPlayer(), null, true, true,player == players.last())
         }
     }
 
@@ -341,7 +341,7 @@ class AdminCommands {
     @CommandDescription("Debug command for combos")
     @Permission("burb.cmd.debug")
     fun debugTeamWipeList(player: Player) {
-        if(player.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+        if(player.burbPlayer().playerTeam == null) return
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
         BurbAbilityComboManager.resetCombo(player.burbPlayer())
     }

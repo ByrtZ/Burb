@@ -65,7 +65,7 @@ object PlayerVisuals {
      * @param [isTeamWipe] Should the whole team be eliminated with extended timer, only applies to vanquish showdown event and should only be called under this circumstance
      * @param [forcedTeamWipe] Debug parameter, forces a team wipe and only runs if receiving team has more than one player
      */
-    fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false) {
+    fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false, forcedTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {

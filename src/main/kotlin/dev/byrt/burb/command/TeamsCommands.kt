@@ -62,7 +62,7 @@ class TeamsCommands {
                 Component.text()
                     .append(team ?: return@forEach)
                     .append(
-                        Component.join(JoinConfiguration.spaces(), players.map { it.getBukkitPlayer().displayName() })
+                        Component.join(JoinConfiguration.spaces(), players.map { it.bukkitPlayer().displayName() })
                     )
             }
     }

@@ -23,8 +23,8 @@ class ProjectileEvent: Listener {
                 val player = e.hitEntity as Player
                 val shooter = e.entity.shooter as Player
                 if(player != shooter) {
-                    if(player.burbPlayer().playerTeam != null) return
-                    if(shooter.burbPlayer().playerTeam != null) return
+                    if(player.burbPlayer().playerTeam == null) return
+                    if(shooter.burbPlayer().playerTeam == null) return
                     if(player.burbPlayer().playerTeam != shooter.burbPlayer().playerTeam) {
                         applyDamage(e, player, shooter)
                     }
@@ -35,7 +35,7 @@ class ProjectileEvent: Listener {
                 val hitEntity = e.hitEntity as LivingEntity
                 val shooter = e.entity.shooter as Player
                 if(hitEntity.type in listOf(EntityType.MANNEQUIN, EntityType.PLAYER)) return
-                if(shooter.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+                if(shooter.burbPlayer().playerTeam == null) return
                 applyDamage(e, hitEntity, shooter)
             }
         }

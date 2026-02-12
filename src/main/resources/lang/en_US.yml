@@ -7,6 +7,9 @@ messages:
   death.killed_by: <death_prefix><arg:0><reset> was vanquished by <arg:1><reset>.
   death.died: <death_prefix><arg:0><reset> was vanquished.
 
+  ability:
+    use: <white>You used <arg:0><reset>!
+
   bossbar:
     winners: "WINNERS: <arg:0>"
     suburbination: SUBURBINATION

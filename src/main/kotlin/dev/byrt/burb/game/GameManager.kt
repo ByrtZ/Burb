@@ -11,6 +11,7 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
+import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.text.ChatUtility
@@ -22,6 +23,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.time.Duration
@@ -130,7 +132,7 @@ object GameManager {
                 SpawnPoints.respawnLocation(player)
                 ItemManager.giveCharacterItems(player)
             }
-            if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
+            if(player.burbPlayer().playerTeam != null) {
                 player.gameMode = GameMode.SPECTATOR
             }
             Jukebox.disconnect(player)
