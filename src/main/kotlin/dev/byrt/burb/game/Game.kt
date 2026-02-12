@@ -10,6 +10,7 @@ import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
+import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
@@ -61,11 +62,8 @@ object Game {
         CapturePoints.clearCapturePoints()
         Jukebox.resetMusicStress()
         GameVisuals.setDayTime(GameDayTime.DAY)
+        GameManager.teams.teamGlowingEnabled = false
         for(player in Bukkit.getOnlinePlayers()) {
-            // TODO(lucy)
-//            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-//                TeamManager.disableTeamGlowing(player)
-//            }
             SpawnPoints.respawnLocation(player)
             Jukebox.disconnect(player)
             Jukebox.startMusicLoop(player, Music.LOBBY_WAITING)

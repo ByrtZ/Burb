@@ -124,10 +124,9 @@ object GameManager {
                 player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0, false, false))
             }
         }
+        teams.teamGlowingEnabled = true
         for(player in Bukkit.getOnlinePlayers()) {
             if(teams.isParticipating(player.uniqueId)) {
-                // TODO(lucy)
-//                TeamManager.enableTeamGlowing(player)
                 SpawnPoints.respawnLocation(player)
                 ItemManager.giveCharacterItems(player)
             }

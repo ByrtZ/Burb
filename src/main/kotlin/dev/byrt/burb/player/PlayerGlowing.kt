@@ -133,4 +133,14 @@ object PlayerGlowing : Listener {
         if (!group.remove(player.uniqueId)) return
         syncData(player, group)
     }
+
+    /**
+     * Removes an entire group.
+     */
+    fun removeGroup(name: String) {
+        glowingGroups[name]?.forEach {
+            removeFromGlowingGroup(name, Bukkit.getPlayer(it) ?: return@forEach)
+        }
+        glowingGroups.remove(name)
+    }
 }

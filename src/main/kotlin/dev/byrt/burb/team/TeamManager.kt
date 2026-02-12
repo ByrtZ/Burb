@@ -1,6 +1,7 @@
 package dev.byrt.burb.team
 
 import dev.byrt.burb.player.BurbPlayer
+import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.characterSelect
 import net.kyori.adventure.text.Component
@@ -37,6 +38,25 @@ class TeamManager<T> @PublishedApi internal constructor(
             color(NamedTextColor.nearestTo(it.textColour))
         }
     }
+
+    /**
+     * Whether team glowing is enabled.
+     */
+    public var teamGlowingEnabled = false
+        set(value) {
+            if (field == value) return
+            field = value
+
+            allTeams.forEach { team ->
+                if (value) {
+                    teamMembers(team).forEach {
+                        PlayerGlowing.addToGlowingGroup("team_${team.name}", it.getBukkitPlayer())
+                    }
+                } else {
+                    PlayerGlowing.removeGroup("team_${team.name}")
+                }
+            }
+        }
 
     /**
      * Whether a player is participating in the game, i.e. they are on a team.
