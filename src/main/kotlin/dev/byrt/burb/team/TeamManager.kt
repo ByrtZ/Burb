@@ -8,7 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scoreboard.Team
-import java.util.*
+import java.util.UUID
 import kotlin.enums.EnumEntries
 import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
