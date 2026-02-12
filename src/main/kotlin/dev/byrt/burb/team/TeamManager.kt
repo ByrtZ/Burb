@@ -9,7 +9,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerType
-import dev.byrt.burb.player.characterSelect
+import dev.byrt.burb.player.character.characterSelect
 import dev.byrt.burb.plugin
 
 import fr.skytasul.glowingentities.GlowingEntities

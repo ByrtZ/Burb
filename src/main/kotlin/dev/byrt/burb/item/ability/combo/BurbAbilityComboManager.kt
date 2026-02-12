@@ -3,7 +3,6 @@ package dev.byrt.burb.item.ability.combo
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ability.BurbAbilities
 import dev.byrt.burb.library.Sounds
-import dev.byrt.burb.player.BurbCharacter
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
@@ -36,7 +35,7 @@ object BurbAbilityComboManager {
             }
             // Initiate timeout
             abilityTimeoutCheck(burbPlayer, abilityComboMap[burbPlayer]?.combo?.toList()!!)
-            // Always check combo
+            // Check combo
             checkCombo(burbPlayer)
         }
     }
@@ -68,25 +67,11 @@ object BurbAbilityComboManager {
         val abilitySet = burbPlayer.playerCharacter.characterAbilities.abilitySet
         for(combo in BurbAbilityComboClicks.entries) {
             if(combo.comboClicks == abilityComboMap[burbPlayer]?.combo) {
-                // Melee characters
-                if(burbPlayer.playerCharacter in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
-                    for(ability in abilitySet) {
-                        if(combo.name.removePrefix("MELEE_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
-                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
-                            resetCombo(burbPlayer)
-                            return
-                        }
-                    }
-                }
-                // Ranged characters
-                if(burbPlayer.playerCharacter in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
-                    val abilitySet = burbPlayer.playerCharacter.characterAbilities.abilitySet
-                    for(ability in abilitySet) {
-                        if(combo.name.removePrefix("RANGED_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
-                            BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
-                            resetCombo(burbPlayer)
-                            return
-                        }
+                for(ability in abilitySet) {
+                    if(combo.name.removePrefix("${burbPlayer.playerCharacter.characterType}_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
+                        BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
+                        resetCombo(burbPlayer)
+                        return
                     }
                 }
             }

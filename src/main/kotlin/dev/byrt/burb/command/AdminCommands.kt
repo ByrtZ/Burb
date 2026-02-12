@@ -334,7 +334,7 @@ class AdminCommands {
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
         val players = TeamManager.getTeam(team)
         for(player in players) {
-            PlayerVisuals.death(player.bukkitPlayer(), null, Formatting.allTags.deserialize("${player.playerTeam.teamColourTag}${player.playerName}<reset>"), false, player == players.last())
+            PlayerVisuals.death(player.bukkitPlayer(), null, Formatting.allTags.deserialize("${player.playerTeam.teamColourTag}${player.playerName}<reset> was vanquished."), false, player == players.last())
         }
     }
 

@@ -13,6 +13,8 @@ import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.character.BurbCharacter
+import dev.byrt.burb.player.character.setRandomCharacter
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager

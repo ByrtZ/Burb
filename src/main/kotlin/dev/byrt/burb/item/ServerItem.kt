@@ -6,7 +6,7 @@ import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.util.extension.fullDecimal
 
 import org.bukkit.Material

@@ -93,7 +93,7 @@ object Sounds {
         val RELOAD_SUCCESS = sound(key("block.note_block.pling"), Source.VOICE, 1f, 1.5f)
         val ABILITY_COMBO_LEFT = sound(key("block.stone_pressure_plate.click_off"), Source.VOICE, 1f, 1.25f)
         val ABILITY_COMBO_RIGHT = sound(key("block.stone_pressure_plate.click_off"), Source.VOICE, 1f, 1.75f)
-        val ABILITY_COMBO_CAST = sound(key("entity.experience_orb.pickup"), Source.MASTER, 0.75f, 0.5f)
+        val ABILITY_COMBO_CAST = sound(key("entity.experience_orb.pickup"), Source.VOICE, 0.75f, 0.5f)
     }
     object Fishing {
         val FISH_FLOP = sound(key("entity.cod.flop"), Source.VOICE, 1f, 1f)

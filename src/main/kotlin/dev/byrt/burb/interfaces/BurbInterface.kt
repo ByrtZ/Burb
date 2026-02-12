@@ -1,9 +1,9 @@
 package dev.byrt.burb.interfaces
 
 import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.getCharacter
+import dev.byrt.burb.player.character.getCharacter
 import dev.byrt.burb.team.Teams
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.BurbLobby

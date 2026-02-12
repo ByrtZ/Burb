@@ -6,17 +6,21 @@ import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.item.ability.BurbAbilities
 import dev.byrt.burb.item.ability.combo.BurbAbilityComboClick
 import dev.byrt.burb.item.ability.combo.BurbAbilityComboManager
+import dev.byrt.burb.item.ability.getAbilityByID
 import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.lobby.npc.BurbNPC
-import dev.byrt.burb.player.BurbCharacter
+import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.plugin
 import dev.byrt.burb.util.Cooldowns
 import dev.byrt.burb.util.Keys
 
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.block.data.*
 import org.bukkit.entity.Mannequin
 import org.bukkit.event.EventHandler
@@ -84,6 +88,24 @@ class InteractEvent: Listener {
                                     else -> {} // Nothing
                                 }
                             }
+                        }
+                    }
+                }
+                /** VERIFY ABILITY **/
+                if(ItemManager.verifyAbility(e.player.inventory.itemInMainHand) && e.action.isRightClick) {
+                    val ability = e.player.inventory.itemInMainHand
+                    val burbPlayer = e.player.burbPlayer()
+                    /** CHECK ABILITY NOT ON COOLDOWN **/
+                    if(!burbPlayer.bukkitPlayer().hasCooldown(ability)) {
+                        /** GET PDC FOR THE ABILITY **/
+                        val abilityID = ability.persistentDataContainer.get(NamespacedKey(plugin, "burb.ability.id"), PersistentDataType.STRING)
+                        if(abilityID != null) {
+                            /** RUN ABILITY IF ID MATCHES **/
+                            BurbAbilities.useAbility(
+                                player = burbPlayer.bukkitPlayer(),
+                                ability = abilityID.getAbilityByID(burbPlayer.playerCharacter),
+                                usedItem = ability
+                            )
                         }
                     }
                 }
