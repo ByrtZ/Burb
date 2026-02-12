@@ -10,7 +10,6 @@ import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import net.kyori.adventure.text.Component

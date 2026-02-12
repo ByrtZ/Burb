@@ -4,7 +4,6 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
-import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
@@ -15,38 +14,23 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.TeamManager.areTeamMatesDead
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
+import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.Formatting.sendTranslated
-
 import io.papermc.paper.entity.TeleportFlag
-
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
-
-import org.bukkit.Bukkit
-import org.bukkit.Color
-import org.bukkit.FireworkEffect
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
+import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
-import org.bukkit.entity.Display
-import org.bukkit.entity.Firework
-import org.bukkit.entity.ItemDisplay
-import org.bukkit.entity.Player
-import org.bukkit.entity.TextDisplay
+import org.bukkit.entity.*
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
-
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
-
 import kotlin.random.Random
 
 object PlayerVisuals {

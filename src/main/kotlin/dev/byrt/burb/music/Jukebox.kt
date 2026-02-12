@@ -6,7 +6,6 @@ import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.sound.Sound
 

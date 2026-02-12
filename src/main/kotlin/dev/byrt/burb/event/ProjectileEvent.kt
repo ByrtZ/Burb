@@ -3,7 +3,6 @@ package dev.byrt.burb.event
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player

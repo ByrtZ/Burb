@@ -3,8 +3,6 @@ package dev.byrt.burb.event
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.lobby.LobbyBall
-import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler

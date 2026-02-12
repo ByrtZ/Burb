@@ -1,17 +1,14 @@
 package dev.byrt.burb.player
 
-import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
+import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.item.ability.BurbCharacterAbilities
 import dev.byrt.burb.item.weapon.BurbMainWeapon
-import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
-
 import org.bukkit.scheduler.BukkitRunnable
 
 enum class BurbCharacter(val characterName: String, val characterMainWeapon: BurbMainWeapon, val characterAbilities: BurbCharacterAbilities) {

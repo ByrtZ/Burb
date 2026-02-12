@@ -1,7 +1,5 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.game.location.SpawnPoints
@@ -13,23 +11,19 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
-import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.TeamManagerV2
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
-
+import dev.byrt.burb.text.InfoBoardManager
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-
-import org.bukkit.*
+import org.bukkit.Bukkit
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-
 import java.time.Duration
 
 object GameManager {

@@ -6,7 +6,6 @@ import dev.byrt.burb.game.objective.CapturePoint
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
 
 import io.papermc.paper.scoreboard.numbers.NumberFormat
 import me.lucyydotp.tinsel.font.Spacing
@@ -262,9 +261,9 @@ object InfoBoardManager {
                                 TextAlignment.centreBossBarText(
                                     "<plantscolour>PLANTS<white>: ${
                                         Scores.getDisplayScore(
-                                            Teams.PLANTS
+                                            BurbTeam.PLANTS
                                         )
-                                    } <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(Teams.ZOMBIES)}"
+                                    } <gray>| <zombiescolour>ZOMBIES<white>: ${Scores.getDisplayScore(BurbTeam.ZOMBIES)}"
                                 )
                             )
                             .append(Spacing.spacing(75))

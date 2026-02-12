@@ -9,10 +9,8 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
-import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor

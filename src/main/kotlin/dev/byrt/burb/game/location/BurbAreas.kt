@@ -6,7 +6,6 @@ import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
 import org.bukkit.Bukkit
 import org.bukkit.FireworkEffect
 import org.bukkit.Location

@@ -3,7 +3,6 @@ package dev.byrt.burb.game
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.InfoBoardManager
 
 object Scores {
@@ -46,14 +45,14 @@ object Scores {
         teamScoreWinCheck()
     }
 
-    fun getDisplayScore(teams: Teams): Int {
+    fun getDisplayScore(teams: BurbTeam): Int {
         return when(teams) {
-            Teams.PLANTS -> {
+            BurbTeam.PLANTS -> {
                 this.plantsScore.floorDiv(1000)
             }
-            Teams.ZOMBIES -> {
+            BurbTeam.ZOMBIES -> {
                 this.zombiesScore.floorDiv(1000)
-            } else -> -1
+            }
         }
     }
 

@@ -4,8 +4,6 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.team.BurbTeam
-import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -29,15 +27,6 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
     @Deprecated("Prefer checking against GameManager.teams directly")
     val playerTeam: BurbTeam?
         get() = GameManager.teams.getTeam(uuid)
-
-    @Deprecated("Use TeamManagerV2 directly", level = DeprecationLevel.ERROR)
-    fun setTeam(newTeam: Teams) {
-        throw NotImplementedError("Terminally deprecated")
-//        if(newTeam == this.playerTeam) return
-//        this.playerTeam = newTeam
-//        TeamManager.setTeam(this, this.playerTeam)
-//        logger.info("Teams: ${this.playerName} now has value ${this.playerTeam}.")
-    }
 
     fun setCharacter(newCharacter: BurbCharacter) {
         if(newCharacter == this.playerCharacter) return

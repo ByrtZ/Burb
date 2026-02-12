@@ -4,7 +4,6 @@ import dev.byrt.burb.exception.PlayerManagerException
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.progression.BurbPlayerData
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.entity.Player
 import java.util.UUID

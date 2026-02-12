@@ -21,7 +21,7 @@ import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.Formatting.BURB_FONT
 import dev.byrt.burb.text.TextAlignment
 import dev.byrt.burb.util.CommitIntegration
@@ -156,8 +156,8 @@ class AdminCommands {
     @Command("debug score <team>")
     @CommandDescription("Debug display score")
     @Permission("burb.cmd.debug")
-    fun debugDisplayScore(sender: CommandSender, @Argument("team") team: Teams) {
-        sender.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${Scores.getDisplayScore(team)} (${if (team == Teams.PLANTS) Scores.getPlantsScore() else if (team == Teams.ZOMBIES) Scores.getZombiesScore() else -1})"))
+    fun debugDisplayScore(sender: CommandSender, @Argument("team") team: BurbTeam) {
+        sender.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${Scores.getDisplayScore(team)} (${if (team == BurbTeam.PLANTS) Scores.getPlantsScore() else if (team == BurbTeam.ZOMBIES) Scores.getZombiesScore() else -1})"))
     }
 
     @Command("latestupdate")

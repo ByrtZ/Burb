@@ -1,22 +1,18 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.visual.GameDayTime
 import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
-import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.lobby.LobbyBall
+import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.ChatUtility
+import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
-
 import org.bukkit.Bukkit
 
 object Game {
