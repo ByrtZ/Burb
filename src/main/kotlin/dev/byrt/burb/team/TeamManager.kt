@@ -4,6 +4,7 @@ import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.character.characterSelect
+import dev.byrt.burb.text.InfoBoardManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
@@ -29,9 +30,8 @@ class TeamManager<T> @PublishedApi internal constructor(
 
     private val playerTeams = mutableMapOf<UUID, T>()
 
-    private val scoreboard = Bukkit.getScoreboardManager().newScoreboard
     private val scoreboardTeams = allTeams.associateWith {
-        scoreboard.registerNewTeam(it.name).apply {
+        InfoBoardManager.scoreboard.registerNewTeam(it.name).apply {
             displayName(Component.text(it.name))
             prefix(Component.text(it.name + " ")) // temp, to be replaced by another system
             setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)

@@ -27,7 +27,9 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 object InfoBoardManager {
-    private var scoreboard = Bukkit.getScoreboardManager().mainScoreboard
+    public val scoreboard = Bukkit.getScoreboardManager().newScoreboard
+
+//    private var scoreboard = Bukkit.getScoreboardManager().mainScoreboard
     private var objective = scoreboard.registerNewObjective(
         "${plugin.name.lowercase()}-info-${UUID.randomUUID()}",
         Criteria.DUMMY,
