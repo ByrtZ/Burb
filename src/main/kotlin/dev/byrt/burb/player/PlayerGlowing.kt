@@ -138,7 +138,8 @@ object PlayerGlowing : Listener {
      * Removes an entire group.
      */
     fun removeGroup(name: String) {
-        glowingGroups[name]?.forEach {
+        val playersToRemove = glowingGroups[name]?.let(::HashSet) ?: return
+        playersToRemove.forEach {
             removeFromGlowingGroup(name, Bukkit.getPlayer(it) ?: return@forEach)
         }
         glowingGroups.remove(name)
