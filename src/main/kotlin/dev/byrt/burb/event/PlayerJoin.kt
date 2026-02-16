@@ -2,6 +2,7 @@ package dev.byrt.burb.event
 
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.PlayerManager
+import dev.byrt.burb.text.InfoBoardManager
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -13,5 +14,6 @@ class PlayerJoin: Listener {
     fun onJoin(e: PlayerJoinEvent) {
         e.joinMessage(Formatting.allTags.deserialize("${if(e.player.isOp) "<dark_red>" else "<speccolour>"}${e.player.name}<reset> joined the game."))
         PlayerManager.registerPlayer(e.player)
+        e.player.scoreboard = InfoBoardManager.scoreboard
     }
 }

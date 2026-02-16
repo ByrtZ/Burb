@@ -1,10 +1,13 @@
 package dev.byrt.burb.text
 
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.key.Key
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.ShadowColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.Tag
@@ -18,7 +21,10 @@ object Formatting {
     /**
      * Creates a new text component with the glyph font.
      */
-    fun glyph(value: String) = Component.text(value).font(GLYPH_FONT).color(NamedTextColor.WHITE)
+    fun glyph(value: String) = Component.text(value)
+        .font(GLYPH_FONT)
+        .color(NamedTextColor.WHITE)
+        .shadowColor(ShadowColor.none())
 
     /** Prefix enum for allowing MiniMessage usage of the <prefix:NAME> tag in messages. **/
     enum class Prefix(val prefixName: String, val value: String) {
@@ -56,9 +62,9 @@ object Formatting {
     }
 
     private val BURB_COLOUR = TagResolver.resolver("burbcolour", Tag.styling(TextColor.color(34, 224, 97)))
-    private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(Teams.PLANTS.teamHexColour))
-    private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(Teams.ZOMBIES.teamHexColour))
-    private val SPECTATOR_COLOUR = TagResolver.resolver("speccolour", Tag.styling(Teams.SPECTATOR.teamHexColour))
+    private val PLANTS_COLOUR = TagResolver.resolver("plantscolour", Tag.styling(BurbTeam.PLANTS.textColour))
+    private val ZOMBIES_COLOUR = TagResolver.resolver("zombiescolour", Tag.styling(BurbTeam.ZOMBIES.textColour))
+    private val SPECTATOR_COLOUR = TagResolver.resolver("speccolour", Tag.styling(TextColor.color(170, 170, 170)))
     private val NOTIFICATION_COLOUR = TagResolver.resolver("notifcolour", Tag.styling(TextColor.color(219, 0, 96)))
 
     val allTags = MiniMessage.builder()
@@ -109,5 +115,9 @@ object Formatting {
                 Component.text(UnicodePrefix.ofName(prefixName.toString()).value)
             )
         }
+    }
+
+    public fun Audience.sendTranslated(key: String, vararg args: ComponentLike) {
+        sendMessage(Component.translatable(key, *args))
     }
 }

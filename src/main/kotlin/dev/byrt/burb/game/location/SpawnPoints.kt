@@ -3,7 +3,7 @@ package dev.byrt.burb.game.location
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -28,8 +28,8 @@ object SpawnPoints {
         player.teleport(
             if(GameManager.getGameState() in listOf(GameState.STARTING, GameState.IN_GAME, GameState.OVERTIME)) {
                     when(player.burbPlayer().playerTeam) {
-                        Teams.PLANTS -> plantSpawns.random()
-                        Teams.ZOMBIES -> zombieSpawns.random()
+                        BurbTeam.PLANTS -> plantSpawns.random()
+                        BurbTeam.ZOMBIES -> zombieSpawns.random()
                         else -> {
                             Location(Bukkit.getWorlds()[0], 10.5, 0.0, 0.5, 0f, 0f)
                         }

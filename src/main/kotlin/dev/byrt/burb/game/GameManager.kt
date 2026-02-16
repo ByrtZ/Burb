@@ -1,7 +1,5 @@
 package dev.byrt.burb.game
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.game.GameManager.GameTime.GAME_END_TIME
 import dev.byrt.burb.game.GameManager.GameTime.ROUND_STARTING_TIME
 import dev.byrt.burb.game.location.SpawnPoints
@@ -13,26 +11,32 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
-import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.nametag.LobbyNameTagProvider
+import dev.byrt.burb.plugin
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
-
+import dev.byrt.burb.text.InfoBoardManager
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-
 import java.time.Duration
 
 object GameManager {
+    public val teams = TeamManager<BurbTeam>()
     private var gameState = GameState.IDLE
     private var overtimeActive = false
+
+    init {
+        Bukkit.getPluginManager().registerEvents(teams, plugin)
+    }
 
     fun nextState() {
         when(this.gameState) {
@@ -117,7 +121,7 @@ object GameManager {
 
     private fun starting() {
         InfoBoardManager.updateRound()
-        TeamManager.hideTeamNametags()
+        plugin.nameTagManager.provider = null
         CapturePoints.initializeCapturePoints()
         if(Rounds.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
@@ -126,13 +130,13 @@ object GameManager {
                 player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, PotionEffect.INFINITE_DURATION, 0, false, false))
             }
         }
+        teams.teamGlowingEnabled = true
         for(player in Bukkit.getOnlinePlayers()) {
-            if(player.burbPlayer().playerTeam !in listOf(Teams.SPECTATOR, Teams.NULL)) {
-                TeamManager.enableTeamGlowing(player)
+            if(teams.isParticipating(player.uniqueId)) {
                 SpawnPoints.respawnLocation(player)
                 ItemManager.giveCharacterItems(player)
             }
-            if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
+            if(!teams.isParticipating(player.uniqueId)) {
                 player.gameMode = GameMode.SPECTATOR
             }
             Jukebox.disconnect(player)
@@ -160,7 +164,7 @@ object GameManager {
                 )
             )
         }
-        TeamManager.showTeamNametags()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         GameVisuals.setDayTime(GameDayTime.DAY)
     }
 
@@ -180,7 +184,7 @@ object GameManager {
                 )
             )
         }
-        TeamManager.showTeamNametags()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         Rounds.nextRound()
     }
 

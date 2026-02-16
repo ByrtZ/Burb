@@ -4,7 +4,6 @@ import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.EntityType
@@ -25,8 +24,8 @@ class ProjectileEvent: Listener {
                 val player = e.hitEntity as Player
                 val shooter = e.entity.shooter as Player
                 if(player != shooter) {
-                    if(player.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
-                    if(shooter.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+                    if(player.burbPlayer().playerTeam == null) return
+                    if(shooter.burbPlayer().playerTeam == null) return
                     if(player.burbPlayer().playerTeam != shooter.burbPlayer().playerTeam) {
                         applyDamage(e, player, shooter)
                     }
@@ -37,7 +36,7 @@ class ProjectileEvent: Listener {
                 val hitEntity = e.hitEntity as LivingEntity
                 val shooter = e.entity.shooter as Player
                 if(hitEntity.type in listOf(EntityType.MANNEQUIN, EntityType.PLAYER)) return
-                if(shooter.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+                if(shooter.burbPlayer().playerTeam == null) return
                 applyDamage(e, hitEntity, shooter)
             }
         }

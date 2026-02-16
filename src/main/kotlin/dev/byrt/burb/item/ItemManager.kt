@@ -9,9 +9,9 @@ import dev.byrt.burb.item.weapon.BurbMainWeaponType
 import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
+import net.kyori.adventure.text.format.TextDecoration
 
 import org.bukkit.Bukkit
 import org.bukkit.Color
@@ -26,15 +26,17 @@ import org.bukkit.inventory.meta.LeatherArmorMeta
 import org.bukkit.persistence.PersistentDataType
 
 object ItemManager {
-    fun givePlayerTeamBoots(player: Player, team: Teams) {
+    fun givePlayerTeamBoots(player: Player) {
+        val team = GameManager.teams.getTeam(player.uniqueId)
         val teamBoots = ItemStack(Material.LEATHER_BOOTS)
         val teamBootsMeta = teamBoots.itemMeta
         val teamBootsRarity = if(player.isOp) ItemRarity.SPECIAL else ItemRarity.COMMON
         val teamBootsType = ItemType.ARMOUR
-        teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team.teamName} Team Boots"))
+        // FIXME(lucy): format these properly
+        teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team?.name?.capitalize()} Team Boots").decoration(TextDecoration.ITALIC, false))
         val teamBootsLore = listOf(
-            Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}"),
-            Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team.teamName} team's boots.")
+            Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
+            Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team?.name?.capitalize()} team's boots.").decoration(TextDecoration.ITALIC, false)
         )
         teamBootsMeta.lore(teamBootsLore)
         teamBootsMeta.isUnbreakable = true
@@ -43,17 +45,14 @@ object ItemManager {
         teamBootsMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_DYE, ItemFlag.HIDE_ATTRIBUTES)
         teamBoots.itemMeta = teamBootsMeta
         val lm = teamBoots.itemMeta as LeatherArmorMeta
-        if(team == Teams.SPECTATOR && player.isOp) {
-            lm.setColor(Color.MAROON)
-        } else {
-            lm.setColor(team.teamColour)
-        }
+
+        lm.setColor(team?.teamColour ?: if (player.isOp) Color.RED else Color.GRAY)
         teamBoots.itemMeta = lm
         player.inventory.boots = teamBoots
     }
 
     fun giveCharacterItems(player: Player) {
-        if(player.burbPlayer().playerTeam !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
+        if (GameManager.teams.getTeam(player.uniqueId) == null) return
         val burbPlayer = player.burbPlayer()
         val burbPlayerCharacter = burbPlayer.playerCharacter
         clearItems(player)

@@ -4,7 +4,6 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.events.SpecialEvent
 import dev.byrt.burb.game.events.SpecialEvents
-import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.interfaces.BurbInterface
 import dev.byrt.burb.interfaces.BurbInterfaceType
@@ -17,22 +16,13 @@ import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.character.setRandomCharacter
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.TeamManager.areTeamMatesDead
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
-
+import dev.byrt.burb.text.Formatting
+import dev.byrt.burb.text.Formatting.sendTranslated
 import io.papermc.paper.entity.TeleportFlag
-
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.kyori.adventure.title.Title
-
-import org.bukkit.Bukkit
-import org.bukkit.Color
-import org.bukkit.FireworkEffect
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.NamespacedKey
+import org.bukkit.*
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
 import org.bukkit.entity.Firework
@@ -45,11 +35,9 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
-
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Duration
-
 import kotlin.random.Random
 
 object PlayerVisuals {
@@ -73,11 +61,11 @@ object PlayerVisuals {
     /**
      * @param [player] Player to die
      * @param [killer] Player who killed the [player], nullable
-     * @param [deathMessage] Death message
+     * @param [showDeathMessage] Should the death message be shown
      * @param [isTeamWipe] Should the whole team be eliminated with extended timer, only applies to vanquish showdown event and should only be called under this circumstance
      * @param [forcedTeamWipe] Debug parameter, forces a team wipe and only runs if receiving team has more than one player
      */
-    fun death(player: Player, killer: Player?, deathMessage: Component, isTeamWipe: Boolean = false, forcedTeamWipe: Boolean = false) {
+    fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false, forcedTeamWipe: Boolean = false) {
         player.burbPlayer().setIsDead(true)
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
@@ -98,11 +86,19 @@ object PlayerVisuals {
             addPassenger(player)
         }
 
+        val deathMessage = if (showDeathMessage) {
+            if (killer != null) {
+                Component.translatable("burb.death.killed_by", player.displayName(), killer.displayName())
+            } else {
+                Component.translatable("burb.death.died", player.displayName())
+            }
+        } else Component.empty()
+
         if(!isTeamWipe) {
             player.showTitle(
                 Title.title(
                     Formatting.allTags.deserialize("<#ff3333>You died!"),
-                    Formatting.allTags.deserialize("<gray>${PlainTextComponentSerializer.plainText().serialize(deathMessage)}"),
+                    deathMessage,
                     Title.Times.times(
                         Duration.ofMillis(250),
                         Duration.ofSeconds(8),
@@ -111,7 +107,7 @@ object PlayerVisuals {
                 )
             )
             player.playSound(Sounds.Score.DEATH)
-            for(online in Bukkit.getOnlinePlayers()) online.sendMessage(Formatting.allTags.deserialize(Translation.Generic.DEATH_PREFIX).append(deathMessage))
+            deathMessage?.let(Bukkit::broadcast)
         } else {
             player.showTitle(
                 Title.title(
@@ -129,15 +125,15 @@ object PlayerVisuals {
         /** TEAM WIPE SPECIAL EVENT **/
         if(SpecialEvents.getCurrentEvent() == SpecialEvent.VANQUISH_SHOWDOWN || forcedTeamWipe) {
             // Only run if this vanquished team member is the final player on the team to be eliminated to initiate a team wipe
-            if(player.burbPlayer().playerTeam.areTeamMatesDead(player.burbPlayer()) && !isTeamWipe) {
+            val playerTeam = GameManager.teams.getTeam(player.uniqueId) ?: return
+            val members = GameManager.teams.teamMembers(playerTeam)
+            if(members.all(BurbPlayer::isDead) && !isTeamWipe) {
                 deathVehicle.remove()
-                for(teamMember in TeamManager.getTeam(player.burbPlayer().playerTeam)) {
-                    death(teamMember.bukkitPlayer(), null, Formatting.allTags.deserialize(""), true)
+                members.forEach { member ->
+                    death(member.bukkitPlayer(), null, false, true)
                 }
-                for(online in Bukkit.getOnlinePlayers()) {
-                    online.sendMessage(Formatting.allTags.deserialize("<newline>${Translation.Generic.DEATH_PREFIX}The ${player.burbPlayer().playerTeam.teamColourTag}${player.burbPlayer().playerTeam.teamName}<reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>"))
-                    online.playSound(Sounds.Score.TEAM_WIPE)
-                }
+                Bukkit.getServer().playSound(Sounds.Score.TEAM_WIPE)
+                Bukkit.getServer().sendTranslated("burb.special_event.vanquish_showdown.wipe", playerTeam)
             }
         }
 
@@ -258,14 +254,14 @@ object PlayerVisuals {
     }
 
     fun postRespawn(player: Player, vehicle: ItemDisplay) {
-        player.eject()
+        vehicle.eject()
         vehicle.remove()
         player.burbPlayer().setIsDead(false)
         player.fireTicks = 0
         player.health = 20.0
         player.inventory.helmet = null
         SpawnPoints.respawnLocation(player)
-        ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
+        ItemManager.givePlayerTeamBoots(player)
 
         // Add hub item
         if(GameManager.getGameState() == GameState.IDLE) {

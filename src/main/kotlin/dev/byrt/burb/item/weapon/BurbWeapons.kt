@@ -1,12 +1,12 @@
 package dev.byrt.burb.item.weapon
 
+import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
 import org.bukkit.Color
@@ -71,7 +71,7 @@ object BurbWeapons {
                                 Particle.DUST,
                                 snowball.location,
                                 1, 0.0, 0.0, 0.0, 0.0,
-                                Particle.DustOptions(if (shooter.burbPlayer().playerTeam == Teams.PLANTS) Color.LIME else if (shooter.burbPlayer().playerTeam == Teams.ZOMBIES) Color.PURPLE else Color.GRAY, 0.75f),
+                                Particle.DustOptions(GameManager.teams.getTeam(player.uniqueId)?.teamColour ?: Color.GRAY, 0.75f),
                                 true
                             )
                         }

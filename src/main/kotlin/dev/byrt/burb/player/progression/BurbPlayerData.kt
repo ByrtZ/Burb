@@ -9,9 +9,11 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.Formatting
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.title.Title
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
@@ -76,21 +78,36 @@ object BurbPlayerData {
                 val newEvolution = BurbLevel.entries[currentLevel.ordinal + 1].levelName.endsWith("0")
                 val maxLevel = BurbLevel.entries[currentLevel.ordinal + 1] == BurbLevel.LEVEL_40
 
+                val prefix = Component.translatable(
+                    "burb.level_up.prefix.${when {
+                        maxLevel -> "max_level"
+                        newEvolution -> "new_evolution"
+                        else -> "normal"
+                    }}"
+                )
+
+                val newLevelText = Component.translatable("burb.level_up.new_level_text",
+                    Component.text(
+                    BurbLevel.entries[currentLevel.ordinal + 1].levelName,
+                        GameManager.teams.getTeam(player.uniqueId)?.textColour ?: NamedTextColor.WHITE,
+                    )
+                )
+
                 player.showTitle(
                     Title.title(
-                        Formatting.allTags.deserialize("<b>${if(maxLevel) "<rainbow>" else if(newEvolution) "<gradient:gold:yellow:gold:yellow:gold>" else "<burbcolour>"}LEVEL UP!<reset>"),
-                        Formatting.allTags.deserialize("You are now ${player.burbPlayer().playerTeam.teamColourTag}${BurbLevel.entries[currentLevel.ordinal + 1].levelName}<reset>."),
+                        prefix,
+                        newLevelText,
                         Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(2), Duration.ofMillis(500))
                     )
                 )
-                player.sendMessage(Formatting.allTags.deserialize("<b>${if(maxLevel) "<rainbow>" else if(newEvolution) "<gradient:gold:yellow:gold:yellow:gold>" else "<burbcolour>"}LEVEL UP!<reset> You are now ${player.burbPlayer().playerTeam.teamColourTag}${BurbLevel.entries[currentLevel.ordinal + 1].levelName}<reset>."))
+                player.sendMessage(Component.text().append(prefix).appendSpace().append(newLevelText).build())
                 Jukebox.disconnect(player)
                 if(newEvolution) {
                     player.playSound(Sounds.Misc.ODE_TO_JOY)
                 } else {
                     player.playSound(when(player.burbPlayer().playerTeam) {
-                        Teams.PLANTS -> Sounds.Misc.LEVEL_UP_PLANTS
-                        Teams.ZOMBIES -> Sounds.Misc.LEVEL_UP_ZOMBIES
+                        BurbTeam.PLANTS -> Sounds.Misc.LEVEL_UP_PLANTS
+                        BurbTeam.ZOMBIES -> Sounds.Misc.LEVEL_UP_ZOMBIES
                         else -> Sounds.Misc.SUCCESS
                     })
                 }

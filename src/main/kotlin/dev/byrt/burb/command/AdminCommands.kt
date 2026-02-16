@@ -18,15 +18,16 @@ import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.logger
+import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.player.nametag.DisplayNameTagProvider
 import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.TeamManager
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.Formatting.BURB_FONT
 import dev.byrt.burb.text.TextAlignment
 import dev.byrt.burb.util.CommitIntegration
@@ -161,8 +162,8 @@ class AdminCommands {
     @Command("debug score <team>")
     @CommandDescription("Debug display score")
     @Permission("burb.cmd.debug")
-    fun debugDisplayScore(sender: CommandSender, @Argument("team") team: Teams) {
-        sender.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${Scores.getDisplayScore(team)} (${if (team == Teams.PLANTS) Scores.getPlantsScore() else if (team == Teams.ZOMBIES) Scores.getZombiesScore() else -1})"))
+    fun debugDisplayScore(sender: CommandSender, @Argument("team") team: BurbTeam) {
+        sender.sendMessage(Formatting.allTags.deserialize("$team DISPLAY SCORE: ${Scores.getDisplayScore(team)} (${if (team == BurbTeam.PLANTS) Scores.getPlantsScore() else if (team == BurbTeam.ZOMBIES) Scores.getZombiesScore() else -1})"))
     }
 
     @Command("latestupdate")
@@ -329,12 +330,11 @@ class AdminCommands {
     @Command("debug team_wipe <team>")
     @CommandDescription("Debug command for team wipes")
     @Permission("burb.cmd.debug")
-    fun debugTeamWipe(sender: CommandSender, @Argument("team") team: Teams) {
-        if(team in listOf(Teams.SPECTATOR, Teams.NULL)) return
+    fun debugTeamWipe(sender: CommandSender, @Argument("team") team: BurbTeam) {
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
-        val players = TeamManager.getTeam(team)
+        val players = GameManager.teams.teamMembers(team)
         for(player in players) {
-            PlayerVisuals.death(player.bukkitPlayer(), null, Formatting.allTags.deserialize("${player.playerTeam.teamColourTag}${player.playerName}<reset> was vanquished."), false, player == players.last())
+            PlayerVisuals.death(player.bukkitPlayer(), null, true, true,player == players.last())
         }
     }
 
@@ -342,8 +342,28 @@ class AdminCommands {
     @CommandDescription("Debug command for combos")
     @Permission("burb.cmd.debug")
     fun debugTeamWipeList(player: Player) {
-        if(player.burbPlayer().playerTeam in listOf(Teams.SPECTATOR, Teams.NULL)) return
+        if(player.burbPlayer().playerTeam == null) return
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
         BurbAbilityComboManager.resetCombo(player.burbPlayer())
+    }
+
+    @Command("debug glow on")
+    @CommandDescription("Adds all online players to a glowing group")
+    @Permission("burb.cmd.debug")
+    fun glowOn() {
+        Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.addToGlowingGroup("all", player) }
+    }
+
+    @Command("debug glow off")
+    @CommandDescription("Removes all online players from a glowing group")
+    @Permission("burb.cmd.debug")
+    fun glowOff() {
+        Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.removeFromGlowingGroup("all", player) }
+    }
+
+    @Command("debug nametags")
+    @Permission("burb.cmd.debug")
+    fun refreshNametags() {
+        plugin.nameTagManager.provider = DisplayNameTagProvider()
     }
 }

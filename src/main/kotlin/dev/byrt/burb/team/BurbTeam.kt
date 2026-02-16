@@ -1,0 +1,42 @@
+package dev.byrt.burb.team
+
+import dev.byrt.burb.library.Sounds
+import dev.byrt.burb.text.Formatting
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentLike
+import net.kyori.adventure.text.format.TextColor
+import org.bukkit.Color
+
+enum class BurbTeam(
+    override val teamDisplayName: String,
+    val playerNamePrefix: Component,
+    val winMusic: Sound,
+    val winSound: Sound,
+    val loseSound: Sound,
+    val teamColour: Color,
+    override val textColour: TextColor,
+) : GameTeam, ComponentLike {
+    PLANTS(
+        "Plants",
+        Formatting.glyph("\uD012"),
+        Sounds.Score.PLANTS_WIN_MUSIC,
+        Sounds.Score.PLANTS_WIN,
+        Sounds.Score.PLANTS_LOSE,
+        Color.LIME,
+        TextColor.color(21, 237, 50)
+    ),
+    ZOMBIES(
+        "Zombies",
+        Formatting.glyph("\uD013"),
+        Sounds.Score.ZOMBIES_WIN_MUSIC,
+        Sounds.Score.ZOMBIES_WIN,
+        Sounds.Score.ZOMBIES_LOSE,
+        Color.PURPLE,
+        TextColor.color(136, 21, 237),
+    ), ;
+
+    override fun asComponent() = Component.translatable("burb.team.normal.${name.lowercase()}")
+
+    fun uppercaseName() = Component.translatable("burb.team.uppercase.${name.lowercase()}")
+}

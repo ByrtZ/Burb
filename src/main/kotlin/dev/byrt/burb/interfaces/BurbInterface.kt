@@ -4,7 +4,6 @@ import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.character.getCharacter
-import dev.byrt.burb.team.Teams
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.item.ServerItem
@@ -22,9 +21,11 @@ import com.noxcrew.interfaces.interfaces.buildChestInterface
 import com.noxcrew.interfaces.pane.Pane
 import com.noxcrew.interfaces.transform.builtin.PaginationButton
 import com.noxcrew.interfaces.transform.builtin.PaginationTransformation
+import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.lobby.fishing.FishRarity
+import dev.byrt.burb.team.BurbTeam
 
 import kotlinx.coroutines.runBlocking
 
@@ -100,7 +101,7 @@ object BurbInterfaces {
         titleSupplier = { Formatting.allTags.deserialize("<!i><b><burbcolour><shadow:#0:0.75>${interfaceType.interfaceName}") }
         rows = 3
         withTransform { pane, _ ->
-            if(player.burbPlayer().playerTeam == Teams.PLANTS) {
+            if(player.burbPlayer().playerTeam == BurbTeam.PLANTS) {
                 val plantsTeamItem = ItemStack(Material.BARRIER)
                 val plantsTeamItemMeta = plantsTeamItem.itemMeta
                 plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
@@ -124,7 +125,7 @@ object BurbInterfaces {
                 plantsTeamItemMeta.displayName(Formatting.allTags.deserialize("<plantscolour>Plants").decoration(TextDecoration.ITALIC, false))
                 plantsTeamItem.itemMeta = plantsTeamItemMeta
                 pane[1, 3] = StaticElement(drawable(plantsTeamItem)) {
-                    player.burbPlayer().setTeam(Teams.PLANTS)
+                    GameManager.teams.setTeam(player, BurbTeam.PLANTS)
                     player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
@@ -141,7 +142,7 @@ object BurbInterfaces {
                 }
             }
 
-            if(player.burbPlayer().playerTeam == Teams.ZOMBIES) {
+            if(player.burbPlayer().playerTeam == BurbTeam.ZOMBIES) {
                 val zombiesTeamItem = ItemStack(Material.BARRIER)
                 val zombiesTeamItemMeta = zombiesTeamItem.itemMeta
                 zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
@@ -165,7 +166,7 @@ object BurbInterfaces {
                 zombiesTeamItemMeta.displayName(Formatting.allTags.deserialize("<zombiescolour>Zombies").decoration(TextDecoration.ITALIC, false))
                 zombiesTeamItem.itemMeta = zombiesTeamItemMeta
                 pane[1, 5] = StaticElement(drawable(zombiesTeamItem)) {
-                    player.burbPlayer().setTeam(Teams.ZOMBIES)
+                    GameManager.teams.setTeam(player, BurbTeam.ZOMBIES)
                     player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
@@ -182,7 +183,7 @@ object BurbInterfaces {
                 }
             }
 
-            if(player.burbPlayer().playerTeam == Teams.SPECTATOR) {
+            if(player.burbPlayer().playerTeam == null) {
                 val closeMenuItem = ItemStack(Material.BARRIER)
                 val closeMenuItemMeta = closeMenuItem.itemMeta
                 closeMenuItemMeta.displayName(Formatting.allTags.deserialize("<red>Close Menu").decoration(TextDecoration.ITALIC, false))
@@ -209,14 +210,14 @@ object BurbInterfaces {
                 spectatorsTeamItemMeta.displayName(Formatting.allTags.deserialize("<speccolour>Spectators").decoration(TextDecoration.ITALIC, false))
                 spectatorsTeamItem.itemMeta = spectatorsTeamItemMeta
                 pane[2, 4] = StaticElement(drawable(spectatorsTeamItem)) {
-                    player.burbPlayer().setTeam(Teams.SPECTATOR)
+                    GameManager.teams.setTeam(player, null)
                     player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                     player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)
 
                     if(player.vehicle != null) {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
-                            veh.teleportDuration = 80
+                            veh.teleportDuration = 55
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
@@ -251,7 +252,7 @@ object BurbInterfaces {
             var i = 0
             for(character in BurbCharacter.entries) {
                 if(character != BurbCharacter.NULL) {
-                    if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
+                    if(player.burbPlayer().playerTeam == BurbTeam.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == BurbTeam.ZOMBIES && character.name.startsWith("ZOMBIES")) {
                         val characterItem = ServerItem.getCharacterBreakdownItem(character)
 
                         if(i == 0) i++
@@ -259,7 +260,7 @@ object BurbInterfaces {
                         if(i == 4) i++
 
                         pane[1, i] = StaticElement(drawable(characterItem)) {
-                            if(player.burbPlayer().playerTeam == Teams.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == Teams.ZOMBIES && character.name.startsWith("ZOMBIES")) {
+                            if(player.burbPlayer().playerTeam == BurbTeam.PLANTS && character.name.startsWith("PLANTS") || player.burbPlayer().playerTeam == BurbTeam.ZOMBIES && character.name.startsWith("ZOMBIES")) {
                                 player.burbPlayer().setCharacter(character.characterName.getCharacter())
                                 player.playSound(Sounds.Misc.INTERFACE_ENTER_SUB_MENU)
                                 player.closeInventory(InventoryCloseEvent.Reason.PLUGIN)

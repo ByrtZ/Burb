@@ -5,7 +5,7 @@ import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import dev.byrt.burb.team.Teams
+import dev.byrt.burb.team.BurbTeam
 import org.bukkit.Bukkit
 import org.bukkit.FireworkEffect
 import org.bukkit.Location
@@ -19,8 +19,7 @@ object BurbAreas {
     /*val lobbyBoundingBox = BoundingBox()
     val inGameBoundingBox = BoundingBox()*/
 
-    fun runSuburbinationShow(team: Teams) {
-        if(team !in listOf(Teams.PLANTS, Teams.ZOMBIES)) return
+    fun runSuburbinationShow(team: BurbTeam) {
         object : BukkitRunnable() {
             override fun run() {
                 if(CapturePoints.getSuburbinatingTeam() != team || GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) {

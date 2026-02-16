@@ -13,21 +13,16 @@ import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
 
 @Suppress("unused")
-class DeathEvent: Listener {
+class DeathEvent : Listener {
     @EventHandler
     private fun onDeath(e: PlayerDeathEvent) {
-        if(e.player.killer != null) {
-            if(e.player.killer is Player) {
-                e.player.killer!!.playSound(Sounds.Score.ELIMINATION)
-                Scores.addScore(e.player.killer!!.burbPlayer().playerTeam, 50)
-                BurbPlayerData.appendExperience(e.player.killer!!, 25)
-            }
+        e.player.killer?.let {
+            it.playSound(Sounds.Score.ELIMINATION)
+            Scores.addScore(it.burbPlayer().playerTeam ?: return, 50)
+            BurbPlayerData.appendExperience(it, 25)
         }
-        PlayerVisuals.death(
-            e.player,
-            if(e.player.killer != null && e.player.killer is Player) e.player.killer else null,
-            if(e.player.killer is Player && e.player.killer != null) Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name}<reset> was vanquished by ${e.player.killer!!.burbPlayer().playerTeam.teamColourTag}${e.player.killer!!.name}<reset>.") else Formatting.allTags.deserialize("${e.player.burbPlayer().playerTeam.teamColourTag}${e.player.name}<reset> was vanquished.")
-        )
+
+        PlayerVisuals.death(e.player, e.player.killer, true)
         e.isCancelled = true
     }
 }

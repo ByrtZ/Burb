@@ -1,322 +1,117 @@
 package dev.byrt.burb.team
 
-import dev.byrt.burb.text.ChatUtility
-import dev.byrt.burb.text.Formatting
-import dev.byrt.burb.game.GameManager
-import dev.byrt.burb.game.GameState
-import dev.byrt.burb.item.ItemManager
-import dev.byrt.burb.library.Translation
+import dev.byrt.burb.logger
 import dev.byrt.burb.player.BurbPlayer
+import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.PlayerType
 import dev.byrt.burb.player.character.characterSelect
-import dev.byrt.burb.plugin
-
-import fr.skytasul.glowingentities.GlowingEntities
-
+import dev.byrt.burb.text.InfoBoardManager
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.title.Title
-
 import org.bukkit.Bukkit
-import org.bukkit.Color
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.Team
+import java.util.*
+import kotlin.enums.EnumEntries
+import kotlin.enums.enumEntries
+import kotlin.reflect.KClass
 
-import java.time.Duration
+/**
+ * Manages the team a player is assigned to.
+ */
+class TeamManager<T> @PublishedApi internal constructor(
+    private val teamClazz: KClass<T>,
+    private val allTeams: EnumEntries<T>
+) : Listener where T : GameTeam, T : Enum<T> {
 
-object TeamManager {
-    private val spectators = mutableSetOf<BurbPlayer>()
-    private val plants = mutableSetOf<BurbPlayer>()
-    private val zombies = mutableSetOf<BurbPlayer>()
+    companion object {
+        inline operator fun <reified T> invoke() where T : GameTeam, T : Enum<T> =
+            TeamManager(T::class, enumEntries<T>())
+    }
 
-    private var plantsDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("b_plants")
-    private var zombiesDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("c_zombies")
-    private var spectatorDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("z_spectator")
-    private var adminDisplayTeam = Bukkit.getScoreboardManager().mainScoreboard.registerNewTeam("a_admin")
+    private val playerTeams = mutableMapOf<UUID, T>()
 
-    private val GlowingEntities = GlowingEntities(plugin)
-
-    fun setTeam(player: BurbPlayer, team: Teams) {
-        cancelAllGlowing(player.bukkitPlayer())
-        if(spectators.contains(player)) {
-            spectators.remove(player)
-            spectatorDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
-            adminDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
+    private val scoreboardTeams = allTeams.associateWith {
+        InfoBoardManager.scoreboard.registerNewTeam(it.name).apply {
+            displayName(Component.text(it.name))
+            setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
+            color(NamedTextColor.nearestTo(it.textColour))
         }
-        if(plants.contains(player)) {
-            plants.remove(player)
-            plantsDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
-        }
-        if(zombies.contains(player)) {
-            zombies.remove(player)
-            zombiesDisplayTeam.removePlayer(Bukkit.getOfflinePlayer(player.uuid))
-        }
-        when(team) {
-            Teams.SPECTATOR -> {
-                spectators.add(player)
-                player.setType(PlayerType.SPECTATOR)
-                if(player.bukkitPlayer().isOp) {
-                    adminDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
+    }
+
+    /**
+     * Whether team glowing is enabled.
+     */
+    public var teamGlowingEnabled = false
+        set(value) {
+            if (field == value) return
+            field = value
+
+            allTeams.forEach { team ->
+                if (value) {
+                    teamMembers(team).forEach {
+                        PlayerGlowing.addToGlowingGroup("team_${team.name}", it.bukkitPlayer())
+                    }
                 } else {
-                    spectatorDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
+                    PlayerGlowing.removeGroup("team_${team.name}")
                 }
             }
-            Teams.PLANTS -> {
-                plants.add(player)
-                player.setType(PlayerType.PARTICIPANT)
-                plantsDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
-            }
-            Teams.ZOMBIES -> {
-                zombies.add(player)
-                player.setType(PlayerType.PARTICIPANT)
-                zombiesDisplayTeam.addPlayer(Bukkit.getOfflinePlayer(player.uuid))
-            }
-            Teams.NULL -> {
-                player.setType(PlayerType.INVALID)
-            }
-        }
-        ItemManager.givePlayerTeamBoots(player.bukkitPlayer(), team)
-        when(team) {
-            in listOf(Teams.PLANTS, Teams.ZOMBIES) -> {
-                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)))
-                player.bukkitPlayer().showTitle(
-                    Title.title(
-                        Formatting.allTags.deserialize(""),
-                        Formatting.allTags.deserialize(Translation.Teams.JOIN_TEAM.replace("%d", team.teamColourTag).replace("%s", team.teamName)),
-                        Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
-                    )
-                )
-            }
-            Teams.SPECTATOR -> {
-                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR))
-                player.bukkitPlayer().showTitle(
-                    Title.title(
-                        Formatting.allTags.deserialize(""),
-                        Formatting.allTags.deserialize(Translation.Teams.JOIN_SPECTATOR),
-                        Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250))
-                    )
-                )
-            }
-            else -> {
-                player.bukkitPlayer().sendMessage(Formatting.allTags.deserialize("<red>Something went wrong setting your team, please contact an admin if you see this message."))
-            }
         }
 
-        if(GameManager.getGameState() in listOf(GameState.IN_GAME, GameState.OVERTIME)) {
-            if(player.playerTeam in listOf(Teams.PLANTS, Teams.ZOMBIES)) {
-                refreshGlowing()
-            }
+    /**
+     * Whether a player is participating in the game, i.e. they are on a team.
+     */
+    fun isParticipating(player: UUID): Boolean = player in playerTeams
+
+    /**
+     * A set of all participating players.
+     */
+    fun allParticipants(): Set<BurbPlayer> = playerTeams.keys.mapTo(mutableSetOf()) { it.burbPlayer() }
+
+    /**
+     * Gets all the players on a team.
+     */
+    fun teamMembers(team: T) : Set<BurbPlayer> = playerTeams.filterValues { it == team }.keys.mapTo(mutableSetOf()) { it.burbPlayer() }
+
+    /**
+     * Gets the team the player is on.
+     */
+    fun getTeam(player: UUID): T? = playerTeams[player]
+
+    /**
+     * Sets the team the player is on.
+     */
+    fun setTeam(player: Player, team: T?) {
+        val previousTeam = if (team == null) {
+            playerTeams.remove(player.uniqueId)
+        } else {
+            playerTeams.put(player.uniqueId, team)
         }
 
-        if(team != Teams.NULL) player.characterSelect()
-    }
-
-    fun shuffleTeams(sender: CommandSender?, players: Set<Player>, ignoreAdmins: Boolean) {
-        for((i, player) in players.withIndex()) {
-            if(i % 2 == 0) {
-                player.burbPlayer().setTeam(Teams.ZOMBIES)
-            } else {
-                player.burbPlayer().setTeam(Teams.PLANTS)
-            }
+        if (previousTeam != null) {
+            scoreboardTeams.getValue(previousTeam).removePlayer(player)
         }
-        ChatUtility.broadcastDev("<dark_gray>Teams shuffled by ${sender?.name ?: "the game"} ${if(ignoreAdmins) "<italic>[Non-Admins]</italic>." else "."}", false)
-    }
 
-    fun getTeam(team: Teams): Set<BurbPlayer> {
-        return when(team) {
-            Teams.SPECTATOR -> spectators
-            Teams.PLANTS -> plants
-            Teams.ZOMBIES -> zombies
-            Teams.NULL -> emptySet()
-        }
-    }
+        Bukkit.getPluginManager().callEvent(PlayerTeamChangedEvent(player, team))
+        logger.info("Teams: ${player.name} now has value ${team?.name}.")
 
-    fun getParticipants(): Set<BurbPlayer> {
-        return this.plants + this.zombies
-    }
-
-    fun getSpectators(): Set<BurbPlayer> {
-        return this.spectators
-    }
-
-    fun getPlants(): Set<BurbPlayer> {
-        return this.plants
-    }
-
-    fun getZombies(): Set<BurbPlayer> {
-        return this.zombies
-    }
-
-    fun Set<BurbPlayer>.getPlayerNames(): ArrayList<String> {
-        val playerNames = ArrayList<String>()
-        for(player in this) {
-            playerNames.add(player.playerName)
-        }
-        return playerNames
-    }
-
-    fun Teams.getTeammates(burbPlayer: BurbPlayer): Set<Player> {
-        val teamMates = mutableSetOf<Player>()
-        when(this) {
-            Teams.PLANTS -> {
-                for(teamMate in plants) {
-                    if(teamMate != burbPlayer) {
-                        teamMates.add(teamMate.bukkitPlayer())
-                    }
-                }
-            }
-            Teams.ZOMBIES -> {
-                for(teamMate in zombies) {
-                    if(teamMate != burbPlayer) {
-                        teamMates.add(teamMate.bukkitPlayer())
-                    }
-                }
-            }
-            else -> { /* do nothing */ }
-        }
-        return teamMates
-    }
-
-    fun Teams.areTeamMatesDead(burbPlayer: BurbPlayer): Boolean {
-        val teamMates = mutableSetOf<BurbPlayer>()
-        when(this) {
-            Teams.PLANTS -> {
-                for(teamMate in plants) {
-                    if(teamMate != burbPlayer) {
-                        if(teamMate.isDead) {
-                            teamMates.add(teamMate)
-                        }
-                    }
-                }
-                return if(teamMates.isEmpty()) false else teamMates.size >= plants.size - 1
-            }
-            Teams.ZOMBIES -> {
-                for(teamMate in zombies) {
-                    if(teamMate != burbPlayer) {
-                        if(teamMate.isDead) {
-                            teamMates.add(teamMate)
-                        }
-                    }
-                }
-                return if(teamMates.isEmpty()) false else teamMates.size >= zombies.size - 1
-            }
-            else -> { return false }
-        }
-    }
-
-    fun isTeamDead(team: Teams): Boolean {
-        val deadTeammates = mutableSetOf<BurbPlayer>()
-        return when(team) {
-            Teams.PLANTS -> {
-                for(player in plants) {
-                    if(player.isDead) {
-                        deadTeammates.add(player)
-                    }
-                }
-                deadTeammates.size >= plants.size
-            }
-            Teams.ZOMBIES -> {
-                for(player in zombies) {
-                    if(player.isDead) {
-                        deadTeammates.add(player)
-                    }
-                }
-                deadTeammates.size >= zombies.size
-            }
-            else -> false
-        }
-    }
-
-    fun refreshGlowing() {
-        for(player in Bukkit.getOnlinePlayers()) {
-            cancelAllGlowing(player)
-            enableTeamGlowing(player)
-        }
-    }
-
-    fun enableTeamGlowing(player: Player) {
-        val teamMates = player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())
-        if(player.burbPlayer().playerTeam.getTeammates(player.burbPlayer()).isNotEmpty()) {
-            for(teamMate in teamMates) {
-                GlowingEntities.setGlowing(teamMate, player)
+        if (team != null) {
+            scoreboardTeams.getValue(team).addPlayer(player)
+            player.burbPlayer().characterSelect()
+            if (teamGlowingEnabled) {
+                PlayerGlowing.addToGlowingGroup("team_${team.name}", player)
             }
         }
     }
 
-    fun disableTeamGlowing(player: Player) {
-        for(teamMate in player.burbPlayer().playerTeam.getTeammates(player.burbPlayer())) {
-            GlowingEntities.unsetGlowing(teamMate, player)
-        }
+    /**
+     * Remove players from their team on quit.
+     */
+    @EventHandler
+    private fun onPlayerQuit(event: PlayerQuitEvent) {
+        setTeam(event.player, null)
     }
-
-    fun cancelAllGlowing(player: Player) {
-        for(otherPlayer in Bukkit.getOnlinePlayers()) {
-            GlowingEntities.unsetGlowing(otherPlayer, player)
-        }
-    }
-
-    fun showTeamNametags() {
-        plantsDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS)
-        zombiesDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS)
-    }
-
-    fun hideTeamNametags() {
-        plantsDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS)
-        zombiesDisplayTeam.setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.FOR_OTHER_TEAMS)
-    }
-
-    fun buildDisplayTeams() {
-        plantsDisplayTeam.color(NamedTextColor.GREEN)
-        plantsDisplayTeam.prefix(Component.text("\uD83E\uDEB4 ").color(NamedTextColor.WHITE)) // vanilla literal
-        plantsDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        plantsDisplayTeam.displayName(Component.text("Plants").color(Teams.PLANTS.teamHexColour))
-        plantsDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
-        plantsDisplayTeam.setAllowFriendlyFire(false)
-
-        zombiesDisplayTeam.color(NamedTextColor.DARK_PURPLE)
-        zombiesDisplayTeam.prefix(Component.text("\uD83E\uDDDF ").color(NamedTextColor.WHITE)) // vanilla literal
-        zombiesDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        zombiesDisplayTeam.displayName(Component.text("Zombies").color(Teams.ZOMBIES.teamHexColour))
-        zombiesDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
-        zombiesDisplayTeam.setAllowFriendlyFire(false)
-
-        adminDisplayTeam.color(NamedTextColor.DARK_RED)
-        adminDisplayTeam.prefix(
-            Component.empty()
-                .append(Formatting.glyph("\uD002").color(NamedTextColor.WHITE))
-                .appendSpace()
-        )
-        adminDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        adminDisplayTeam.displayName(Component.text("Admin").color(NamedTextColor.DARK_RED))
-        adminDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
-        adminDisplayTeam.setAllowFriendlyFire(false)
-
-        spectatorDisplayTeam.color(NamedTextColor.GRAY)
-        spectatorDisplayTeam.prefix(
-            Component.empty()
-                .append(Formatting.glyph("\uD003").color(NamedTextColor.WHITE))
-                .appendSpace()
-        )
-        spectatorDisplayTeam.suffix(Component.text("").color(NamedTextColor.WHITE))
-        spectatorDisplayTeam.displayName(Component.text("Spectator").color(Teams.SPECTATOR.teamHexColour))
-        spectatorDisplayTeam.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
-        spectatorDisplayTeam.setAllowFriendlyFire(false)
-    }
-
-    fun destroyDisplayTeams() {
-        plantsDisplayTeam.unregister()
-        zombiesDisplayTeam.unregister()
-        adminDisplayTeam.unregister()
-        spectatorDisplayTeam.unregister()
-    }
-}
-
-enum class Teams(val teamName: String, val teamHexColour: TextColor, val teamColour: Color, val teamColourTag: String) {
-    SPECTATOR("Spectator", TextColor.fromHexString("#aaaaaa")!!, Color.GRAY, "<speccolour>"),
-    PLANTS("Plants", TextColor.color(21, 237, 50), Color.LIME, "<plantscolour>"),
-    ZOMBIES("Zombies", TextColor.color(136, 21, 237), Color.PURPLE, "<zombiescolour>"),
-    NULL("null", TextColor.color(0, 0, 0), Color.BLACK,"<#000000>")
 }
