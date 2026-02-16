@@ -33,6 +33,5 @@ class LobbyNameTagProvider : NameTagProvider() {
     public fun onTeamChange(e: PlayerTeamChangedEvent) {
         val tag = nametags[e.player.uniqueId] ?: return
         tag[1] = teamName(e.player, e.newTeam as BurbTeam?)
-        logger.info("Teams: ${e.player.name} now has value ${e.newTeam?.name}.")
     }
 }

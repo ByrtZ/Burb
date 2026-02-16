@@ -1,5 +1,6 @@
 package dev.byrt.burb.team
 
+import dev.byrt.burb.logger
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -93,6 +94,7 @@ class TeamManager<T> @PublishedApi internal constructor(
         }
 
         Bukkit.getPluginManager().callEvent(PlayerTeamChangedEvent(player, team))
+        logger.info("Teams: ${player.name} now has value ${team?.name}.")
 
         if (team != null) {
             scoreboardTeams.getValue(team).addPlayer(player)
