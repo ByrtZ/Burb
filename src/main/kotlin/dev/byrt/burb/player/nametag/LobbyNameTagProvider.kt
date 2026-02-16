@@ -1,6 +1,7 @@
 package dev.byrt.burb.player.nametag
 
 import dev.byrt.burb.game.GameManager
+import dev.byrt.burb.logger
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.PlayerTeamChangedEvent
 import dev.byrt.burb.text.Formatting
@@ -32,5 +33,6 @@ class LobbyNameTagProvider : NameTagProvider() {
     public fun onTeamChange(e: PlayerTeamChangedEvent) {
         val tag = nametags[e.player.uniqueId] ?: return
         tag[1] = teamName(e.player, e.newTeam as BurbTeam?)
+        logger.info("Teams: ${e.player.name} now has value ${e.newTeam?.name}.")
     }
 }
