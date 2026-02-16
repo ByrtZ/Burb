@@ -217,7 +217,7 @@ object BurbInterfaces {
                     if(player.vehicle != null) {
                         if(player.vehicle is ItemDisplay) {
                             val veh = player.vehicle as ItemDisplay
-                            veh.teleportDuration = 80
+                            veh.teleportDuration = 55
                             if(veh.scoreboardTags.contains("${player.uniqueId}-title-vehicle")) {
                                 veh.teleport(Location(veh.world, 1014.75, 18.5, 997.5, -55f, 15f))
                                 player.setRotation(-55f, 15f)
