@@ -4,18 +4,18 @@ import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent
 
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
+import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 
 import io.papermc.paper.event.entity.EntityKnockbackEvent
-import org.bukkit.entity.Explosive
 
+import org.bukkit.entity.Explosive
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.potion.PotionEffectType
 
 @Suppress("unused", "unstableApiUsage")
 class DamageEvent: Listener {
@@ -52,7 +52,7 @@ class DamageEvent: Listener {
                         e.isCancelled = true
                     } else {
                         if(e.damageSource.causingEntity != null) {
-                            val damage = e.damage * if(player.hasPotionEffect(PotionEffectType.RESISTANCE)) 0.5 else 1.0
+                            val damage = BurbWeapons.calculateDamage(player, e.damage)
                             if(e.damageSource.causingEntity is Player) {
                                 val damager = e.damageSource.causingEntity as Player
                                 if(!damager.burbPlayer().isDead && damage > 0.1) {
@@ -83,7 +83,7 @@ class DamageEvent: Listener {
                     e.isCancelled = true
                     return
                 } else {
-                    val damage = e.damage * if(player.hasPotionEffect(PotionEffectType.RESISTANCE)) 0.5 else 1.0
+                    val damage = BurbWeapons.calculateDamage(player, e.damage)
                     player.health -= damage
                     player.damage(0.00001, e.damager)
                     PlayerVisuals.damageIndicator(player, damage)

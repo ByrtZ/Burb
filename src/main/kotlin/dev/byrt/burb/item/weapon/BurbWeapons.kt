@@ -13,10 +13,12 @@ import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 import kotlin.random.Random
@@ -111,6 +113,23 @@ object BurbWeapons {
     fun useMeleeWeapon(player: Player, usedItem: ItemStack) {
         // Use sound
         usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.sound"), PersistentDataType.STRING)?.let { player.world.playSound(player.location, it, 1f, 1f) }
+    }
+
+    /** Calculate damage based on the listed effects **/
+    fun calculateDamage(entity: LivingEntity, damageDealt: Double): Double {
+        var damageReduction = 1.0
+        for(effect in entity.activePotionEffects) {
+            /** Reduce damage by multiplier for resistance levels, [25%, 50%, 75%] **/
+            if(effect.type == PotionEffectType.RESISTANCE) {
+                damageReduction = when(effect.amplifier) {
+                    0 -> 0.75
+                    1 -> 0.5
+                    2 -> 0.25
+                    else -> 1.0
+                }
+            }
+        }
+        return damageDealt * damageReduction
     }
 }
 

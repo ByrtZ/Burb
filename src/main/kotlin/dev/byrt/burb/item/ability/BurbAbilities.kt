@@ -283,7 +283,8 @@ object BurbAbilities {
                     player.addPotionEffects(
                         listOf(
                             PotionEffect(PotionEffectType.SPEED, 20 * 6, 4, false, false),
-                            PotionEffect(PotionEffectType.INVISIBILITY, 20 * 6, 0, false, false)
+                            PotionEffect(PotionEffectType.INVISIBILITY, 20 * 6, 0, false, false),
+                            PotionEffect(PotionEffectType.RESISTANCE, 20 * 6, 0, false, false)
                         )
                     )
                     ItemManager.clearItems(player)
@@ -312,6 +313,7 @@ object BurbAbilities {
                                 player.velocity = player.velocity.add(Vector(0.0, 0.75, 0.0))
                                 player.removePotionEffect(PotionEffectType.SPEED)
                                 player.removePotionEffect(PotionEffectType.INVISIBILITY)
+                                player.removePotionEffect(PotionEffectType.RESISTANCE)
                                 player.getAttribute(Attribute.SCALE)?.baseValue = 1.0
                                 ItemManager.giveCharacterItems(player)
                                 ItemManager.givePlayerTeamBoots(player, player.burbPlayer().playerTeam)
@@ -797,7 +799,7 @@ object BurbAbilities {
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_2 -> {
                     player.world.playSound(player.location, "block.beacon.activate", SoundCategory.VOICE, 2f, 1.25f)
                     player.world.playSound(player.location, "block.respawn_anchor.set_spawn", SoundCategory.VOICE, 0.75f, 1.5f)
-                    player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 7 * 20, 0, false, false))
+                    player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 7 * 20, 1, false, false))
                     player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 7 * 20, 3, false, false))
                     object: BukkitRunnable() {
                         override fun run() {
@@ -1038,6 +1040,7 @@ object BurbAbilities {
                 BurbAbility.ZOMBIES_RANGED_ABILITY_1 -> {
                     player.world.playSound(player.location, "block.barrel.open", SoundCategory.VOICE, 1f, 0.8f)
                     player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 5 * 20, 1, false, false))
+                    player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 5 * 20, 0, false, false))
                     object : BukkitRunnable() {
                         var timer = 0
                         val barrelEntity = player.world.spawn(player.location.setRotation(0f, 0f), ItemDisplay::class.java).apply {
@@ -1056,6 +1059,7 @@ object BurbAbilities {
                             if(player.burbPlayer().isDead || player.vehicle != null || !player.isOnline) {
                                 player.world.playSound(player.location, "block.barrel.close", SoundCategory.VOICE, 1f, 0.8f)
                                 player.removePotionEffect(PotionEffectType.SLOWNESS)
+                                player.removePotionEffect(PotionEffectType.RESISTANCE)
                                 barrelEntity.eject()
                                 barrelEntity.remove()
                                 cancel()
@@ -1063,6 +1067,7 @@ object BurbAbilities {
                             if(timer >= 5 * 20) {
                                 player.world.playSound(player.location, "block.barrel.close", SoundCategory.VOICE, 1f, 0.8f)
                                 player.removePotionEffect(PotionEffectType.SLOWNESS)
+                                player.removePotionEffect(PotionEffectType.RESISTANCE)
                                 player.world.createExplosion(player, player.location, 2.5f, false, false)
                                 player.velocity = player.velocity.setY(1.5)
                                 barrelEntity.eject()
