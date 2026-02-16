@@ -23,6 +23,7 @@ import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.player.nametag.LobbyNameTagProvider
 import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
@@ -358,5 +359,11 @@ class AdminCommands {
     @Permission("burb.cmd.debug")
     fun glowOff() {
         Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.removeFromGlowingGroup("all", player) }
+    }
+
+    @Command("debug nametags")
+    @Permission("burb.cmd.debug")
+    fun refreshNametags() {
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
     }
 }

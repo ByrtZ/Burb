@@ -92,9 +92,14 @@ class TeamManager<T> @PublishedApi internal constructor(
             scoreboardTeams.getValue(previousTeam).removePlayer(player)
         }
 
+        Bukkit.getPluginManager().callEvent(PlayerTeamChangedEvent(player, team))
+
         if (team != null) {
             scoreboardTeams.getValue(team).addPlayer(player)
             player.burbPlayer().characterSelect()
+            if (teamGlowingEnabled) {
+                PlayerGlowing.addToGlowingGroup("team_${team.name}", player)
+            }
         }
     }
 }

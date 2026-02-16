@@ -5,14 +5,13 @@ import com.noxcrew.interfaces.InterfacesListeners
 import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.player.PlayerGlowing
+import dev.byrt.burb.player.nametag.NameTagManager
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.CdnPackRegistry
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.BurbTranslator
 import dev.byrt.burb.text.TextAlignment
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.translation.GlobalTranslator
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
@@ -43,6 +42,9 @@ class Main : JavaPlugin() {
     lateinit var resourcePackApplier: ResourcePackApplier
         private set
 
+    lateinit var nameTagManager: NameTagManager
+        private set
+
     override fun onEnable() {
         logger.info("Starting Burb plugin...")
         GlobalTranslator.translator().addSource(BurbTranslator())
@@ -56,6 +58,8 @@ class Main : JavaPlugin() {
 
         resourcePackApplier = ResourcePackApplier(resourcePackLoader)
         server.pluginManager.registerEvents(resourcePackApplier, this)
+
+        nameTagManager = NameTagManager(this)
 
         Game.setup()
         setupCommands()

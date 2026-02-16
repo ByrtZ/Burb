@@ -9,6 +9,7 @@ import org.bukkit.Color
 
 enum class BurbTeam(
     override val teamDisplayName: String,
+    val playerNamePrefix: Component,
     val winMusic: Sound,
     val winSound: Sound,
     val loseSound: Sound,
@@ -17,6 +18,7 @@ enum class BurbTeam(
 ) : GameTeam, ComponentLike {
     PLANTS(
         "Plants",
+        Component.text("[PLANTS] ", TextColor.color(21, 237, 50)), // <- cool glyph goes here
         Sounds.Score.PLANTS_WIN_MUSIC,
         Sounds.Score.PLANTS_WIN,
         Sounds.Score.PLANTS_LOSE,
@@ -25,6 +27,7 @@ enum class BurbTeam(
     ),
     ZOMBIES(
         "Zombies",
+        Component.text("[ZOMBIES] ", TextColor.color(136, 21, 237)), // <- cool glyph goes here
         Sounds.Score.ZOMBIES_WIN_MUSIC,
         Sounds.Score.ZOMBIES_WIN,
         Sounds.Score.ZOMBIES_LOSE,
