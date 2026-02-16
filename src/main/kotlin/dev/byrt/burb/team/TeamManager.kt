@@ -10,8 +10,11 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.scoreboard.Team
-import java.util.UUID
+import java.util.*
 import kotlin.enums.EnumEntries
 import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
@@ -22,7 +25,7 @@ import kotlin.reflect.KClass
 class TeamManager<T> @PublishedApi internal constructor(
     private val teamClazz: KClass<T>,
     private val allTeams: EnumEntries<T>
-) where T : GameTeam, T : Enum<T> {
+) : Listener where T : GameTeam, T : Enum<T> {
 
     companion object {
         inline operator fun <reified T> invoke() where T : GameTeam, T : Enum<T> =
@@ -102,5 +105,13 @@ class TeamManager<T> @PublishedApi internal constructor(
                 PlayerGlowing.addToGlowingGroup("team_${team.name}", player)
             }
         }
+    }
+
+    /**
+     * Remove players from their team on quit.
+     */
+    @EventHandler
+    private fun onPlayerQuit(event: PlayerQuitEvent) {
+        setTeam(event.player, null)
     }
 }

@@ -34,6 +34,10 @@ object GameManager {
     private var gameState = GameState.IDLE
     private var overtimeActive = false
 
+    init {
+        Bukkit.getPluginManager().registerEvents(teams, plugin)
+    }
+
     fun nextState() {
         when(this.gameState) {
             GameState.IDLE -> { setGameState(GameState.STARTING) }
