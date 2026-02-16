@@ -4,8 +4,8 @@ tags:
 
 message_prefix: burb
 messages:
-  death.killed_by: <death_prefix><arg:0><reset> was vanquished by <arg:1><reset>.
-  death.died: <death_prefix><arg:0><reset> was vanquished.
+  death.killed_by: <death_prefix> <arg:0><reset> was vanquished by <arg:1><reset>.
+  death.died: <death_prefix> <arg:0><reset> was vanquished.
 
   ability:
     use: <white>You used <arg:0><reset>!
@@ -15,10 +15,11 @@ messages:
     suburbination: SUBURBINATION
 
   capture_point:
-    captured: <arrow_prefix><yellow><arg:0><reset> is now controlled by the <arg:1><reset>.
-    lost: <arrow_prefix><yellow><arg:0><reset> is no longer controlled by the <arg:1><reset>.
+    captured: <arrow_prefix> <yellow><arg:0><reset> is now controlled by the <arg:1><reset>.
+    lost: <arrow_prefix> <yellow><arg:0><reset> is no longer controlled by the <arg:1><reset>.
 
   team:
+    change: You are now on team <arg:0>.
     normal:
       plants: <plantscolour>Plants
       zombies: <zombiescolour>Zombies
@@ -29,11 +30,11 @@ messages:
 
   win_game:
     plants:
-      main: <plantscolour><b>Plants
+      main: <plantscolour><b>PLANTS
       sub: won the game!
       chat: <plantscolour><b>Plants<reset> won the game!
     zombies:
-      main: <zombiescolour><b>Zombies
+      main: <zombiescolour><b>ZOMBIES
       sub: won the game!
       chat: <zombiescolour><b>Zombies<reset> won the game!
     null:

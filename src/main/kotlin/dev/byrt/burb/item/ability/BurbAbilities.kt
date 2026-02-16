@@ -6,6 +6,7 @@ import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
@@ -846,7 +847,13 @@ object BurbAbilities {
                                     nearbyEnemies.forEach { enemyToHit ->
                                         val direction = player.location.direction.subtract(enemyToHit.location.direction)
                                         enemyToHit.velocity = direction.setY(0.25)
-                                        enemyToHit.health -= 5.0
+                                        // TODO: Simplify damage calculation
+                                        if(enemyToHit.health >= 5.0) {
+                                            enemyToHit.health -= 5.0
+                                        } else {
+                                            enemyToHit.health = 0.0
+                                        }
+                                        PlayerVisuals.damageIndicator(enemyToHit, 5.0)
                                         enemyToHit.damage(0.0001)
                                         enemyToHit.world.playSound(player.location, "entity.zombie.attack_iron_door", SoundCategory.VOICE, 1f, 1.25f)
                                     }
