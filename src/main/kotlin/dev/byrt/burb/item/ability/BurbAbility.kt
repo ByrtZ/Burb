@@ -57,7 +57,7 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     ZOMBIES_HEALER_ABILITY_3("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 225),
 
     /** Barrel Blast **/
-    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", "red_dye",  Material.RED_DYE, 750),
+    ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "BOOM!", "burb.character.zombies_ranged.ability.1", "red_dye",  Material.RED_DYE, 750),
     /** Cannon Rodeo **/
     ZOMBIES_RANGED_ABILITY_2("Cannon Rodeo", "YEE-HAW!", "burb.character.zombies_ranged.ability.2", "orange_dye",  Material.ORANGE_DYE, 625),
     /** Escape **/

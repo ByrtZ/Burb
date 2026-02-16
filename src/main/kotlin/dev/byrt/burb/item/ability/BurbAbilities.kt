@@ -1027,6 +1027,7 @@ object BurbAbilities {
                 // Deadbeard
                 BurbAbility.ZOMBIES_RANGED_ABILITY_1 -> {
                     player.world.playSound(player.location, "block.barrel.open", SoundCategory.VOICE, 1f, 0.8f)
+                    player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 5 * 20, 1, false, false))
                     object : BukkitRunnable() {
                         var timer = 0
                         val barrelEntity = player.world.spawn(player.location.clone(), ItemDisplay::class.java).apply {
@@ -1045,12 +1046,14 @@ object BurbAbilities {
                             player.addPassenger(barrelEntity)
                             if(player.burbPlayer().isDead || player.vehicle != null || !player.isOnline) {
                                 player.world.playSound(player.location, "block.barrel.close", SoundCategory.VOICE, 1f, 0.8f)
+                                player.removePotionEffect(PotionEffectType.SLOWNESS)
                                 barrelEntity.eject()
                                 barrelEntity.remove()
                                 cancel()
                             }
                             if(timer >= 5 * 20) {
                                 player.world.playSound(player.location, "block.barrel.close", SoundCategory.VOICE, 1f, 0.8f)
+                                player.removePotionEffect(PotionEffectType.SLOWNESS)
                                 player.world.createExplosion(player, player.location, 2.5f, false, false)
                                 player.velocity = player.velocity.setY(1.5)
                                 barrelEntity.eject()
