@@ -42,7 +42,7 @@ messages:
       chat: Nobody won, what a disappointment!
 
   special_event:
-    vanquish_showdown.wipe: <newline><death_prefix>>The <arg:0><reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>
+    vanquish_showdown.wipe: <newline><death_prefix> The <arg:0><reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>
 
   level_up:
     prefix:
