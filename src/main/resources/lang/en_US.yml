@@ -1,5 +1,5 @@
 tags:
-  arrow_prefix: [ <yellow>▶<reset> ]
+  arrow_prefix: [<yellow>▶<reset>]
   death_prefix: <gray>[<#ff3333><unicodeprefix:skull><gray>]<reset>
 
 message_prefix: burb
