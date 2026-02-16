@@ -21,11 +21,11 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     PLANTS_HEAVY_ABILITY_3("Burrow", "Burrow into the ground and leap out.", "burb.character.plants_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 200),
 
     /** Heal Beam **/
-    PLANTS_HEALER_ABILITY_1("Heal Beam", "Solar powered healing.", "burb.character.plants_healer.ability.1", "red_dye",  Material.RED_DYE, 40),
+    PLANTS_HEALER_ABILITY_1("Heal Beam", "Solar powered healing.", "burb.character.plants_healer.ability.1", "red_dye",  Material.RED_DYE, 80),
     /** Sunbeam **/
     PLANTS_HEALER_ABILITY_2("Sunbeam", "The power of the sun, in the palm of my hand.", "burb.character.plants_healer.ability.2", "orange_dye",  Material.ORANGE_DYE, 550),
-    /** Heal Flower **/
-    PLANTS_HEALER_ABILITY_3("Heal Flower", "", "burb.character.plants_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 400),
+    /** Photosynthesis **/
+    PLANTS_HEALER_ABILITY_3("Photosynthesis", "Up and away!", "burb.character.plants_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 400),
 
     /** Potato Mine **/
     PLANTS_RANGED_ABILITY_1("Potato Mine", "So cute, yet so deadly.", "burb.character.plants_ranged.ability.1", "red_dye",  Material.RED_DYE, 200),
@@ -50,11 +50,11 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
     ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 250),
 
     /** Heal Beam of Science **/
-    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", "red_dye",  Material.RED_DYE, 40),
+    ZOMBIES_HEALER_ABILITY_1("Heal Beam of Science", "", "burb.character.zombies_healer.ability.1", "red_dye",  Material.RED_DYE, 80),
     /** Science Mine **/
     ZOMBIES_HEALER_ABILITY_2("Science Mine", "And now we wait...", "burb.character.zombies_healer.ability.2", "orange_dye",  Material.ORANGE_DYE, 275),
     /** Warp **/
-    ZOMBIES_HEALER_ABILITY_3("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 175),
+    ZOMBIES_HEALER_ABILITY_3("Warp", "Transcend time and space, a few blocks forward.", "burb.character.zombies_healer.ability.3", "yellow_dye",  Material.YELLOW_DYE, 225),
 
     /** Barrel Blast **/
     ZOMBIES_RANGED_ABILITY_1("Barrel Blast", "", "burb.character.zombies_ranged.ability.1", "red_dye",  Material.RED_DYE, 750),
