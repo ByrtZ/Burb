@@ -1,5 +1,6 @@
 package dev.byrt.burb.event
 
+import dev.byrt.burb.item.weapon.BurbWeapons
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
@@ -47,7 +48,7 @@ class ProjectileEvent: Listener {
     private fun applyDamage(e: ProjectileHitEvent, entity: LivingEntity, shooter: Player) {
         if(e.entity.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))) {
             entity.damage(0.00001, shooter)
-            val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
+            val damageDealt = BurbWeapons.calculateDamage(entity, e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!)
             if(entity.health >= damageDealt) {
                 entity.health -= damageDealt
             } else {
