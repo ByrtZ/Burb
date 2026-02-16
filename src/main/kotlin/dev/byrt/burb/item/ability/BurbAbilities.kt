@@ -480,7 +480,7 @@ object BurbAbilities {
                     }
                 }
                 BurbAbility.PLANTS_HEALER_ABILITY_3 -> {
-                    player.world.playSound(player.location, "trial_spawner.about_to_spawn_item", SoundCategory.VOICE, 2f, 1.5f)
+                    player.world.playSound(player.location, "block.trial_spawner.about_to_spawn_item", SoundCategory.VOICE, 2f, 1.5f)
                     player.velocity = player.velocity.setY(1.5)
                     object : BukkitRunnable() {
                         override fun run() {
@@ -492,7 +492,7 @@ object BurbAbilities {
                                         player.location.direction.z * 1.5
                                     )
                                 )
-                                player.world.playSound(player.location, "block.beacon.power_select", SoundCategory.VOICE, 1f, 1f)
+                                player.world.playSound(player.location, "block.beacon.power_select", SoundCategory.VOICE, 2f, 1f)
                             }
                         }
                     }.runTaskLater(plugin, 20L)
@@ -1030,14 +1030,13 @@ object BurbAbilities {
                     player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 5 * 20, 1, false, false))
                     object : BukkitRunnable() {
                         var timer = 0
-                        val barrelEntity = player.world.spawn(player.location.clone(), ItemDisplay::class.java).apply {
+                        val barrelEntity = player.world.spawn(player.location.setRotation(0f, 0f), ItemDisplay::class.java).apply {
                             setItemStack(ItemStack(Material.BARREL))
-                            teleportDuration = 2
                             brightness = Display.Brightness(15, 15)
                             transformation = Transformation(
-                                Vector3f(0f, 0.5f, 0f),
+                                Vector3f(0f, -2f, 0f),
                                 transformation.leftRotation,
-                                Vector3f(1.5f, 1.5f, 1.5f),
+                                Vector3f(1.5f, 2f, 1.5f),
                                 transformation.rightRotation
                             )
                             addScoreboardTag("${player.uniqueId}.barrel_blast")
@@ -1062,17 +1061,17 @@ object BurbAbilities {
                             }
                             if(timer in (0 * 20)..(2 * 20)) {
                                 if(timer % 10 == 0) {
-                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 1f, 1f)
+                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 2f, 1f)
                                 }
                             }
-                            if(timer in (2 * 20)..(3 * 20)) {
+                            if(timer in (2 * 20)..(4 * 20)) {
                                 if(timer % 5 == 0) {
-                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 1f, 1.25f)
+                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 2f, 1.25f)
                                 }
                             }
                             if(timer in (4 * 20)..(5 * 20)) {
                                 if(timer % 2 == 0) {
-                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 1f, 1.5f)
+                                    player.world.playSound(player.location, "block.note_block.snare", SoundCategory.VOICE, 2f, 1.5f)
                                 }
                             }
                             timer++
