@@ -44,8 +44,8 @@ enum class BurbAbility(val abilityName: String, val abilityLore: String, val abi
 
     /** Super Ultra Ball **/
     ZOMBIES_HEAVY_ABILITY_1("Super Ultra Ball", "FUS-RO-DAH!", "burb.character.zombies_heavy.ability.1", "red_dye",  Material.RED_DYE, 450),
-    /** Turbo Twister **/
-    ZOMBIES_HEAVY_ABILITY_2("Turbo Twister", "", "burb.character.zombies_heavy.ability.2", "orange_dye",  Material.ORANGE_DYE, 700),
+    /** Shielding Cape **/
+    ZOMBIES_HEAVY_ABILITY_2("Shielding Cape", "Time to cause a ruckus.", "burb.character.zombies_heavy.ability.2", "orange_dye",  Material.ORANGE_DYE, 800),
     /** Heroic Kick **/
     ZOMBIES_HEAVY_ABILITY_3("Heroic Kick", "Strangely powerful toes.", "burb.character.zombies_heavy.ability.3", "yellow_dye",  Material.YELLOW_DYE, 250),
 

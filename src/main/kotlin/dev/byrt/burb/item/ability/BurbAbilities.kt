@@ -768,16 +768,79 @@ object BurbAbilities {
                         }
                     }.runTaskTimer(plugin, 0L, 1L)
                 }
-                //TODO: TURBO TWISTER: CHANGE TO GROUND POUND
+                BurbAbility.ZOMBIES_HEAVY_ABILITY_2 -> {
+                    player.world.playSound(player.location, "block.beacon.activate", SoundCategory.VOICE, 2f, 1.25f)
+                    player.world.playSound(player.location, "block.respawn_anchor.set_spawn", SoundCategory.VOICE, 0.75f, 1.5f)
+                    player.addPotionEffect(PotionEffect(PotionEffectType.RESISTANCE, 7 * 20, 0, false, false))
+                    player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 7 * 20, 3, false, false))
+                    object: BukkitRunnable() {
+                        override fun run() {
+                            if(player.isDead || !(player.hasPotionEffect(PotionEffectType.SLOWNESS) && player.hasPotionEffect(PotionEffectType.RESISTANCE))) {
+                                player.world.playSound(player.location, "block.beacon.deactivate", SoundCategory.VOICE, 2f, 1.25f)
+                                player.world.playSound(player.location, "block.respawn_anchor.deplete", SoundCategory.VOICE, 0.75f, 0.75f)
+                                cancel()
+                            } else {
+                                player.world.spawnParticle(
+                                    Particle.ENCHANTED_HIT,
+                                    player.location,
+                                    5,
+                                    0.75,
+                                    0.75,
+                                    0.75,
+                                    0.0
+                                )
+                            }
+                        }
+                    }.runTaskTimer(plugin, 0L, 1L)
+                }
                 BurbAbility.ZOMBIES_HEAVY_ABILITY_3 -> {
                     player.world.playSound(player.location, "entity.breeze.shoot", SoundCategory.VOICE, 1f, 0.75f)
+                    player.world.playSound(player.location, "item.spear.lunge_3", SoundCategory.VOICE, 1f, 1.25f)
                     player.velocity = player.velocity.add(
                         Vector(
-                            player.location.direction.x * 2.25,
-                            0.25,
-                            player.location.direction.z * 2.25
+                            player.location.direction.x * 2.3,
+                            0.5,
+                            player.location.direction.z * 2.3
                         )
                     )
+                    object : BukkitRunnable() {
+                        var timer = 0
+                        override fun run() {
+                            if(player.isDead || timer >= 5 * 20 || player.velocity.y <= 0.0) {
+                                cancel()
+                            } else {
+                                val nearbyEnemies = player.getNearbyEntities(1.25, 1.25, 1.25).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }.sortedBy { p -> player.location.distanceSquared(p.location) }
+                                if(nearbyEnemies.isNotEmpty()) {
+                                    val enemyToHit = nearbyEnemies[0]
+                                    val direction = player.location.direction.subtract(enemyToHit.location.direction)
+                                    enemyToHit.velocity = direction.setY(0.5)
+                                    enemyToHit.health -= 5.0
+                                    enemyToHit.damage(0.0001)
+                                    enemyToHit.world.playSound(player.location, "entity.zombie.attack_iron_door", SoundCategory.VOICE, 1f, 1.25f)
+                                    cancel()
+                                }
+                                player.world.spawnParticle(
+                                    Particle.CLOUD,
+                                    player.location,
+                                    3,
+                                    0.75,
+                                    0.75,
+                                    0.75,
+                                    0.0
+                                )
+                                player.world.spawnParticle(
+                                    Particle.ELECTRIC_SPARK,
+                                    player.location,
+                                    5,
+                                    0.75,
+                                    0.75,
+                                    0.75,
+                                    0.0
+                                )
+                                timer++
+                            }
+                        }
+                    }.runTaskTimer(plugin, 0L, 1L)
                 }
                 // Scientist
                 BurbAbility.ZOMBIES_HEALER_ABILITY_1 -> {

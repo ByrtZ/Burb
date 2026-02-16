@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.persistence.PersistentDataType
+import org.bukkit.potion.PotionEffectType
 
 @Suppress("unused")
 class ProjectileEvent: Listener {
@@ -48,7 +49,7 @@ class ProjectileEvent: Listener {
     private fun applyDamage(e: ProjectileHitEvent, entity: LivingEntity, shooter: Player) {
         if(e.entity.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))) {
             entity.damage(0.00001, shooter)
-            val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!
+            val damageDealt = e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!! * if(entity.hasPotionEffect(PotionEffectType.RESISTANCE)) 0.5 else 1.0
             if(entity.health >= damageDealt) {
                 entity.health -= damageDealt
             } else {

@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
+import org.bukkit.potion.PotionEffectType
 
 @Suppress("unused", "unstableApiUsage")
 class DamageEvent: Listener {
@@ -51,14 +52,15 @@ class DamageEvent: Listener {
                         e.isCancelled = true
                     } else {
                         if(e.damageSource.causingEntity != null) {
+                            val damage = e.damage * if(player.hasPotionEffect(PotionEffectType.RESISTANCE)) 0.5 else 1.0
                             if(e.damageSource.causingEntity is Player) {
                                 val damager = e.damageSource.causingEntity as Player
-                                if(!damager.burbPlayer().isDead && e.damage > 0.1) {
-                                    PlayerVisuals.damageIndicator(player, e.damage)
+                                if(!damager.burbPlayer().isDead && damage > 0.1) {
+                                    PlayerVisuals.damageIndicator(player, damage)
                                 }
                             } else {
-                                if(e.damage > 0.1) {
-                                    PlayerVisuals.damageIndicator(player, e.damage)
+                                if(damage > 0.1) {
+                                    PlayerVisuals.damageIndicator(player, damage)
                                 }
                             }
                         }
@@ -81,9 +83,10 @@ class DamageEvent: Listener {
                     e.isCancelled = true
                     return
                 } else {
-                    player.health -= e.damage
+                    val damage = e.damage * if(player.hasPotionEffect(PotionEffectType.RESISTANCE)) 0.5 else 1.0
+                    player.health -= damage
                     player.damage(0.00001, e.damager)
-                    PlayerVisuals.damageIndicator(player, e.damage)
+                    PlayerVisuals.damageIndicator(player, damage)
                     e.isCancelled = true
                 }
             }
