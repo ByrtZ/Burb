@@ -806,7 +806,7 @@ object BurbAbilities {
                     object : BukkitRunnable() {
                         var timer = 0
                         override fun run() {
-                            if(player.isDead || timer >= 5 * 20 || player.velocity.y <= 0.0) {
+                            if(player.isDead || timer >= 5 * 20 || (player.velocity.y <= 0.0 && player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR)) {
                                 cancel()
                             } else {
                                 val nearbyEnemies = player.getNearbyEntities(1.25, 1.25, 1.25).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }.sortedBy { p -> player.location.distanceSquared(p.location) }
