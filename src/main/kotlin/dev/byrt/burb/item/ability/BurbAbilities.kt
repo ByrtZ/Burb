@@ -481,7 +481,7 @@ object BurbAbilities {
                 }
                 BurbAbility.PLANTS_HEALER_ABILITY_3 -> {
                     player.world.playSound(player.location, "block.trial_spawner.about_to_spawn_item", SoundCategory.VOICE, 2f, 1.5f)
-                    player.velocity = player.velocity.setY(1.5)
+                    player.velocity = player.velocity.setY(1.25)
                     object : BukkitRunnable() {
                         override fun run() {
                             if(!player.burbPlayer().isDead || player.vehicle != null) {
@@ -491,6 +491,15 @@ object BurbAbilities {
                                         0.25,
                                         player.location.direction.z * 1.5
                                     )
+                                )
+                                player.world.spawnParticle(
+                                    Particle.END_ROD,
+                                    player.location,
+                                    40,
+                                    0.75,
+                                    0.75,
+                                    0.75,
+                                    0.0
                                 )
                                 player.world.playSound(player.location, "block.beacon.power_select", SoundCategory.VOICE, 2f, 1f)
                             }
@@ -799,7 +808,7 @@ object BurbAbilities {
                             } else {
                                 player.world.spawnParticle(
                                     Particle.ENCHANTED_HIT,
-                                    player.location,
+                                    player.eyeLocation,
                                     5,
                                     0.75,
                                     0.75,
@@ -826,19 +835,20 @@ object BurbAbilities {
                             if(player.isDead || timer >= 5 * 20 || player.vehicle != null || (player.velocity.y <= 0.0 && player.location.block.getRelative(BlockFace.DOWN).type != Material.AIR)) {
                                 cancel()
                             } else {
-                                val nearbyEnemies = player.getNearbyEntities(1.25, 1.25, 1.25).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }.sortedBy { p -> player.location.distanceSquared(p.location) }
+                                val nearbyEnemies = player.getNearbyEntities(1.25, 1.5, 1.25).filterIsInstance<Player>().filter { p -> p.burbPlayer().playerTeam == Teams.PLANTS && !p.burbPlayer().isDead }.sortedBy { p -> player.location.distanceSquared(p.location) }
                                 if(nearbyEnemies.isNotEmpty()) {
-                                    val enemyToHit = nearbyEnemies[0]
-                                    val direction = player.location.direction.subtract(enemyToHit.location.direction)
-                                    enemyToHit.velocity = direction.setY(0.5)
-                                    enemyToHit.health -= 5.0
-                                    enemyToHit.damage(0.0001)
-                                    enemyToHit.world.playSound(player.location, "entity.zombie.attack_iron_door", SoundCategory.VOICE, 1f, 1.25f)
+                                    nearbyEnemies.forEach { enemyToHit ->
+                                        val direction = player.location.direction.subtract(enemyToHit.location.direction)
+                                        enemyToHit.velocity = direction.setY(0.25)
+                                        enemyToHit.health -= 5.0
+                                        enemyToHit.damage(0.0001)
+                                        enemyToHit.world.playSound(player.location, "entity.zombie.attack_iron_door", SoundCategory.VOICE, 1f, 1.25f)
+                                    }
                                     cancel()
                                 }
                                 player.world.spawnParticle(
                                     Particle.CLOUD,
-                                    player.location,
+                                    player.eyeLocation,
                                     3,
                                     0.75,
                                     0.75,
@@ -847,7 +857,7 @@ object BurbAbilities {
                                 )
                                 player.world.spawnParticle(
                                     Particle.ELECTRIC_SPARK,
-                                    player.location,
+                                    player.eyeLocation,
                                     5,
                                     0.75,
                                     0.75,
@@ -1034,7 +1044,7 @@ object BurbAbilities {
                             setItemStack(ItemStack(Material.BARREL))
                             brightness = Display.Brightness(15, 15)
                             transformation = Transformation(
-                                Vector3f(0f, -2f, 0f),
+                                Vector3f(0f, -0.75f, 0f),
                                 transformation.leftRotation,
                                 Vector3f(1.5f, 2f, 1.5f),
                                 transformation.rightRotation
