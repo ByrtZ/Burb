@@ -27,6 +27,17 @@ class TeamsCommands {
         }
     }
 
+    @Command("teams remove <player>")
+    @CommandDescription("Removes a player from their team.")
+    @Permission("burb.cmd.teams")
+    fun removeFromTeam(sender: CommandSender, @Argument("player") player: Player) {
+        if (GameManager.getGameState() == GameState.IDLE) {
+            GameManager.teams.setTeam(player, null)
+        } else {
+            sender.sendMessage(Formatting.allTags.deserialize("<red>Teams cannot be modified in this state."))
+        }
+    }
+
     @Command("teams shuffle")
     @CommandDescription("Automatically assigns everyone online to a team.")
     @Permission("burb.cmd.teams")

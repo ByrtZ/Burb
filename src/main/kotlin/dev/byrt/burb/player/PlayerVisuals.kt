@@ -254,7 +254,7 @@ object PlayerVisuals {
     }
 
     fun postRespawn(player: Player, vehicle: ItemDisplay) {
-        player.eject()
+        vehicle.eject()
         vehicle.remove()
         player.burbPlayer().setIsDead(false)
         player.fireTicks = 0

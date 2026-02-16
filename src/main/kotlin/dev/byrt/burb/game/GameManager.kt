@@ -11,7 +11,8 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
-import dev.byrt.burb.player.PlayerManager.burbPlayer
+import dev.byrt.burb.player.nametag.LobbyNameTagProvider
+import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.text.ChatUtility
@@ -116,8 +117,7 @@ object GameManager {
 
     private fun starting() {
         InfoBoardManager.updateRound()
-        // TODO(lucy)
-//        TeamManager.hideTeamNametags()
+        plugin.nameTagManager.provider = null
         CapturePoints.initializeCapturePoints()
         if(Rounds.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {
@@ -160,7 +160,7 @@ object GameManager {
                 )
             )
         }
-//        TeamManager.showTeamNametags()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         GameVisuals.setDayTime(GameDayTime.DAY)
     }
 
@@ -180,7 +180,7 @@ object GameManager {
                 )
             )
         }
-//        TeamManager.showTeamNametags()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         Rounds.nextRound()
     }
 

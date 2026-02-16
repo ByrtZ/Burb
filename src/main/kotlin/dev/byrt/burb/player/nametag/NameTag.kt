@@ -1,5 +1,6 @@
 package dev.byrt.burb.player.nametag
 
+import dev.byrt.burb.plugin
 import net.kyori.adventure.text.Component
 import org.bukkit.entity.Display
 import org.bukkit.entity.Player
@@ -28,6 +29,16 @@ class NameTag(player: Player, size: Int): AutoCloseable {
          * The space between each line.
          */
         private const val LINE_HEIGHT = 0.3f
+
+        /**
+         * The distance at which players can see the nametag.
+         */
+        private const val VIEW_RANGE = 32f
+
+        /**
+         * Whether players should be able to see their own nametags. Useful for development.
+         */
+        private const val SHOW_TO_SELF = false
     }
 
     private var entities = buildList {
@@ -41,8 +52,14 @@ class NameTag(player: Player, size: Int): AutoCloseable {
                     Vector3f(1f, 1f, 1f),
                     Quaternionf(),
                 )
+                it.viewRange = VIEW_RANGE / 80f // woo magic numbers thanks mojang!!
                 player.addPassenger(it)
                 add(it)
+            }.let {
+                @Suppress("KotlinConstantConditions")
+                if (!SHOW_TO_SELF) {
+                    player.hideEntity(plugin, it)
+                }
             }
         }
     }

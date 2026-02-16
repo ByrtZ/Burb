@@ -6,6 +6,7 @@ import dev.byrt.burb.game.Game
 import dev.byrt.burb.messenger.BrandMessenger
 import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.nametag.NameTagManager
+import dev.byrt.burb.player.displayname.PlayerNameFormatter
 import dev.byrt.burb.resource.ResourcePackApplier
 import dev.byrt.burb.resource.ResourcePackLoader
 import dev.byrt.burb.resource.registry.CdnPackRegistry
@@ -50,6 +51,7 @@ class Main : JavaPlugin() {
         GlobalTranslator.translator().addSource(BurbTranslator())
         server.pluginManager.registerEvents(TextAlignment, this)
         server.pluginManager.registerEvents(PlayerGlowing, this)
+        server.pluginManager.registerEvents(PlayerNameFormatter(), this)
         resourcePackLoader = ResourcePackLoader(
             CdnPackRegistry("https://mc-rp.lucyydotp.me/burb"),
             dataPath.resolve("packs").createDirectories(),

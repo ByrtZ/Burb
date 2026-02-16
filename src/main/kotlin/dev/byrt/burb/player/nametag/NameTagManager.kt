@@ -23,6 +23,6 @@ class NameTagManager(private val plugin: Main) {
 
     init {
         // re-set to run setter
-        provider = LobbyNameTagProvider()
+        provider = DisplayNameTagProvider()
     }
 }

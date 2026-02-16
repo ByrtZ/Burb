@@ -10,9 +10,9 @@ import org.bukkit.Color
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 
+// TODO(lucy): finish this
 class LobbyNameTagProvider : NameTagProvider() {
 
-    // TODO(lucy): temp, replace this with something nicer
     fun getRank(player: Player) = if (player.isOp) Formatting.glyph("\uD002") else Component.empty()
 
     override val lines: Int = 2

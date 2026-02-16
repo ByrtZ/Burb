@@ -34,7 +34,6 @@ class TeamManager<T> @PublishedApi internal constructor(
     private val scoreboardTeams = allTeams.associateWith {
         InfoBoardManager.scoreboard.registerNewTeam(it.name).apply {
             displayName(Component.text(it.name))
-            prefix(Component.text(it.name + " ")) // temp, to be replaced by another system
             setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
             color(NamedTextColor.nearestTo(it.textColour))
         }
