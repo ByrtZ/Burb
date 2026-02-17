@@ -47,7 +47,7 @@ messages:
     vanquish_showdown.wipe: <newline><death_prefix> The <arg:0><reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>
 
   level_up:
-    prefix: <b><arg:0>LEVEL UP!<reset>
+    prefix: <b>LEVEL UP!<reset>
     new_level_text: You are now <arg:0><reset>.
 
   cosmetic:

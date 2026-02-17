@@ -12,6 +12,7 @@ import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.Formatting
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.title.Title
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
@@ -48,7 +49,7 @@ object BurbExperienceLevels {
                 // Level up
                 val newEvolution = BurbLevel.entries[currentLevel.ordinal + 1].levelName.endsWith("0")
 
-                val prefix = Component.translatable("burb.level_up.prefix", Component.text(BurbLevel.entries[currentLevel.ordinal + 1].levelColourTag))
+                val prefix = Component.translatable("burb.level_up.prefix").color(TextColor.fromHexString(BurbLevel.entries[currentLevel.ordinal + 1].levelColourTag))
 
                 val newLevelText = Component.translatable("burb.level_up.new_level_text",
                     Component.text(
