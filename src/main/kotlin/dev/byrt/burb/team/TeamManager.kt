@@ -40,6 +40,7 @@ class TeamManager<T> @PublishedApi internal constructor(
         InfoBoardManager.scoreboard.registerNewTeam(it.name).apply {
             displayName(Component.text(it.name))
             setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER)
+            setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER)
             color(NamedTextColor.nearestTo(it.textColour))
         }
     }
