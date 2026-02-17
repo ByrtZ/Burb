@@ -4,8 +4,9 @@ import dev.byrt.burb.item.rarity.ItemRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.text.Formatting
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
 
-enum class BurbCosmetic(val cosmeticName: String, val cosmeticId: String, val cosmeticLore: Component, val cosmeticObtainment: Component, val cosmeticType: ItemType, val cosmeticModel: String, val cosmeticRarity: ItemRarity, val isColorable: Boolean = false, val isHidden: Boolean = false) {
+enum class BurbCosmetic(val cosmeticName: String, val cosmeticId: String, val cosmeticLore: Component, val cosmeticObtainment: TranslatableComponent, val cosmeticType: ItemType, val cosmeticModel: String, val cosmeticRarity: ItemRarity, val isColorable: Boolean = false, val isHidden: Boolean = false) {
     INVALID_COSMETIC("Invalid", "burb.cosmetic.invalid", Formatting.allTags.deserialize("<i><gray>How did you get this?"), BurbCosmeticObtainmentSource.ERROR.obtainmentSourceComponent, ItemType.ACCESSORY, "barrier", ItemRarity.SPECIAL),
     // Common
     HAT_GRAVESTONE("Gravestone", "burb.cosmetic.hat.gravestone", Formatting.allTags.deserialize("<i><gray>You are die."), BurbCosmeticObtainmentSource.STICKER_SHOP.obtainmentSourceComponent, ItemType.HAT, "gravestone_point", ItemRarity.COMMON),

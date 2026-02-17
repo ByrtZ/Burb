@@ -137,7 +137,5 @@ object BurbCosmetics {
         return BurbCosmetic.INVALID_COSMETIC
     }
 
-    fun buildCosmeticLore(vararg components: Component): List<Component> {
-        return components.asList()
-    }
+    fun buildCosmeticLore(vararg components: Component): List<Component> = components.asList()
 }
