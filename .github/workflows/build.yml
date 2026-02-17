@@ -12,3 +12,6 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew build
+      - uses: actions/upload-artifact@v4
+        with:
+          path: build/libs/*.jar
