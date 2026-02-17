@@ -38,7 +38,7 @@ class NameTag(player: Player, size: Int): AutoCloseable {
         /**
          * Whether players should be able to see their own nametags. Useful for development.
          */
-        private const val SHOW_TO_SELF = false
+        private const val SHOW_TO_SELF = true //false
     }
 
     private var entities = buildList {
