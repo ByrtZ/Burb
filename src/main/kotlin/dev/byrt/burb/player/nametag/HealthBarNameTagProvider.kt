@@ -21,7 +21,7 @@ import kotlin.math.roundToInt
 
 class HealthBarNameTagProvider : NameTagProvider() {
     private companion object {
-        private const val BAR_WIDTH = 80
+        private const val BAR_WIDTH = 60
 
         private const val FILL_END_CHAR = '\uE001'
         private const val FILL_CHAR = '\uE002'
