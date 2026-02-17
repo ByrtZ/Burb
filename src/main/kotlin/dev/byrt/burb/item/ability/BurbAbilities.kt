@@ -384,7 +384,7 @@ object BurbAbilities {
                                                     NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                                 cancel()
                                             } else {
-                                                healingTeammate.health += 0.25
+                                                healingTeammate.heal(0.25)
                                                 player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.5<red>${ChatUtility.HEART_UNICODE}"))
                                             }
                                         }
@@ -932,7 +932,7 @@ object BurbAbilities {
                                                     NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                                 cancel()
                                             } else {
-                                                healingTeammate.health += 0.5
+                                                healingTeammate.heal(0.5)
                                                 player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.75<red>${ChatUtility.HEART_UNICODE}"))
                                             }
                                         }
