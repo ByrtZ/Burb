@@ -19,6 +19,6 @@ interface GlyphLike {
     /**
      * Gets the glyph as a MiniMessage tag, formatted with the glyph font.
      */
-    fun asMiniMesssage() = "<!shadow><font:$GLYPH_FONT>$rawGlyph</font></!shadow>"
+    fun asMiniMessage() = "<!shadow><font:$GLYPH_FONT>$rawGlyph</font></!shadow>"
 }
 

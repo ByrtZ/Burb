@@ -426,9 +426,9 @@ object BurbInterfaces {
                     // Do not show details if hidden
                     if(cosmetic.isHidden) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<red>???")) } }
-                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i>")) + listOf(cosmetic.cosmeticObtainment) + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
+                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
                     } else {
-                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + listOf(cosmetic.cosmeticObtainment) + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
+                        cosmeticItem.lore(listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment + listOf(Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")) )
                     }
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {

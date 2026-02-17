@@ -361,9 +361,15 @@ class AdminCommands {
         Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.removeFromGlowingGroup("all", player) }
     }
 
-    @Command("debug nametags")
+    @Command("debug refresh_nametags")
     @Permission("burb.cmd.debug")
     fun refreshNametags() {
         plugin.nameTagManager.provider = DisplayNameTagProvider()
+    }
+
+    @Command("debug translation <translation>")
+    @Permission("burb.cmd.debug")
+    fun sendTranslation(player: Player, @Argument("translation") translation: String) {
+        player.sendMessage(Component.translatable(translation))
     }
 }

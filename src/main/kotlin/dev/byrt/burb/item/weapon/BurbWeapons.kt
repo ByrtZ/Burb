@@ -35,7 +35,7 @@ object BurbWeapons {
                 val newAmmoMeta = usedItem.itemMeta
                 newAmmoMeta.lore(
                     listOf(
-                        Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                        Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMessage()}${ItemType.WEAPON.asMiniMessage()}"),
                         Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
                         Formatting.allTags.deserialize("<!i><white>Ammo: <yellow>${usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.current_ammo"), PersistentDataType.INTEGER)!! - 1}<gray>/<yellow>${burbPlayer.playerCharacter.characterMainWeapon.maxAmmo}<reset>"),
                         Formatting.allTags.deserialize("<!i><white>Fire Rate: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.fireRate}t<reset>"),
@@ -93,7 +93,7 @@ object BurbWeapons {
                     val newAmmoMeta = usedItem.itemMeta
                     newAmmoMeta.lore(
                         listOf(
-                            Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                            Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMessage()}${ItemType.WEAPON.asMiniMessage()}"),
                             Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
                             Formatting.allTags.deserialize("<!i><white>Ammo: <green>${usedItem.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.max_ammo"), PersistentDataType.INTEGER)}<gray>/<yellow>${burbPlayer.playerCharacter.characterMainWeapon.maxAmmo}<reset>"),
                             Formatting.allTags.deserialize("<!i><white>Fire Rate: <yellow>${burbPlayer.playerCharacter.characterMainWeapon.fireRate}t<reset>"),

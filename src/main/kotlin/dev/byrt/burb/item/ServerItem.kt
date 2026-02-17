@@ -127,13 +127,13 @@ object ServerItem {
         val chancesItemMeta = chancesItem.itemMeta
         chancesItemMeta.displayName(Formatting.allTags.deserialize("<!i><${rarity.itemRarity.rarityColour}>${rarity.itemRarity.rarityName} Fish"))
         val loreList = mutableListOf(
-            Formatting.allTags.deserialize("<!i><white>${rarity.itemRarity.asMiniMesssage()}${ItemType.FISH.asMiniMesssage()}"),
+            Formatting.allTags.deserialize("<!i><white>${rarity.itemRarity.asMiniMessage()}${ItemType.FISH.asMiniMessage()}"),
             Formatting.allTags.deserialize("<!i><#ffff00>Base Chance: <aqua>${rarity.weight}%"),
             Formatting.allTags.deserialize("<!i>"),
             Formatting.allTags.deserialize("<!i><#ffff00>Sub Rarity Chances:"),
-            Formatting.allTags.deserialize("<!i><white>${SubRarity.SHINY.asMiniMesssage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.SHINY.weight).fullDecimal()}%"),
-            Formatting.allTags.deserialize("<!i><white>${SubRarity.SHADOW.asMiniMesssage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.SHADOW.weight).fullDecimal()}%"),
-            Formatting.allTags.deserialize("<!i><white>${SubRarity.OBFUSCATED.asMiniMesssage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.OBFUSCATED.weight).fullDecimal()}%"),
+            Formatting.allTags.deserialize("<!i><white>${SubRarity.SHINY.asMiniMessage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.SHINY.weight).fullDecimal()}%"),
+            Formatting.allTags.deserialize("<!i><white>${SubRarity.SHADOW.asMiniMessage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.SHADOW.weight).fullDecimal()}%"),
+            Formatting.allTags.deserialize("<!i><white>${SubRarity.OBFUSCATED.asMiniMessage()} <#ffff00>Chance: <dark_aqua>${(rarity.weight * SubRarity.OBFUSCATED.weight).fullDecimal()}%"),
             Formatting.allTags.deserialize("<!i>"),
         )
         chancesItemMeta.lore(loreList)
