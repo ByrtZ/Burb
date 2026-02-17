@@ -6,6 +6,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.progression.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
+import net.kyori.adventure.text.Component
 
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -38,7 +39,7 @@ object BurbCosmetics {
         val cosmeticItem = ItemStack(if(cosmetic.isColorable) Material.LEATHER_HORSE_ARMOR else Material.RESIN_CLUMP, 1)
         val cosmeticItemMeta = cosmeticItem.itemMeta
         cosmeticItemMeta.displayName(Formatting.allTags.deserialize("<!i><${cosmetic.cosmeticRarity.rarityColour}>${cosmetic.cosmeticName}"))
-        val cosmeticLore = listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticLore + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment
+        val cosmeticLore = buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticLore, Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticObtainment)
         cosmeticItemMeta.lore(cosmeticLore)
 
         if(cosmetic.cosmeticType == ItemType.HAT) {
@@ -134,5 +135,9 @@ object BurbCosmetics {
             }
         }
         return BurbCosmetic.INVALID_COSMETIC
+    }
+
+    fun buildCosmeticLore(vararg components: Component): List<Component> {
+        return components.asList()
     }
 }
