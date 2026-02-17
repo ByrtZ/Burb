@@ -37,6 +37,7 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
             ItemManager.giveCharacterItems(this.bukkitPlayer())
         } else {
             ItemManager.clearItems(this.bukkitPlayer())
+            ItemManager.givePlayerTeamBoots(this.bukkitPlayer())
         }
         this.bukkitPlayer().activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) this.bukkitPlayer().removePotionEffect(e.type)}
         if(this.playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {

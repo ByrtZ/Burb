@@ -38,7 +38,7 @@ object BurbCosmetics {
         val cosmeticItem = ItemStack(if(cosmetic.isColorable) Material.LEATHER_HORSE_ARMOR else Material.RESIN_CLUMP, 1)
         val cosmeticItemMeta = cosmeticItem.itemMeta
         cosmeticItemMeta.displayName(Formatting.allTags.deserialize("<!i><${cosmetic.cosmeticRarity.rarityColour}>${cosmetic.cosmeticName}"))
-        val cosmeticLore = listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticLore + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticObtainment
+        val cosmeticLore = listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticLore + listOf(Formatting.allTags.deserialize("<!i>")) + listOf(cosmetic.cosmeticObtainment)
         cosmeticItemMeta.lore(cosmeticLore)
 
         if(cosmetic.cosmeticType == ItemType.HAT) {
