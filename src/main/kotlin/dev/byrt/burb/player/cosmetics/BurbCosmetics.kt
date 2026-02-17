@@ -3,7 +3,7 @@ package dev.byrt.burb.player.cosmetics
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.data.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
 

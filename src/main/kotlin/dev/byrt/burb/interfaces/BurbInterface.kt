@@ -9,7 +9,7 @@ import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.item.ServerItem
 import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.data.BurbPlayerData
 import dev.byrt.burb.plugin
 
 import com.noxcrew.interfaces.drawable.Drawable.Companion.drawable
