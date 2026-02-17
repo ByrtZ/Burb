@@ -4,6 +4,7 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.logger
 import dev.byrt.burb.player.character.BurbCharacter
+import dev.byrt.burb.plugin
 import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.team.BurbTeam
 
@@ -14,7 +15,7 @@ import org.bukkit.potion.PotionEffectType
 
 import java.util.UUID
 
-class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerCharacter: BurbCharacter, var isDead: Boolean) {
+class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerType, var playerCharacter: BurbCharacter) {
     init {
         setCharacter(BurbCharacter.NULL)
         logger.info("Player Manager: Registered player ${this.playerName} as BurbPlayer.")
@@ -25,6 +26,19 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
         this.playerType = newType
         logger.info("Type: ${this.playerName} now has value ${this.playerType}.")
     }
+
+    var isDead: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            logger.info("Dead State: ${this.playerName} now has value $value")
+
+            if (value) {
+                plugin.nameTagManager.provider?.remove(this.bukkitPlayer())
+            } else {
+                plugin.nameTagManager.provider?.create(this.bukkitPlayer())
+            }
+        }
 
     @Deprecated("Prefer checking against GameManager.teams directly")
     val playerTeam: BurbTeam?
@@ -44,12 +58,6 @@ class BurbPlayer(val uuid: UUID, val playerName: String, var playerType: PlayerT
             this.bukkitPlayer().addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
         }
         logger.info("Character: ${this.playerName} now has value ${this.playerCharacter}.")
-    }
-
-    fun setIsDead(newIsDead: Boolean) {
-        if(newIsDead == isDead) return
-        this.isDead = newIsDead
-        logger.info("Dead State: ${this.playerName} now has value ${this.isDead}")
     }
 
     fun bukkitPlayer(): Player {

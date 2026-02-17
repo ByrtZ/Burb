@@ -67,7 +67,7 @@ object PlayerVisuals {
      * @param [forcedTeamWipe] Debug parameter, forces a team wipe and only runs if receiving team has more than one player
      */
     fun death(player: Player, killer: Player?, showDeathMessage: Boolean, isTeamWipe: Boolean = false, forcedTeamWipe: Boolean = false) {
-        player.burbPlayer().setIsDead(true)
+        player.burbPlayer().isDead = true
         player.activePotionEffects.forEach { e -> if(e.type !in listOf(PotionEffectType.HUNGER, PotionEffectType.INVISIBILITY)) player.removePotionEffect(e.type)}
         if(player.burbPlayer().playerCharacter == BurbCharacter.ZOMBIES_HEAVY) {
             player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, PotionEffect.INFINITE_DURATION, 3, false, false))
@@ -257,7 +257,7 @@ object PlayerVisuals {
     fun postRespawn(player: Player, vehicle: ItemDisplay) {
         vehicle.eject()
         vehicle.remove()
-        player.burbPlayer().setIsDead(false)
+        player.burbPlayer().isDead = false
         player.fireTicks = 0
         player.health = player.getAttribute(Attribute.MAX_HEALTH)!!.value
         player.inventory.helmet = null

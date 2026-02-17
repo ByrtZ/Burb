@@ -672,12 +672,12 @@ object BurbAbilities {
                                         for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
                                             if(nearbyPlayer.burbPlayer().playerTeam == BurbTeam.PLANTS) {
                                                 if(!nearbyPlayer.burbPlayer().isDead) {
-                                                    nearbyPlayer.damage(0.001, player)
                                                     if(nearbyPlayer.health >= 1.0) {
                                                         nearbyPlayer.health -= 1.0
                                                     } else {
                                                         nearbyPlayer.health = 0.0
                                                     }
+                                                    nearbyPlayer.damage(0.001, player)
                                                 }
                                             }
                                         }
