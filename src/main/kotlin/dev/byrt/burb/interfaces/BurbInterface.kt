@@ -31,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
+import net.kyori.adventure.translation.GlobalTranslator
 
 import org.bukkit.Location
 import org.bukkit.Material
@@ -43,6 +44,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 import java.time.Duration
+import java.util.Locale
 
 class BurbInterface(player: Player, interfaceType: BurbInterfaceType) {
     init {
@@ -426,9 +428,9 @@ object BurbInterfaces {
                     // Do not show details if hidden
                     if(cosmetic.isHidden) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<red>???")) } }
-                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticObtainment, Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
+                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
                     } else {
-                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticObtainment, Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
+                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
                     }
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {
