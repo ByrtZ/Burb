@@ -427,7 +427,7 @@ object BurbInterfaces {
                     cosmeticItem.type = Material.GRAY_DYE
                     // Do not show details if hidden
                     if(cosmetic.isHidden) {
-                        cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<red>???")) } }
+                        cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<!i><red>???")) } }
                         cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
                     } else {
                         cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
