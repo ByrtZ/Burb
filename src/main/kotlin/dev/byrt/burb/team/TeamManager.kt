@@ -104,7 +104,7 @@ class TeamManager<T> @PublishedApi internal constructor(
         player.showTitle(Title.title(
             Component.empty(),
             teamChangeComponent,
-            Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)),
+            Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250)),
         ))
         player.burbPlayer().characterSelect()
         if (team != null) {

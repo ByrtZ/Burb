@@ -14,8 +14,7 @@ object PlayerManager {
 
     fun registerPlayer(player: Player) {
         logger.info("Player Manager: Registering player ${player.name} as BurbPlayer.")
-        val burbPlayer =
-            BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, BurbCharacter.NULL, isDead = false)
+        val burbPlayer = BurbPlayer(player.uniqueId, player.name, PlayerType.INVALID, BurbCharacter.NULL, isDead = false)
         burbPlayers[player.uniqueId] = burbPlayer
         BurbPlayerData.getPlayerData(player)
         ItemManager.clearItems(player)
