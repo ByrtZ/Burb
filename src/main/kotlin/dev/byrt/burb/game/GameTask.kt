@@ -9,7 +9,7 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.progression.BurbExperienceLevels
 import dev.byrt.burb.plugin
 
 import net.kyori.adventure.text.Component
@@ -24,9 +24,9 @@ import org.bukkit.scheduler.BukkitRunnable
 import java.time.Duration
 
 object GameTask {
-    private const val WIN_XP = 200
-    private const val DRAW_XP = 30
-    private const val LOSE_XP = 50
+    private const val WIN_XP = 250
+    private const val DRAW_XP = 150
+    private const val LOSE_XP = 100
 
     private var gameRunnables = mutableMapOf<Int, BukkitRunnable>()
     private var currentGameTaskId = 0
@@ -312,13 +312,13 @@ object GameTask {
 
                             if (winningTeam == null) {
                                 player.playSound(playerTeam.loseSound)
-                                BurbPlayerData.appendExperience(player, DRAW_XP)
+                                BurbExperienceLevels.appendExperience(player, DRAW_XP)
                             } else if (winningTeam == playerTeam) {
                                 player.playSound(playerTeam.winSound)
-                                BurbPlayerData.appendExperience(player, WIN_XP)
+                                BurbExperienceLevels.appendExperience(player, WIN_XP)
                             } else {
                                 player.playSound(playerTeam.loseSound)
-                                BurbPlayerData.appendExperience(player, LOSE_XP)
+                                BurbExperienceLevels.appendExperience(player, LOSE_XP)
                             }
                         }
                     }

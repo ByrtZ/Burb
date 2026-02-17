@@ -1,8 +1,9 @@
 package dev.byrt.burb.player.cosmetics
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TranslatableComponent
 
-enum class BurbCosmeticObtainmentSource(val obtainmentSourceComponent: Component) {
+enum class BurbCosmeticObtainmentSource(val obtainmentSourceComponent: TranslatableComponent) {
     STICKER_SHOP(Component.translatable("burb.cosmetic.obtainment.sticker_shop")),
     FOOTBALL_GAME(Component.translatable("burb.cosmetic.obtainment.football_game")),
     NPC_SHOP(Component.translatable("burb.cosmetic.obtainment.npc_shop")),

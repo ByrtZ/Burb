@@ -3,9 +3,12 @@ package dev.byrt.burb.player.cosmetics
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.data.BurbPlayerData
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.Formatting
+
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.translation.GlobalTranslator
 
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -16,6 +19,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataType
 
 import java.io.File
+import java.util.Locale
 
 @Suppress("unstableApiUsage")
 object BurbCosmetics {
@@ -38,7 +42,7 @@ object BurbCosmetics {
         val cosmeticItem = ItemStack(if(cosmetic.isColorable) Material.LEATHER_HORSE_ARMOR else Material.RESIN_CLUMP, 1)
         val cosmeticItemMeta = cosmeticItem.itemMeta
         cosmeticItemMeta.displayName(Formatting.allTags.deserialize("<!i><${cosmetic.cosmeticRarity.rarityColour}>${cosmetic.cosmeticName}"))
-        val cosmeticLore = listOf(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMesssage()}${cosmetic.cosmeticType.asMiniMesssage()}")) + listOf(Formatting.allTags.deserialize("<!i>")) + cosmetic.cosmeticLore + listOf(Formatting.allTags.deserialize("<!i>")) + listOf(cosmetic.cosmeticObtainment)
+        val cosmeticLore = buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticLore, Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH))
         cosmeticItemMeta.lore(cosmeticLore)
 
         if(cosmetic.cosmeticType == ItemType.HAT) {
@@ -135,4 +139,6 @@ object BurbCosmetics {
         }
         return BurbCosmetic.INVALID_COSMETIC
     }
+
+    fun buildCosmeticLore(vararg components: Component): List<Component> = components.asList()
 }

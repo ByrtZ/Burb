@@ -35,7 +35,7 @@ object ItemManager {
         val teamBootsType = ItemType.ARMOUR
         teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team?.name?.lowercase()?.capitalize() ?: "Spectator"} Boots").decoration(TextDecoration.ITALIC, false))
         val teamBootsLore = listOf(
-            Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
+            Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMessage()}${teamBootsType.asMiniMessage()}").decoration(TextDecoration.ITALIC, false),
             Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team?.name?.lowercase()?.capitalize() ?: "Spectator"} boots.").decoration(TextDecoration.ITALIC, false)
         )
         teamBootsMeta.lore(teamBootsLore)
@@ -63,14 +63,14 @@ object ItemManager {
         mainWeaponMeta.displayName(Formatting.allTags.deserialize("<!i><${ItemRarity.COMMON.rarityColour}>${burbPlayerCharacter.characterMainWeapon.weaponName}"))
         if(burbPlayerCharacter.characterMainWeapon.weaponType == BurbMainWeaponType.MELEE) {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMessage()}${ItemType.WEAPON.asMiniMessage()}"),
                 Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
                 Formatting.allTags.deserialize("<!i><white>${burbPlayerCharacter.characterMainWeapon.weaponLore}")
             ))
             mainWeaponMeta.isUnbreakable = true
         } else {
             mainWeaponMeta.lore(listOf(
-                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.WEAPON.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMessage()}${ItemType.WEAPON.asMiniMessage()}"),
                 Formatting.allTags.deserialize("<!i><white>Damage: <yellow>${burbPlayerCharacter.characterMainWeapon.weaponDamage}<red>${ChatUtility.HEART_UNICODE}<reset>"),
                 Formatting.allTags.deserialize("<!i><white>Ammo: <green>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<gray>/<yellow>${burbPlayerCharacter.characterMainWeapon.maxAmmo}<reset>"),
                 Formatting.allTags.deserialize("<!i><white>Fire Rate: <yellow>${burbPlayerCharacter.characterMainWeapon.fireRate}t<reset>"),
@@ -124,7 +124,7 @@ object ItemManager {
         abilityItemMeta.persistentDataContainer.set(NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER, ability.abilityCooldown)
         abilityItemMeta.displayName(Formatting.allTags.deserialize("<!i><${ItemRarity.COMMON.rarityColour}>${ability.abilityName.ifEmpty { ability.abilityId + ".name" }}<gray>: ").append(ability.getDisplayCombo(character)))
         abilityItemMeta.lore(listOf(
-                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMesssage()}${ItemType.UTILITY.asMiniMesssage()}"),
+                Formatting.allTags.deserialize("<!i><white>${ItemRarity.COMMON.asMiniMessage()}${ItemType.UTILITY.asMiniMessage()}"),
                 Formatting.allTags.deserialize("<!i><white>${ability.abilityLore.ifEmpty { ability.abilityId + ".lore" }}")
             )
         )

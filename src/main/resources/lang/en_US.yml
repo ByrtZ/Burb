@@ -33,11 +33,11 @@ messages:
     plants:
       main: <plantscolour><b>PLANTS
       sub: won the game!
-      chat: <plantscolour><b>Plants<reset> won the game!
+      chat: <plantscolour><b>PLANTS<reset> won the game!
     zombies:
       main: <zombiescolour><b>ZOMBIES
       sub: won the game!
-      chat: <zombiescolour><b>Zombies<reset> won the game!
+      chat: <zombiescolour><b>ZOMBIES<reset> won the game!
     null:
       main: <yellow><b>DRAW
       sub: It was a tie, do better next time.
@@ -47,10 +47,7 @@ messages:
     vanquish_showdown.wipe: <newline><death_prefix> The <arg:0><reset> got <b><#ff3333>TEAM WIPED!<reset><newline><gray>Their respawn timer has been extended.<newline>
 
   level_up:
-    prefix:
-      max_level: <b><rainbow>LEVEL UP!<reset>
-      new_evolution: <b><gradient:gold:yellow:gold:yellow:gold>LEVEL UP!<reset>
-      normal: <b><burbcolour>LEVEL UP!<reset>
+    prefix: <b>LEVEL UP!<reset>
     new_level_text: You are now <arg:0><reset>.
 
   cosmetic:

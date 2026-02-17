@@ -1,6 +1,5 @@
 package dev.byrt.burb.game.objective
 
-import dev.byrt.burb.game.Game
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Scores
@@ -10,19 +9,16 @@ import dev.byrt.burb.game.location.BurbAreas
 import dev.byrt.burb.game.visual.GameDayTime
 import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.library.Sounds
-import dev.byrt.burb.library.Translation
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.music.MusicStress
-import dev.byrt.burb.player.PlayerManager.burbPlayer
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.progression.BurbExperienceLevels
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.Formatting
 import dev.byrt.burb.text.Formatting.sendTranslated
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
-import net.kyori.adventure.text.Component.translatable
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Location
@@ -116,13 +112,13 @@ object CapturePoints {
             }
             when (newSuburbinationTeam) {
                 BurbTeam.PLANTS -> for (player in Bukkit.getOnlinePlayers()
-                    .filter { filter -> filter.burbPlayer().playerTeam == BurbTeam.PLANTS }) {
-                    BurbPlayerData.appendExperience(player, 150)
+                    .filter { filter -> GameManager.teams.getTeam(filter.uniqueId) == BurbTeam.PLANTS }) {
+                    BurbExperienceLevels.appendExperience(player, 200)
                 }
 
                 BurbTeam.ZOMBIES -> for (player in Bukkit.getOnlinePlayers()
-                    .filter { filter -> filter.burbPlayer().playerTeam == BurbTeam.ZOMBIES }) {
-                    BurbPlayerData.appendExperience(player, 150)
+                    .filter { filter -> GameManager.teams.getTeam(filter.uniqueId) == BurbTeam.ZOMBIES }) {
+                    BurbExperienceLevels.appendExperience(player, 200)
                 }
 
                 else -> {}
@@ -181,7 +177,7 @@ object CapturePoints {
 
                 val playersInRange = GameManager.teams.allParticipants()
                     .filter { !it.isDead && it.bukkitPlayer().location.distanceSquared(location) <= 25.0 }
-                    .groupingBy { it.playerTeam }
+                    .groupingBy { GameManager.teams.getTeam(it.uuid) }
                     .eachCount()
 
                 val plants = playersInRange[BurbTeam.PLANTS] ?: 0
@@ -232,7 +228,7 @@ object CapturePoints {
                 ) {
                     Bukkit.getOnlinePlayers().forEach {
                         it.sendTranslated("burb.capture_point.lost", text(capturePoint.pointName), capturePoint.lastCapturedTeam ?: Component.empty())
-                        it.playSound(if (it.burbPlayer().playerTeam == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_UNFRIENDLY else Sounds.Score.CAPTURE_FRIENDLY)
+                        it.playSound(if (GameManager.teams.getTeam(it.uniqueId) == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_UNFRIENDLY else Sounds.Score.CAPTURE_FRIENDLY)
                     }
                     capturedPoints.remove(capturePoint)
                     capturePoint.lastCapturedTeam = null
@@ -270,10 +266,10 @@ object CapturePoints {
                         capturePoint.lastCapturedTeam = dominatingTeam
                         Bukkit.getOnlinePlayers().forEach {
                             it.sendTranslated("burb.capture_point.captured", text(capturePoint.pointName), dominatingTeam)
-                            it.playSound(if (it.burbPlayer().playerTeam == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
-                            if (it.burbPlayer().playerTeam == capturePoint.dominatingTeam) BurbPlayerData.appendExperience(
+                            it.playSound(if (GameManager.teams.getTeam(it.uniqueId) == capturePoint.lastCapturedTeam) Sounds.Score.CAPTURE_FRIENDLY else Sounds.Score.CAPTURE_UNFRIENDLY)
+                            if (GameManager.teams.getTeam(it.uniqueId) == capturePoint.dominatingTeam) BurbExperienceLevels.appendExperience(
                                 it,
-                                10
+                                20
                             )
                         }
                     }

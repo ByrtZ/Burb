@@ -26,7 +26,7 @@ import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.nametag.DisplayNameTagProvider
 import dev.byrt.burb.player.nametag.HealthBarNameTagProvider
 import dev.byrt.burb.player.progression.BurbLevel
-import dev.byrt.burb.player.progression.BurbPlayerData
+import dev.byrt.burb.player.progression.BurbExperienceLevels
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.text.Formatting.BURB_FONT
@@ -222,14 +222,14 @@ class AdminCommands {
     @CommandDescription("Debug command for XP")
     @Permission("burb.cmd.debug")
     fun debugXp(player: Player, @Argument("xp") xp: Int) {
-        BurbPlayerData.appendExperience(player, xp)
+        BurbExperienceLevels.appendExperience(player, xp)
     }
 
     @Command("progression set_level <level>")
     @CommandDescription("Debug command for levels")
     @Permission("burb.cmd.debug")
     fun debugLevel(player: Player, @Argument("level") level: BurbLevel) {
-        BurbPlayerData.setLevel(player, level)
+        BurbExperienceLevels.setLevel(player, level)
     }
 
     @Command("cosmetic item <cosmetic> [player]")
@@ -343,7 +343,7 @@ class AdminCommands {
     @CommandDescription("Debug command for combos")
     @Permission("burb.cmd.debug")
     fun debugTeamWipeList(player: Player) {
-        if(player.burbPlayer().playerTeam == null) return
+        if(GameManager.teams.getTeam(player.uniqueId) == null) return
         if(GameManager.getGameState() !in listOf(GameState.IN_GAME, GameState.OVERTIME)) return
         BurbAbilityComboManager.resetCombo(player.burbPlayer())
     }
@@ -362,15 +362,21 @@ class AdminCommands {
         Bukkit.getOnlinePlayers().forEach { player -> PlayerGlowing.removeFromGlowingGroup("all", player) }
     }
 
-    @Command("debug nametags")
+    @Command("debug nametags displayname")
     @Permission("burb.cmd.debug")
     fun refreshNametags() {
         plugin.nameTagManager.provider = DisplayNameTagProvider()
     }
 
-    @Command("debug healthbars")
+    @Command("debug nametags healthbar")
     @Permission("burb.cmd.debug")
     fun setHealthBars() {
         plugin.nameTagManager.provider = HealthBarNameTagProvider()
+    }
+
+    @Command("debug translation <translation>")
+    @Permission("burb.cmd.debug")
+    fun sendTranslation(player: Player, @Argument("translation") translation: String) {
+        player.sendMessage(Component.translatable(translation))
     }
 }
