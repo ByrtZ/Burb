@@ -90,11 +90,15 @@ abstract class NameTagProvider: AutoCloseable, Listener {
     abstract fun setUpForPlayer(player: Player, nametag: NameTag)
 
     public fun create(player: Player) {
-        nametags.remove(player.uniqueId)?.close()
+        remove(player)
 
         val tag = NameTag(player, lines)
         setUpForPlayer(player, tag)
         nametags[player.uniqueId] = tag
+    }
+
+    fun remove(player: Player) {
+        nametags.remove(player.uniqueId)?.close()
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -104,7 +108,7 @@ abstract class NameTagProvider: AutoCloseable, Listener {
 
     @EventHandler
     public fun onLeave(e: PlayerQuitEvent) {
-        nametags.remove(e.player.uniqueId)?.close()
+        remove(e.player)
     }
 
     override fun close() {

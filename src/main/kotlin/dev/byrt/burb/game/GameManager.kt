@@ -12,6 +12,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.player.nametag.DisplayNameTagProvider
+import dev.byrt.burb.player.nametag.HealthBarNameTagProvider
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
@@ -121,7 +122,7 @@ object GameManager {
 
     private fun starting() {
         InfoBoardManager.updateRound()
-        plugin.nameTagManager.provider = null
+        plugin.nameTagManager.provider = HealthBarNameTagProvider()
         CapturePoints.initializeCapturePoints()
         if(Rounds.getRound() == Round.ONE) {
             for(player in Bukkit.getOnlinePlayers()) {

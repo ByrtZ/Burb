@@ -47,13 +47,13 @@ class ProjectileEvent: Listener {
 
     private fun applyDamage(e: ProjectileHitEvent, entity: LivingEntity, shooter: Player) {
         if(e.entity.persistentDataContainer.has(NamespacedKey(plugin, "burb.weapon.damage"))) {
-            entity.damage(0.00001, shooter)
             val damageDealt = BurbWeapons.calculateDamage(entity, e.entity.persistentDataContainer.get(NamespacedKey(plugin, "burb.weapon.damage"), PersistentDataType.DOUBLE)!!)
             if(entity.health >= damageDealt) {
                 entity.health -= damageDealt
             } else {
                 entity.health = 0.0
             }
+            entity.damage(0.00001, shooter)
             entity.world.playSound(entity.location, "entity.player.hurt", 0.5f, 1f)
             shooter.playSound(shooter.location, "entity.arrow.hit_player", 0.25f, 0f)
             PlayerVisuals.damageIndicator(entity, damageDealt)

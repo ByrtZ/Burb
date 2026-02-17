@@ -384,7 +384,7 @@ object BurbAbilities {
                                                     NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                                 cancel()
                                             } else {
-                                                healingTeammate.health += 0.25
+                                                healingTeammate.heal(0.25)
                                                 player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.5<red>${ChatUtility.HEART_UNICODE}"))
                                             }
                                         }
@@ -672,12 +672,12 @@ object BurbAbilities {
                                         for(nearbyPlayer in smokeGrenadeLocation.getNearbyPlayers(3.0)) {
                                             if(nearbyPlayer.burbPlayer().playerTeam == BurbTeam.PLANTS) {
                                                 if(!nearbyPlayer.burbPlayer().isDead) {
-                                                    nearbyPlayer.damage(0.001, player)
                                                     if(nearbyPlayer.health >= 1.0) {
                                                         nearbyPlayer.health -= 1.0
                                                     } else {
                                                         nearbyPlayer.health = 0.0
                                                     }
+                                                    nearbyPlayer.damage(0.001, player)
                                                 }
                                             }
                                         }
@@ -932,7 +932,7 @@ object BurbAbilities {
                                                     NamespacedKey(plugin, "burb.ability.cooldown"), PersistentDataType.INTEGER)!!)
                                                 cancel()
                                             } else {
-                                                healingTeammate.health += 0.5
+                                                healingTeammate.heal(0.5)
                                                 player.sendActionBar(Formatting.allTags.deserialize("<green>Healed ${healingTeammate.name} for 0.75<red>${ChatUtility.HEART_UNICODE}"))
                                             }
                                         }
