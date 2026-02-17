@@ -70,11 +70,11 @@ class HealthBarNameTagProvider : NameTagProvider() {
         out.append(Component.text("\uE000"))
 
         val healthText = Component.text(health.roundToInt().toString()).font(Formatting.BURB_FONT)
-        val healthWidth = TextAlignment.tinsel.textWidthMeasurer().measure(healthText)
+        val healthOffset = (TextAlignment.tinsel.textWidthMeasurer().measure(healthText) / 2f).roundToInt()
 
-        out.append(Spacing.spacing(-12))
+        out.append(Spacing.spacing(-(healthOffset + 7)))
         out.append(healthText)
-        out.append(Spacing.spacing(11 - healthWidth))
+        out.append(Spacing.spacing(7 - healthOffset))
         return out.build()
     }
 

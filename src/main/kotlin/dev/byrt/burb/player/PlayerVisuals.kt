@@ -23,6 +23,7 @@ import io.papermc.paper.entity.TeleportFlag
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.*
+import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Display
 import org.bukkit.entity.Firework
@@ -258,7 +259,7 @@ object PlayerVisuals {
         vehicle.remove()
         player.burbPlayer().setIsDead(false)
         player.fireTicks = 0
-        player.health = 20.0
+        player.health = player.getAttribute(Attribute.MAX_HEALTH)!!.value
         player.inventory.helmet = null
         SpawnPoints.respawnLocation(player)
         ItemManager.givePlayerTeamBoots(player)
