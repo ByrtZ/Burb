@@ -33,10 +33,10 @@ object ItemManager {
         val teamBootsMeta = teamBoots.itemMeta
         val teamBootsRarity = if(player.isOp) ItemRarity.SPECIAL else ItemRarity.COMMON
         val teamBootsType = ItemType.ARMOUR
-        teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team?.name ?: "Spectator"} Boots").decoration(TextDecoration.ITALIC, false))
+        teamBootsMeta.displayName(Formatting.allTags.deserialize("<!i><${teamBootsRarity.rarityColour}>${team?.name?.lowercase()?.capitalize() ?: "Spectator"} Boots").decoration(TextDecoration.ITALIC, false))
         val teamBootsLore = listOf(
             Formatting.allTags.deserialize("<!i><white>${teamBootsRarity.asMiniMesssage()}${teamBootsType.asMiniMesssage()}").decoration(TextDecoration.ITALIC, false),
-            Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team?.name ?: "Spectator"} boots.").decoration(TextDecoration.ITALIC, false)
+            Formatting.allTags.deserialize("<!i><white>A snazzy pair of ${team?.name?.lowercase()?.capitalize() ?: "Spectator"} boots.").decoration(TextDecoration.ITALIC, false)
         )
         teamBootsMeta.lore(teamBootsLore)
         teamBootsMeta.isUnbreakable = true
@@ -51,12 +51,12 @@ object ItemManager {
     }
 
     fun giveCharacterItems(player: Player) {
+        givePlayerTeamBoots(player)
         if (GameManager.teams.getTeam(player.uniqueId) == null) return
         clearItems(player)
         val burbPlayer = player.burbPlayer()
         val burbPlayerCharacter = burbPlayer.playerCharacter
         if(player.burbPlayer().isDead) return
-        givePlayerTeamBoots(player)
 
         val mainWeapon = ItemStack(burbPlayerCharacter.characterMainWeapon.material, 1)
         val mainWeaponMeta = mainWeapon.itemMeta

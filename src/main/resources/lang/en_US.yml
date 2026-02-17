@@ -52,3 +52,12 @@ messages:
       new_evolution: <b><gradient:gold:yellow:gold:yellow:gold>LEVEL UP!<reset>
       normal: <b><burbcolour>LEVEL UP!<reset>
     new_level_text: You are now <arg:0><reset>.
+
+  cosmetic:
+    obtainment:
+      sticker_shop: <!i><burbcolour>Obtained from the sticker shop.
+      football_game: <!i><#ffff00>Obtained rarely from football.
+      npc_shop: <!i><#03fcc2>Obtained by purchasing from a shop.
+      gnome_task: <!i><#ec1c24>Obtained by completing a colossal task.
+      hidden: <!i><#ff3374>Who knows where you get this?
+      error: <!i><#ec1c24>Obtained by encountering... an error?
