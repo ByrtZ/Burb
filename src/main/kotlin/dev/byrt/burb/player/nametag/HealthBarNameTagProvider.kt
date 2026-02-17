@@ -55,11 +55,12 @@ class HealthBarNameTagProvider : NameTagProvider() {
     }
 
     private fun drawHealthbar(player: Player, health: Double = player.health): Component {
+        val team = GameManager.teams.getTeam(player.uniqueId) ?: return Component.empty()
         val out = Component.text().font(Key.key("burb", "healthbar"))
         val healthPct = health / player.getAttribute(Attribute.MAX_HEALTH)!!.value
         val fillAmount = ((BAR_WIDTH * healthPct).roundToInt() + 1).coerceAtMost(BAR_WIDTH)
         out.append(
-            Component.text(buildString(0, fillAmount), GameManager.teams.getTeam(player.uniqueId)?.textColour ?: NamedTextColor.GRAY)
+            Component.text(buildString(0, fillAmount), team.textColour)
         )
         out.append(
             Component.text(buildString(fillAmount, BAR_WIDTH - fillAmount), NamedTextColor.DARK_GRAY)
