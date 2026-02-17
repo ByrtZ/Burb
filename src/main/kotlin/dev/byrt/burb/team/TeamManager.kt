@@ -99,25 +99,25 @@ class TeamManager<T> @PublishedApi internal constructor(
         }
 
         Bukkit.getPluginManager().callEvent(PlayerTeamChangedEvent(player, team))
-
-        val teamChangeComponent = Component.translatable("burb.team.change", Component.text(team?.teamDisplayName ?: "<gray>Spectator"))
+        val teamChangeComponent = teamChangeComponent(team)
         player.sendMessage(teamChangeComponent)
         player.showTitle(Title.title(
             Component.empty(),
             teamChangeComponent,
             Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1)),
         ))
-
-        logger.info("Teams: ${player.name} now has value ${team?.name}.")
-
+        player.burbPlayer().characterSelect()
         if (team != null) {
             scoreboardTeams.getValue(team).addPlayer(player)
-            player.burbPlayer().characterSelect()
             if (teamGlowingEnabled) {
                 PlayerGlowing.addToGlowingGroup("team_${team.name}", player)
             }
         }
+        logger.info("Teams: ${player.name} now has value ${team?.name}.")
     }
+
+    /** Return component depending on what team is set **/
+    fun teamChangeComponent(team: T?): Component = team?.let { Component.translatable("burb.team.join", it) } ?: Component.translatable("burb.team.leave")
 
     /**
      * Remove players from their team on quit.

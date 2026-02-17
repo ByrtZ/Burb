@@ -19,7 +19,8 @@ messages:
     lost: <arrow_prefix> <yellow><arg:0><reset> is no longer controlled by the <arg:1><reset>.
 
   team:
-    change: You are now on team <arg:0>.
+    join: You are now on team <arg:0>.
+    leave: You are no longer on a team.
     normal:
       plants: <plantscolour>Plants
       zombies: <zombiescolour>Zombies

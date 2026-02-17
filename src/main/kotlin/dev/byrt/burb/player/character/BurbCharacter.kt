@@ -25,7 +25,7 @@ enum class BurbCharacter(val characterName: String, val characterType: BurbChara
 }
 
 fun BurbPlayer.setRandomCharacter() {
-    when(this.playerTeam) {
+    when(GameManager.teams.getTeam(this.uuid)) {
         BurbTeam.PLANTS -> {
             val charactersList = mutableListOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_HEAVY, BurbCharacter.PLANTS_HEALER, BurbCharacter.PLANTS_RANGED)
             charactersList.remove(this.playerCharacter)
@@ -40,6 +40,7 @@ fun BurbPlayer.setRandomCharacter() {
     }
 }
 
+/** Resets the character for non-participants and opens character select interface for participants. **/
 fun BurbPlayer.characterSelect() {
     setCharacter(BurbCharacter.NULL)
     object : BukkitRunnable() {

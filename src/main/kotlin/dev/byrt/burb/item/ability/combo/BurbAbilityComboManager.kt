@@ -70,12 +70,11 @@ object BurbAbilityComboManager {
     fun checkCombo(burbPlayer: BurbPlayer) {
         // Return if player has no combo active
         if(!abilityComboMap.containsKey(burbPlayer)) return
-        val abilitySet = burbPlayer.playerCharacter.characterAbilities.abilitySet
         for(combo in BurbAbilityComboClicks.entries) {
             if(combo.comboClicks == abilityComboMap[burbPlayer]?.combo) {
-                for(ability in abilitySet) {
+                for(ability in burbPlayer.playerCharacter.characterAbilities.abilitySet) {
                     if(combo.name.removePrefix("${burbPlayer.playerCharacter.characterType}_").contains(ability.name.removePrefix("${burbPlayer.playerCharacter.name}_"))) {
-                        BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability))
+                        BurbAbilities.useAbility(burbPlayer.bukkitPlayer(), ability, ItemManager.getAbilityItem(ability, burbPlayer.playerCharacter))
                         resetCombo(burbPlayer)
                         return
                     }

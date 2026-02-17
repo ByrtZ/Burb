@@ -55,9 +55,7 @@ object BurbAbilities {
                 player.playSound(Sounds.Misc.INTERFACE_ERROR)
                 return
             } else {
-                player.sendActionBar(
-                    Component.translatable("burb.ability.use", Component.text(ability.abilityName, GameManager.teams.getTeam(player.uniqueId)?.textColour ?: NamedTextColor.WHITE))
-                )
+                player.sendActionBar(Component.translatable("burb.ability.use", Component.text(ability.abilityName, GameManager.teams.getTeam(player.uniqueId)?.textColour ?: NamedTextColor.WHITE)))
                 player.playSound(Sounds.Weapon.ABILITY_COMBO_CAST)
             }
             // Set cooldown on use

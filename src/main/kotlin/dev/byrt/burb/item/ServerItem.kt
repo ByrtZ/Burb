@@ -1,6 +1,6 @@
 package dev.byrt.burb.item
 
-import dev.byrt.burb.item.ability.combo.BurbAbilityComboClicks
+import dev.byrt.burb.item.ability.combo.getDisplayCombo
 import dev.byrt.burb.item.rarity.SubRarity
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.lobby.npc.BurbNPC
@@ -26,30 +26,7 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i>"),
             Formatting.allTags.deserialize("<!i><light_purple>Abilities:")
         )
-
-
-        for(ability in character.characterAbilities.abilitySet) {
-            if(character in listOf(BurbCharacter.PLANTS_HEAVY, BurbCharacter.ZOMBIES_HEAVY)) {
-                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("MELEE") }) {
-                    val comboClicks = mutableListOf<String>()
-                    if(combo.name.removePrefix("MELEE_").contains(ability.name.removePrefix("${character.name}_"))) {
-                        combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
-                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
-                        comboClicks.clear()
-                    }
-                }
-            }
-            if(character in listOf(BurbCharacter.PLANTS_SCOUT, BurbCharacter.PLANTS_RANGED, BurbCharacter.PLANTS_HEALER, BurbCharacter.ZOMBIES_SCOUT, BurbCharacter.ZOMBIES_RANGED, BurbCharacter.ZOMBIES_HEALER)) {
-                for(combo in BurbAbilityComboClicks.entries.filter { it.name.startsWith("RANGED") }) {
-                    val comboClicks = mutableListOf<String>()
-                    if(combo.name.removePrefix("RANGED_").contains(ability.name.removePrefix("${character.name}_"))) {
-                        combo.comboClicks.forEach { comboClick -> comboClicks.add("<aqua>${comboClick.comboAbbreviation}") }
-                        loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: <aqua>${comboClicks.joinToString("<gray>-").trim()}"))
-                        comboClicks.clear()
-                    }
-                }
-            }
-        }
+        for(ability in character.characterAbilities.abilitySet) loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: ").append(ability.getDisplayCombo(character)))
         characterItemMeta.lore(loreList)
         characterItem.itemMeta = characterItemMeta
         return characterItem
