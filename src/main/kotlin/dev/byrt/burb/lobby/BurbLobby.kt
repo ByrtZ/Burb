@@ -93,7 +93,7 @@ object BurbLobby {
     }
 
     fun createTutorialBoards() {
-        BurbTutorialBoard.entries.forEach { board ->
+        for(board in BurbTutorialBoard.entries) {
             val display = board.boardLocation.world.spawn(board.boardLocation, TextDisplay::class.java).apply {
                 text(GlobalTranslator.renderer().render(board.boardText, Locale.ENGLISH))
                 billboard = Display.Billboard.VERTICAL
@@ -112,7 +112,6 @@ object BurbLobby {
         val maxRotation = texts.size - 1
         object : BukkitRunnable() {
             override fun run() {
-                if(Bukkit.getServer().isStopping) cancel()
                 if(rotation > maxRotation) rotation = 0
                 display.apply {
                     text(GlobalTranslator.renderer().render(texts[rotation], Locale.ENGLISH))
