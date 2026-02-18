@@ -93,10 +93,11 @@ object BurbLobby {
     }
 
     fun createTutorialBoards() {
-        for(board in BurbTutorialBoard.entries) {
+        BurbTutorialBoard.entries.forEach { board ->
             val display = board.boardLocation.world.spawn(board.boardLocation, TextDisplay::class.java).apply {
                 text(GlobalTranslator.renderer().render(board.boardText, Locale.ENGLISH))
                 billboard = Display.Billboard.VERTICAL
+                isShadowed = true
                 addScoreboardTag("burb.tutorial.text_display")
             }
             if(board.otherTexts.isNotEmpty()) {
