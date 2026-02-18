@@ -10,9 +10,10 @@ import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
-import net.kyori.adventure.translation.GlobalTranslator
-import org.bukkit.Bukkit
 
+import net.kyori.adventure.translation.GlobalTranslator
+
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.Display
@@ -22,6 +23,7 @@ import org.bukkit.entity.TextDisplay
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
+
 import java.util.Locale
 
 object BurbLobby {
@@ -92,6 +94,7 @@ object BurbLobby {
         }.runTaskLater(plugin, 2 * 20L)
     }
 
+    private val tutorialBoards = mutableMapOf<TextDisplay, Int?>()
     fun createTutorialBoards() {
         for(board in BurbTutorialBoard.entries) {
             val display = board.boardLocation.world.spawn(board.boardLocation, TextDisplay::class.java).apply {
@@ -102,6 +105,8 @@ object BurbLobby {
             }
             if(board.otherTexts.isNotEmpty()) {
                 runTutorialBoardRotation(board, display)
+            } else {
+                tutorialBoards[display] = null
             }
         }
     }
@@ -110,7 +115,7 @@ object BurbLobby {
         val texts = listOf(board.boardText) + board.otherTexts
         var rotation = 0
         val maxRotation = texts.size - 1
-        object : BukkitRunnable() {
+        val boardRunnable = object : BukkitRunnable() {
             override fun run() {
                 if(rotation > maxRotation) rotation = 0
                 display.apply {
@@ -119,13 +124,21 @@ object BurbLobby {
                 rotation += 1
             }
         }.runTaskTimer(plugin, 0L, 15 * 20L)
+        tutorialBoards[display] = boardRunnable.taskId
     }
 
     fun destroyTutorialBoards() {
+        // Catch any stray boards that might not have been cleaned up
         for(world in Bukkit.getWorlds()) {
             for(display in world.getEntitiesByClass(TextDisplay::class.java)) {
                 if(display.scoreboardTags.contains("burb.tutorial.text_display")) display.remove()
             }
         }
+        // Remove registered boards
+        tutorialBoards.forEach {
+            Bukkit.getScheduler().cancelTask(it.value ?: return@forEach)
+            it.key.remove()
+        }
+        tutorialBoards.clear()
     }
 }
