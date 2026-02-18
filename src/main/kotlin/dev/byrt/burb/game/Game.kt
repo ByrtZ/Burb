@@ -6,11 +6,11 @@ import dev.byrt.burb.game.visual.GameDayTime
 import dev.byrt.burb.game.visual.GameVisuals
 import dev.byrt.burb.item.ItemManager
 import dev.byrt.burb.item.ServerItem
+import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.lobby.npc.BurbNPCs
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
-import dev.byrt.burb.team.TeamManager
 import dev.byrt.burb.text.ChatUtility
 import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
@@ -36,8 +36,8 @@ object Game {
 
     fun setup() {
         InfoBoardManager.buildScoreboard()
-//        TeamManager.buildDisplayTeams()
         CommitIntegration.grabLatestCommit()
+        BurbLobby.createTutorialBoards()
         LobbyBall.createLobbyBall()
         BurbNPCs.spawnAllNPCs()
         GameVisuals.resetDayTime()
@@ -45,10 +45,10 @@ object Game {
 
     fun cleanup() {
         BurbNPCs.clearNPCs()
-//        TeamManager.destroyDisplayTeams()
         InfoBoardManager.destroyScoreboard()
         CapturePoints.clearCapturePoints()
         ItemManager.destroyBullets()
+        BurbLobby.destroyTutorialBoards()
         LobbyBall.cleanup()
         CommitIntegration.destroyUpdatesBoard()
         GameVisuals.resetDayTime()

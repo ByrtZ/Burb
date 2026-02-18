@@ -5,18 +5,23 @@ import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
+import dev.byrt.burb.lobby.tutorial.BurbTutorialBoard
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
 import dev.byrt.burb.player.PlayerVisuals
 import dev.byrt.burb.plugin
+import net.kyori.adventure.translation.GlobalTranslator
+import org.bukkit.Bukkit
 
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
+import org.bukkit.entity.TextDisplay
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
+import java.util.Locale
 
 object BurbLobby {
     fun playerJoinTitleScreen(player: Player) {
@@ -84,5 +89,41 @@ object BurbLobby {
                 }.runTaskLater(plugin, 20L)
             }
         }.runTaskLater(plugin, 2 * 20L)
+    }
+
+    fun createTutorialBoards() {
+        for(board in BurbTutorialBoard.entries) {
+            val display = board.boardLocation.world.spawn(board.boardLocation, TextDisplay::class.java).apply {
+                text(GlobalTranslator.renderer().render(board.boardText, Locale.ENGLISH))
+                addScoreboardTag("burb.tutorial.text_display")
+            }
+            if(board.otherTexts.isNotEmpty()) {
+                runTutorialBoardRotation(board, display)
+            }
+        }
+    }
+
+    fun runTutorialBoardRotation(board: BurbTutorialBoard, display: TextDisplay) {
+        val texts = listOf(board.boardText) + board.otherTexts
+        var rotation = 0
+        val maxRotation = texts.size - 1
+        object : BukkitRunnable() {
+            override fun run() {
+                if(Bukkit.getServer().isStopping) cancel()
+                if(rotation > maxRotation) rotation = 0
+                display.apply {
+                    text(GlobalTranslator.renderer().render(texts[rotation], Locale.ENGLISH))
+                }
+                rotation += 1
+            }
+        }.runTaskTimer(plugin, 0L, 15 * 20L)
+    }
+
+    fun destroyTutorialBoards() {
+        for(world in Bukkit.getWorlds()) {
+            for(display in world.getEntitiesByClass(TextDisplay::class.java)) {
+                if(display.scoreboardTags.contains("burb.tutorial.text_display")) display.remove()
+            }
+        }
     }
 }

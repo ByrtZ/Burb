@@ -829,9 +829,9 @@ object BurbAbilities {
                     player.world.playSound(player.location, "item.spear.lunge_3", SoundCategory.VOICE, 1f, 1.25f)
                     player.velocity = player.velocity.add(
                         Vector(
-                            player.location.direction.x * 2.3,
-                            0.5,
-                            player.location.direction.z * 2.3
+                            player.location.direction.x * 2.25,
+                            0.25,
+                            player.location.direction.z * 2.25
                         )
                     )
                     object : BukkitRunnable() {

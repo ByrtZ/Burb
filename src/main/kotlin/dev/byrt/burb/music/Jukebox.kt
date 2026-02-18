@@ -103,29 +103,29 @@ object Jukebox {
         for(music in Music.entries) {
             stopMusicLoop(player, music)
         }
+        if(SpecialEvents.isEventRunning()) {
+            when(SpecialEvents.getCurrentEvent()) {
+                SpecialEvent.TREASURE_TIME -> startMusicLoop(player, Music.TREASURE_TIME_LOW)
+                SpecialEvent.MOON_GRAVITY -> startMusicLoop(player, Music.LOBBY_UNDERWORLD)
+                SpecialEvent.RANDOS_REVENGE -> startMusicLoop(player, Music.RANDOS_REVENGE)
+                SpecialEvent.VANQUISH_SHOWDOWN -> startMusicLoop(player, Music.VANQUISH_SHOWDOWN)
+                null -> {}
+            }
+            return
+        }
+        if(CapturePoints.isSuburbinating()) {
+            when(CapturePoints.getSuburbinatingTeam()) {
+                BurbTeam.PLANTS -> startMusicLoop(player, Music.SUBURBINATION_PLANTS)
+                BurbTeam.ZOMBIES -> startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
+                else -> {}
+            }
+            return
+        }
         when(musicStress) {
             MusicStress.LOW -> startMusicLoop(player, Music.RANDOM_LOW)
             MusicStress.MEDIUM -> startMusicLoop(player, Music.RANDOM_MEDIUM)
             MusicStress.HIGH -> startMusicLoop(player, Music.RANDOM_HIGH)
-            else -> {
-                if(SpecialEvents.isEventRunning()) {
-                    when(SpecialEvents.getCurrentEvent()) {
-                        SpecialEvent.TREASURE_TIME -> startMusicLoop(player, Music.TREASURE_TIME_LOW)
-                        SpecialEvent.MOON_GRAVITY -> startMusicLoop(player, Music.LOBBY_UNDERWORLD)
-                        SpecialEvent.RANDOS_REVENGE -> startMusicLoop(player, Music.RANDOS_REVENGE)
-                        SpecialEvent.VANQUISH_SHOWDOWN -> startMusicLoop(player, Music.VANQUISH_SHOWDOWN)
-                        null -> {}
-                    }
-                } else {
-                    if(CapturePoints.isSuburbinating()) {
-                        when(CapturePoints.getSuburbinatingTeam()) {
-                            BurbTeam.PLANTS -> startMusicLoop(player, Music.SUBURBINATION_PLANTS)
-                            BurbTeam.ZOMBIES -> startMusicLoop(player, Music.SUBURBINATION_ZOMBIES)
-                            else -> {}
-                        }
-                    }
-                }
-            }
+            else -> {}
         }
     }
 
