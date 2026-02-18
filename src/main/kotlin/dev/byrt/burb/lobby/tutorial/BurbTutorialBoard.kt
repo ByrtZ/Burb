@@ -7,6 +7,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Location
 
 enum class BurbTutorialBoard(val boardName: String, val boardText: TranslatableComponent, var otherTexts: List<TranslatableComponent> = emptyList(), val boardLocation: Location) {
+    INTRO_TUTORIAL("Introduction", Component.translatable("burb.tutorial.intro"), otherTexts = emptyList(), Location(Bukkit.getWorlds()[0], 987.5, 5.5, 994.5, 115f, 0f)),
     SUBURBINATION_TUTORIAL("Suburbination", Component.translatable("burb.tutorial.suburbination"), otherTexts = emptyList(), Location(Bukkit.getWorlds()[0], -5.5, 0.5, 22.5, -140f, 0f)),
     EVENTS_TUTORIAL("Special Events", Component.translatable("burb.tutorial.special_events.generic"), otherTexts = listOf(
         Component.translatable("burb.tutorial.special_events.moon_gravity"),

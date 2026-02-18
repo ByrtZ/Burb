@@ -15,6 +15,7 @@ import org.bukkit.Bukkit
 
 import org.bukkit.GameMode
 import org.bukkit.Location
+import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.TextDisplay
@@ -95,6 +96,7 @@ object BurbLobby {
         for(board in BurbTutorialBoard.entries) {
             val display = board.boardLocation.world.spawn(board.boardLocation, TextDisplay::class.java).apply {
                 text(GlobalTranslator.renderer().render(board.boardText, Locale.ENGLISH))
+                billboard = Display.Billboard.VERTICAL
                 addScoreboardTag("burb.tutorial.text_display")
             }
             if(board.otherTexts.isNotEmpty()) {
