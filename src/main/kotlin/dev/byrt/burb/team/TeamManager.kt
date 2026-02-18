@@ -106,9 +106,7 @@ class TeamManager<T> @PublishedApi internal constructor(
             teamChangeComponent,
             Title.Times.times(Duration.ofMillis(250), Duration.ofSeconds(3), Duration.ofMillis(250)),
         ))
-        if(player.isOnline) {
-            player.burbPlayer().characterSelect()
-        }
+        player.burbPlayer().characterSelect()
         if (team != null) {
             scoreboardTeams.getValue(team).addPlayer(player)
             if (teamGlowingEnabled) {
