@@ -39,6 +39,9 @@ class GlowingInterceptor(val glowingManager: PlayerGlowing, val player: ServerPl
             msg.subPackets().map { newPacket(it) ?: it } as Iterable<Packet<in ClientGamePacketListener>>)
 
         is ClientboundSetEntityDataPacket -> {
+            // Ignore self
+            if (player.id == msg.id) return msg
+
             val target = player.level().server.playerList.players
                 .find { it.id == msg.id }
                 ?.takeIf { glowingManager.glowingGroups.values.any { group -> it.uuid in group && player.uuid in group } }
