@@ -38,7 +38,7 @@ class NameTag(player: Player, size: Int): AutoCloseable {
         /**
          * Whether players should be able to see their own nametags. Useful for development.
          */
-        private const val SHOW_TO_SELF = false
+        private const val SHOW_TO_SELF = true
     }
 
     private var entities = buildList {
@@ -101,7 +101,7 @@ abstract class NameTagProvider: AutoCloseable, Listener {
         nametags.remove(player.uniqueId)?.close()
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public fun onJoin(e: PlayerJoinEvent) {
         create(e.player)
     }

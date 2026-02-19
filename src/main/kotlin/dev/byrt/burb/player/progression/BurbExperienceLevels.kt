@@ -14,12 +14,19 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.title.Title
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
 import java.io.File
 import java.time.Duration
 
 object BurbExperienceLevels {
+
+    fun getLevel(player: Player): BurbLevel = BurbLevel.valueOf(
+        BurbPlayerData.getPlayerConfiguration(player).get("${player.uniqueId}${BurbPlayerData.LEVEL_PATH}")
+            .toString()
+    )
+
     fun setLevel(player: Player, newLevel: BurbLevel) {
         val config = BurbPlayerData.getPlayerConfiguration(player)
         config.set("${player.uniqueId}${BurbPlayerData.LEVEL_PATH}", newLevel.name)
@@ -97,6 +104,7 @@ object BurbExperienceLevels {
                     }
                 }.runTaskLater(plugin, if(newEvolution) 14 * 20L else 6 * 20L)
                 config.set("${player.uniqueId}${BurbPlayerData.LEVEL_PATH}", BurbLevel.entries[currentLevel.ordinal + 1].name)
+                Bukkit.getPluginManager().callEvent(PlayerLevelUpEvent(player,  BurbLevel.entries[currentLevel.ordinal + 1]))
             } else {
                 config.set("${player.uniqueId}${BurbPlayerData.EXPERIENCE_PATH}", currentExperience + experienceGained)
             }

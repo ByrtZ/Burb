@@ -1,6 +1,8 @@
 package dev.byrt.burb.player.progression
 
 import dev.byrt.burb.item.rarity.ItemRarity
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 
 enum class BurbLevel(val levelName: String, val requiredXp: Int, val levelColourTag: String) {
     LEVEL_1("Level 1", 100, ItemRarity.COMMON.rarityColour),
@@ -103,4 +105,7 @@ enum class BurbLevel(val levelName: String, val requiredXp: Int, val levelColour
     LEVEL_98("Level 98", 9800, ItemRarity.SPECIAL.rarityColour),
     LEVEL_99("Level 99", 9900, ItemRarity.SPECIAL.rarityColour),
     LEVEL_100("Level 100", 10000, "#22e061");
+
+    val levelOrdinal: Int = ordinal + 1
+    val textColour: TextColor = TextColor.fromCSSHexString(levelColourTag) ?: NamedTextColor.GRAY
 }

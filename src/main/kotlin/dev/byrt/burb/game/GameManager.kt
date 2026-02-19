@@ -11,8 +11,8 @@ import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.library.Translation
 import dev.byrt.burb.lobby.LobbyBall
 import dev.byrt.burb.music.Jukebox
-import dev.byrt.burb.player.nametag.DisplayNameTagProvider
 import dev.byrt.burb.player.nametag.HealthBarNameTagProvider
+import dev.byrt.burb.player.nametag.LobbyNameTagProvider
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
 import dev.byrt.burb.team.TeamManager
@@ -165,7 +165,7 @@ object GameManager {
                 )
             )
         }
-        plugin.nameTagManager.provider = DisplayNameTagProvider()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         GameVisuals.setDayTime(GameDayTime.DAY)
     }
 
@@ -185,7 +185,7 @@ object GameManager {
                 )
             )
         }
-        plugin.nameTagManager.provider = DisplayNameTagProvider()
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
         Rounds.nextRound()
     }
 

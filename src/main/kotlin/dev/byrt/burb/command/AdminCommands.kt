@@ -25,6 +25,7 @@ import dev.byrt.burb.player.cosmetics.BurbCosmetic
 import dev.byrt.burb.player.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.nametag.DisplayNameTagProvider
 import dev.byrt.burb.player.nametag.HealthBarNameTagProvider
+import dev.byrt.burb.player.nametag.LobbyNameTagProvider
 import dev.byrt.burb.player.progression.BurbLevel
 import dev.byrt.burb.player.progression.BurbExperienceLevels
 import dev.byrt.burb.plugin
@@ -367,6 +368,13 @@ class AdminCommands {
     fun refreshNametags() {
         plugin.nameTagManager.provider = DisplayNameTagProvider()
     }
+
+    @Command("debug nametags lobby")
+    @Permission("burb.cmd.debug")
+    fun setLobbyNameTags() {
+        plugin.nameTagManager.provider = LobbyNameTagProvider()
+    }
+
 
     @Command("debug nametags healthbar")
     @Permission("burb.cmd.debug")
