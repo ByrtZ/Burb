@@ -8,15 +8,14 @@ import me.lucyydotp.tinsel.font.Spacing
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Color
 import org.bukkit.attribute.Attribute
-import org.bukkit.entity.Display
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.EntityRegainHealthEvent
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 class HealthBarNameTagProvider : NameTagProvider() {
@@ -57,7 +56,7 @@ class HealthBarNameTagProvider : NameTagProvider() {
     private fun drawHealthbar(player: Player, health: Double = player.health): Component {
         val team = GameManager.teams.getTeam(player.uniqueId) ?: return Component.empty()
         val out = Component.text().font(Key.key("burb", "healthbar"))
-        val healthPct = health / player.getAttribute(Attribute.MAX_HEALTH)!!.value
+        val healthPct = (health / player.getAttribute(Attribute.MAX_HEALTH)!!.value).coerceIn(0.0, 1.0)
         val fillAmount = ((BAR_WIDTH * healthPct).roundToInt() + 1).coerceAtMost(BAR_WIDTH)
         out.append(
             Component.text(buildString(0, fillAmount), team.textColour)
@@ -69,7 +68,7 @@ class HealthBarNameTagProvider : NameTagProvider() {
         out.append(Spacing.spacing(-BAR_WIDTH - 1))
         out.append(Component.text("\uE000"))
 
-        val healthText = Component.text(health.roundToInt().toString()).font(Formatting.BURB_FONT)
+        val healthText = Component.text(floor(health).toInt().toString()).font(Formatting.BURB_FONT)
         val healthOffset = (TextAlignment.tinsel.textWidthMeasurer().measure(healthText) / 2f).roundToInt()
 
         out.append(Spacing.spacing(-(healthOffset + 7)))
