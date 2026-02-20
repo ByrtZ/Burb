@@ -131,7 +131,7 @@ object PlayerVisuals {
             if(members.all(BurbPlayer::isDead) && !isTeamWipe) {
                 deathVehicle.remove()
                 members.forEach { member ->
-                    death(member.bukkitPlayer(), null, false, true)
+                    death(member.bukkitPlayer(), killer, showDeathMessage = false, isTeamWipe = true)
                 }
                 Bukkit.getServer().playSound(Sounds.Score.TEAM_WIPE)
                 Bukkit.getServer().sendTranslated("burb.special_event.vanquish_showdown.wipe", playerTeam)
@@ -166,7 +166,7 @@ object PlayerVisuals {
 
         /** Respawn, includes ability to change characters, and Post Respawn **/
         object : BukkitRunnable() {
-            val RESPAWN_TIME = if(isTeamWipe) 30 else 12
+            val RESPAWN_TIME = if(isTeamWipe) 32 else 15
             var timer = RESPAWN_TIME
             var ticks = 0
             override fun run() {

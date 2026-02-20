@@ -28,7 +28,7 @@ object Sounds {
         val TREASURE_TIME_LOW = sound(key("burb.game.event.treasure_low"), Source.VOICE, 0.5f, 1f)
         val TREASURE_TIME_HIGH = sound(key("burb.game.event.treasure_high"), Source.VOICE, 0.5f, 1f)
         val RANDOS_REVENGE = sound(key("burb.game.event.randos_revenge"), Source.VOICE, 0.5f, 1f)
-        val VANQUISH_SHOWDOWN = sound(key("burb.game.event.vanquish_showdown"), Source.VOICE, 0.3f, 1f)
+        val VANQUISH_SHOWDOWN = sound(key("burb.game.event.vanquish_showdown"), Source.VOICE, 0.2f, 1f)
         val DOWNTIME_LOOP = sound(key("event.downtime.loop"), Source.VOICE, 1f, 1f)
         val DOWNTIME_SUSPENSE = sound(key("event.downtime.suspense"), Source.VOICE, 1f, 1f)
         val NULL = sound(key(""), Source.VOICE, 0f, 0f)
