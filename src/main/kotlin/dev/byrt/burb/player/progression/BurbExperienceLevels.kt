@@ -3,6 +3,8 @@ package dev.byrt.burb.player.progression
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.game.Timer
+import dev.byrt.burb.game.events.SpecialEvent
+import dev.byrt.burb.game.events.SpecialEvents
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.music.Jukebox
 import dev.byrt.burb.music.Music
@@ -39,7 +41,8 @@ object BurbExperienceLevels {
         player.exp = if(exp > 1f) 1f else exp
     }
 
-    fun appendExperience(player: Player, experienceGained: Int) {
+    fun appendExperience(player: Player, expToAppend: Int) {
+        val experienceGained = expToAppend * if(SpecialEvents.getCurrentEvent() == SpecialEvent.TREASURE_TIME) 2 else 1
         player.sendActionBar(Formatting.allTags.deserialize("<font:burb:font>+${experienceGained} <yellow>XP"))
         val config = BurbPlayerData.getPlayerConfiguration(player)
         val currentExperience = config.get("${player.uniqueId}${BurbPlayerData.EXPERIENCE_PATH}") as Int
