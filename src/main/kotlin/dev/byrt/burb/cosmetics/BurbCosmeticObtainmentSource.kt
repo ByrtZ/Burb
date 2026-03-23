@@ -1,4 +1,4 @@
-package dev.byrt.burb.player.cosmetics
+package dev.byrt.burb.cosmetics
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TranslatableComponent

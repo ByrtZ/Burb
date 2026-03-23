@@ -14,7 +14,7 @@ import dev.byrt.burb.library.Translation
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.character.setRandomCharacter
-import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.cosmetics.BurbCosmetics
 import dev.byrt.burb.plugin
 import dev.byrt.burb.text.ChatUtility.BURB_FONT_TAG
 import dev.byrt.burb.text.Formatting

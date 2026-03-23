@@ -21,8 +21,8 @@ import dev.byrt.burb.logger
 import dev.byrt.burb.player.PlayerGlowing
 import dev.byrt.burb.player.PlayerManager.burbPlayer
 import dev.byrt.burb.player.PlayerVisuals
-import dev.byrt.burb.player.cosmetics.BurbCosmetic
-import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.cosmetics.BurbCosmetic
+import dev.byrt.burb.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.nametag.DisplayNameTagProvider
 import dev.byrt.burb.player.nametag.HealthBarNameTagProvider
 import dev.byrt.burb.player.nametag.LobbyNameTagProvider

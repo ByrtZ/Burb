@@ -1,5 +1,6 @@
 package dev.byrt.burb.event
 
+import dev.byrt.burb.cosmetics.shop.BurbStickerShop
 import dev.byrt.burb.game.GameManager
 import dev.byrt.burb.game.GameState
 import dev.byrt.burb.interfaces.BurbInterface
@@ -11,6 +12,7 @@ import dev.byrt.burb.item.ability.combo.BurbAbilityComboClick
 import dev.byrt.burb.item.ability.combo.BurbAbilityComboManager
 import dev.byrt.burb.item.ability.getAbilityByID
 import dev.byrt.burb.item.weapon.BurbWeapons
+import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.npc.BurbNPC
 import dev.byrt.burb.player.character.BurbCharacter
 import dev.byrt.burb.player.PlayerManager.burbPlayer
@@ -18,10 +20,18 @@ import dev.byrt.burb.plugin
 import dev.byrt.burb.util.Cooldowns
 import dev.byrt.burb.util.Keys
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+import net.kyori.adventure.text.Component
+
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.block.data.*
+import org.bukkit.entity.Interaction
 import org.bukkit.entity.Mannequin
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -135,13 +145,32 @@ class InteractEvent: Listener {
     private fun onInteractEntity(e: PlayerInteractEntityEvent) {
         /** On interact with mannequin, get PDC to check if is registered NPC **/
         if(GameManager.getGameState() == GameState.IDLE) {
-            if(e.player.inventory.itemInMainHand.type == Material.AIR && e.rightClicked is Mannequin && e.player.gameMode  in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
+            if(e.player.inventory.itemInMainHand.type == Material.AIR && e.rightClicked is Mannequin && e.player.gameMode in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
                 val npcPdcString = e.rightClicked.persistentDataContainer.get(Keys.LOBBY_NPC, PersistentDataType.STRING)
                 val mannequin = e.rightClicked as Mannequin
                 if(npcPdcString != null) {
                     val burbNPC = BurbNPC.valueOf(npcPdcString.uppercase(getDefault()))
                     if(Cooldowns.attemptNpcInteraction(e.player)) {
                         burbNPC.onInteract(e.player, burbNPC, mannequin)
+                    }
+                }
+            }
+            if(e.rightClicked is Interaction && e.player.gameMode in listOf(GameMode.SURVIVAL, GameMode.ADVENTURE)) {
+                val interaction = e.rightClicked as Interaction
+                val player = e.player
+                if(BurbStickerShop.getShopInteractions().contains(interaction)) {
+                    if(Cooldowns.attemptStickerShopInteraction(e.player)) {
+                        player.sendMessage(Component.translatable("burb.shop.sticker_shop.open"))
+                        player.playSound(Sounds.Shop.ENTER_SHOP)
+                        //TODO: ADD INTERFACE AND MOVE PACK OPENING INTO CONFIRMATION THERE
+                        CoroutineScope(Dispatchers.IO).launch {
+                            delay(750)
+                            if(Cooldowns.attemptStickerShopPull(e.player)) {
+                                BurbStickerShop.pullStickerPack(interaction, player)
+                            } else {
+                                player.sendMessage(Component.translatable("burb.shop.sticker_shop.open_pack_cooldown"))
+                            }
+                        }
                     }
                 }
             }

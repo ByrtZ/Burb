@@ -67,6 +67,15 @@ object Sounds {
     object Tutorial {
         const val TUTORIAL_POP = "entity.item.pickup"
     }
+    object Shop {
+        val ENTER_SHOP = sound(key("burb.lobby.shop.enter"), Source.VOICE, 1f, 1f)
+        val EXIT_SHOP = sound(key("burb.lobby.shop.exit"), Source.VOICE, 1f, 1f)
+        val PURCHASE_PACK = sound(key("burb.lobby.shop.purchase"), Source.VOICE, 1f, 1f)
+        val OPEN_PACK = sound(key("burb.lobby.shop.open_pack"), Source.VOICE, 1f, 1f)
+        val PACK_JINGLE = sound(key("burb.lobby.shop.pack_jingle"), Source.VOICE, 1f, 1f)
+        val REVEAL_CARD = sound(key("burb.lobby.shop.reveal_card"), Source.VOICE, 1f, 1f)
+        val ITEM_DESPAWN = sound(key("entity.item.pickup"), Source.VOICE, 0.75f, 1f)
+    }
     object Misc {
         val ADMIN_MESSAGE = sound(key("ui.button.click"), Source.MASTER, 0.5f, 2f)
         val INTERFACE_INTERACT = sound(key("block.vault.insert_item"), Source.MASTER, 1f, 1f)

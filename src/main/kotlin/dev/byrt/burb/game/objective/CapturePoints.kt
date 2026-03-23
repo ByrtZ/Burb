@@ -48,8 +48,10 @@ object CapturePoints {
     }
 
     fun clearCapturePoints() {
-        for (point in capturePoints) removeCapturePoint(point.key)
-        capturePoints.clear()
+        if(capturePoints.isNotEmpty()) {
+            for (point in capturePoints) removeCapturePoint(point.key)
+            capturePoints.clear()
+        }
         suburbinatingTeam = null
     }
 

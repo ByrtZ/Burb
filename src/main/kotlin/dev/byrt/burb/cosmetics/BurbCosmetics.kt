@@ -1,4 +1,4 @@
-package dev.byrt.burb.player.cosmetics
+package dev.byrt.burb.cosmetics
 
 import dev.byrt.burb.item.type.ItemType
 import dev.byrt.burb.library.Sounds
@@ -23,6 +23,13 @@ import java.util.Locale
 
 @Suppress("unstableApiUsage")
 object BurbCosmetics {
+    fun isCosmeticUnlocked(player: Player, cosmetic: BurbCosmetic): Boolean {
+        val playerConfig = BurbPlayerData.getPlayerConfiguration(player)
+        val rawUnlockedCosmetics = playerConfig.getList("${player.uniqueId}.cosmetics") ?: emptyList()
+        val unlockedCosmetics = rawUnlockedCosmetics.mapNotNull { it as? String }.toMutableList()
+        return unlockedCosmetics.contains(cosmetic.cosmeticId)
+    }
+
     fun unlockCosmetic(player: Player, cosmetic: BurbCosmetic) {
         val playerConfig = BurbPlayerData.getPlayerConfiguration(player)
         val rawUnlockedCosmetics = playerConfig.getList("${player.uniqueId}.cosmetics") ?: emptyList()
@@ -42,7 +49,7 @@ object BurbCosmetics {
         val cosmeticItem = ItemStack(if(cosmetic.isColorable) Material.LEATHER_HORSE_ARMOR else Material.RESIN_CLUMP, 1)
         val cosmeticItemMeta = cosmeticItem.itemMeta
         cosmeticItemMeta.displayName(Formatting.allTags.deserialize("<!i><${cosmetic.cosmeticRarity.rarityColour}>${cosmetic.cosmeticName}"))
-        val cosmeticLore = buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticLore, Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH))
+        val cosmeticLore = buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), cosmetic.cosmeticLore, Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment.obtainmentSourceComponent, Locale.ENGLISH))
         cosmeticItemMeta.lore(cosmeticLore)
 
         if(cosmetic.cosmeticType == ItemType.HAT) {

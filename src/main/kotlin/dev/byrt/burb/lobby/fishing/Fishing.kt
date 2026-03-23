@@ -136,53 +136,10 @@ object Fishing {
 
     private fun catchAnimation(catcher: Player, item: Item, location: Location, fishRarity: FishRarity) {
         when (fishRarity) {
-            FishRarity.RARE -> {
-                PlayerVisuals.firework(
-                    location,
-                    flicker = false,
-                    trail = false,
-                    fishRarity.itemRarity.colour,
-                    FireworkEffect.Type.BURST,
-                    false
-                )
-            }
-
-            FishRarity.EPIC -> {
-                catcher.playSound(Sounds.Fishing.EPIC_CATCH)
-                PlayerVisuals.firework(
-                    location,
-                    flicker = false,
-                    trail = false,
-                    fishRarity.itemRarity.colour,
-                    FireworkEffect.Type.BALL,
-                    false
-                )
-                epicEffect(location)
-            }
-
-            FishRarity.LEGENDARY -> {
-                Bukkit.getServer().playSound(Sounds.Fishing.LEGENDARY_CATCH)
-                for (i in 0..2) {
-                    object : BukkitRunnable() {
-                        override fun run() {
-                            PlayerVisuals.firework(
-                                location,
-                                flicker = true,
-                                trail = true,
-                                fishRarity.itemRarity.colour,
-                                FireworkEffect.Type.BALL_LARGE,
-                                false
-                            )
-                        }
-                    }.runTaskLater(plugin, i * 2L)
-                }
-                legendaryEffect(location)
-            }
-
-            FishRarity.MYTHIC -> {
-                Bukkit.getServer().playSound(Sounds.Fishing.MYTHIC_CATCH)
-                mythicEffect(location)
-            }
+            FishRarity.RARE -> rareEffect(location)
+            FishRarity.EPIC -> epicEffect(catcher, location)
+            FishRarity.LEGENDARY -> legendaryEffect(location)
+            FishRarity.MYTHIC -> mythicEffect(location)
 
             FishRarity.UNREAL -> {
                 val server = Bukkit.getServer()
@@ -455,7 +412,27 @@ object Fishing {
         }
     }
 
-    private fun epicEffect(location: Location) {
+    fun rareEffect(location: Location) {
+        PlayerVisuals.firework(
+            location,
+            flicker = false,
+            trail = false,
+            ItemRarity.RARE.colour,
+            FireworkEffect.Type.BURST,
+            false
+        )
+    }
+
+    fun epicEffect(player: Player, location: Location) {
+        player.playSound(Sounds.Fishing.EPIC_CATCH)
+        PlayerVisuals.firework(
+            location,
+            flicker = false,
+            trail = false,
+            ItemRarity.EPIC.colour,
+            FireworkEffect.Type.BALL,
+            false
+        )
         object : BukkitRunnable() {
             var radius = 0.0
             override fun run() {
@@ -476,6 +453,21 @@ object Fishing {
     }
 
     fun legendaryEffect(location: Location) {
+        Bukkit.getServer().playSound(Sounds.Fishing.LEGENDARY_CATCH)
+        for (i in 0..2) {
+            object : BukkitRunnable() {
+                override fun run() {
+                    PlayerVisuals.firework(
+                        location,
+                        flicker = true,
+                        trail = true,
+                        ItemRarity.LEGENDARY.colour,
+                        FireworkEffect.Type.BALL_LARGE,
+                        false
+                    )
+                }
+            }.runTaskLater(plugin, i * 2L)
+        }
         val effectLoc = location.clone()
         for (i in 0..3) {
             object : BukkitRunnable() {
@@ -516,6 +508,7 @@ object Fishing {
     }
 
     fun mythicEffect(location: Location) {
+        Bukkit.getServer().playSound(Sounds.Fishing.MYTHIC_CATCH)
         for (i in 0..15) {
             object : BukkitRunnable() {
                 override fun run() {

@@ -7,8 +7,8 @@ import dev.byrt.burb.player.character.getCharacter
 import dev.byrt.burb.library.Sounds
 import dev.byrt.burb.lobby.BurbLobby
 import dev.byrt.burb.item.ServerItem
-import dev.byrt.burb.player.cosmetics.BurbCosmetic
-import dev.byrt.burb.player.cosmetics.BurbCosmetics
+import dev.byrt.burb.cosmetics.BurbCosmetic
+import dev.byrt.burb.cosmetics.BurbCosmetics
 import dev.byrt.burb.player.data.BurbPlayerData
 import dev.byrt.burb.plugin
 
@@ -428,9 +428,9 @@ object BurbInterfaces {
                     // Do not show details if hidden
                     if(cosmetic.isHidden) {
                         cosmeticItem.apply { itemMeta = itemMeta.apply { displayName(Formatting.allTags.deserialize("<!i><red>???")) } }
-                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
+                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment.obtainmentSourceComponent, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
                     } else {
-                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
+                        cosmeticItem.lore(BurbCosmetics.buildCosmeticLore(Formatting.allTags.deserialize("<!i><white>${cosmetic.cosmeticRarity.asMiniMessage()}${cosmetic.cosmeticType.asMiniMessage()}"), Formatting.allTags.deserialize("<!i>"), GlobalTranslator.renderer().render(cosmetic.cosmeticObtainment.obtainmentSourceComponent, Locale.ENGLISH), Formatting.allTags.deserialize("<!i>"), Formatting.allTags.deserialize("<!i><red><unicodeprefix:locked> Locked")))
                     }
                 } else {
                     if(cosmetic == equippedHat || cosmetic == equippedAccessory) {

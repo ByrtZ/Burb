@@ -1,5 +1,6 @@
 package dev.byrt.burb.game
 
+import dev.byrt.burb.cosmetics.shop.BurbStickerShop
 import dev.byrt.burb.game.location.SpawnPoints
 import dev.byrt.burb.game.objective.CapturePoints
 import dev.byrt.burb.game.visual.GameDayTime
@@ -16,6 +17,7 @@ import dev.byrt.burb.text.InfoBoardManager
 import dev.byrt.burb.util.CommitIntegration
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Location
 
 object Game {
     fun start() {
@@ -40,18 +42,20 @@ object Game {
         BurbLobby.createTutorialBoards()
         LobbyBall.createLobbyBall()
         BurbNPCs.spawnAllNPCs()
+        BurbStickerShop.createStickerShop(Location(Bukkit.getWorlds()[0], -39.5, 8.0, 20.875, 0f, 0f))
         GameVisuals.resetDayTime()
     }
 
     fun cleanup() {
         BurbNPCs.clearNPCs()
         InfoBoardManager.destroyScoreboard()
-        CapturePoints.clearCapturePoints()
-        ItemManager.destroyBullets()
         BurbLobby.destroyTutorialBoards()
+        BurbStickerShop.destroyShops()
         LobbyBall.cleanup()
         CommitIntegration.destroyUpdatesBoard()
+        ItemManager.destroyBullets()
         GameVisuals.resetDayTime()
+        CapturePoints.clearCapturePoints()
     }
 
     fun reload() {
