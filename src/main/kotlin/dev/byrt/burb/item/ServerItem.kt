@@ -26,6 +26,7 @@ object ServerItem {
             Formatting.allTags.deserialize("<!i>"),
             Formatting.allTags.deserialize("<!i><light_purple>Abilities:")
         )
+        characterItemMeta.itemModel = character.characterSpriteModel
         for(ability in character.characterAbilities.abilitySet) loreList.add(Formatting.allTags.deserialize("<!i><gray>-<white> ${ability.abilityName}<gray>: ").append(ability.getDisplayCombo(character)))
         characterItemMeta.lore(loreList)
         characterItem.itemMeta = characterItemMeta

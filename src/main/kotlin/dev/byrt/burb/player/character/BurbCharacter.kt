@@ -10,18 +10,19 @@ import dev.byrt.burb.item.weapon.BurbMainWeapon
 import dev.byrt.burb.player.BurbPlayer
 import dev.byrt.burb.plugin
 import dev.byrt.burb.team.BurbTeam
+import org.bukkit.NamespacedKey
 import org.bukkit.scheduler.BukkitRunnable
 
-enum class BurbCharacter(val characterName: String, val characterType: BurbCharacterType, val characterMainWeapon: BurbMainWeapon, val characterAbilities: BurbCharacterAbilities) {
-    NULL("null", BurbCharacterType.NULL, BurbMainWeapon.NULL, BurbCharacterAbilities.NULL),
-    PLANTS_SCOUT("Peashooter", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_SCOUT_MAIN, BurbCharacterAbilities.PLANTS_SCOUT_ABILITIES),
-    PLANTS_HEAVY("Chomper", BurbCharacterType.MELEE, BurbMainWeapon.PLANTS_HEAVY_MAIN, BurbCharacterAbilities.PLANTS_HEAVY_ABILITIES),
-    PLANTS_HEALER("Sunflower", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_HEALER_MAIN, BurbCharacterAbilities.PLANTS_HEALER_ABILITIES),
-    PLANTS_RANGED("Cactus", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_RANGED_MAIN, BurbCharacterAbilities.PLANTS_RANGED_ABILITIES),
-    ZOMBIES_SCOUT("Foot Soldier", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_SCOUT_MAIN, BurbCharacterAbilities.ZOMBIES_SCOUT_ABILITIES),
-    ZOMBIES_HEAVY("Super Brainz", BurbCharacterType.MELEE, BurbMainWeapon.ZOMBIES_HEAVY_MAIN, BurbCharacterAbilities.ZOMBIES_HEAVY_ABILITIES),
-    ZOMBIES_HEALER("Scientist", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_HEALER_MAIN, BurbCharacterAbilities.ZOMBIES_HEALER_ABILITIES),
-    ZOMBIES_RANGED("Deadbeard", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_RANGED_MAIN, BurbCharacterAbilities.ZOMBIES_RANGED_ABILITIES)
+enum class BurbCharacter(val characterName: String, val characterType: BurbCharacterType, val characterMainWeapon: BurbMainWeapon, val characterAbilities: BurbCharacterAbilities, val characterSpriteModel: NamespacedKey) {
+    NULL("null", BurbCharacterType.NULL, BurbMainWeapon.NULL, BurbCharacterAbilities.NULL, NamespacedKey("minecraft", "barrier")),
+    PLANTS_SCOUT("Peashooter", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_SCOUT_MAIN, BurbCharacterAbilities.PLANTS_SCOUT_ABILITIES, NamespacedKey("minecraft", "peashooter_sprite")),
+    PLANTS_HEAVY("Chomper", BurbCharacterType.MELEE, BurbMainWeapon.PLANTS_HEAVY_MAIN, BurbCharacterAbilities.PLANTS_HEAVY_ABILITIES, NamespacedKey("minecraft", "chomper_sprite")),
+    PLANTS_HEALER("Sunflower", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_HEALER_MAIN, BurbCharacterAbilities.PLANTS_HEALER_ABILITIES, NamespacedKey("minecraft", "sunflower_sprite")),
+    PLANTS_RANGED("Cactus", BurbCharacterType.RANGED, BurbMainWeapon.PLANTS_RANGED_MAIN, BurbCharacterAbilities.PLANTS_RANGED_ABILITIES, NamespacedKey("minecraft", "cactus_sprite")),
+    ZOMBIES_SCOUT("Foot Soldier", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_SCOUT_MAIN, BurbCharacterAbilities.ZOMBIES_SCOUT_ABILITIES, NamespacedKey("minecraft", "purple_dye")),
+    ZOMBIES_HEAVY("Super Brainz", BurbCharacterType.MELEE, BurbMainWeapon.ZOMBIES_HEAVY_MAIN, BurbCharacterAbilities.ZOMBIES_HEAVY_ABILITIES, NamespacedKey("minecraft", "purple_dye")),
+    ZOMBIES_HEALER("Scientist", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_HEALER_MAIN, BurbCharacterAbilities.ZOMBIES_HEALER_ABILITIES, NamespacedKey("minecraft", "purple_dye")),
+    ZOMBIES_RANGED("Deadbeard", BurbCharacterType.RANGED, BurbMainWeapon.ZOMBIES_RANGED_MAIN, BurbCharacterAbilities.ZOMBIES_RANGED_ABILITIES, NamespacedKey("minecraft", "purple_dye"))
 }
 
 fun BurbPlayer.setRandomCharacter() {
